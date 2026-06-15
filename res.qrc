@@ -1,0 +1,7 @@
+<RCC>
+    <qresource prefix="/">
+        <file>images/admin.svg</file>
+        <file>images/tb/dark.svg</file>
+        <file>images/tb/light.svg</file>
+    </qresource>
+</RCC>
