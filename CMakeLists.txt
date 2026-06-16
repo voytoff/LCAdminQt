@@ -7,7 +7,7 @@ set(CMAKE_AUTOUIC ON)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
 find_package(Qt6 6.2 COMPONENTS Quick REQUIRED)
-find_package(Qt6 REQUIRED COMPONENTS Widgets)
+find_package(Qt6 REQUIRED COMPONENTS Widgets Sql)
 
 qt_standard_project_setup()
 
@@ -25,6 +25,10 @@ set(SCHEMEHELPEREDIR "../SchemeHelperQt")
 include_directories(${SCHEMEHELPEREDIR})
 add_subdirectory(${SCHEMEHELPEREDIR} SchemeHelper)
 
+set(DBEXTENSIONDIR "../DBExtensionQt")
+include_directories(${DBEXTENSIONDIR}/lib)
+add_subdirectory(${DBEXTENSIONDIR} DBExtension)
+
 # Qt for iOS sets MACOSX_BUNDLE_GUI_IDENTIFIER automatically since Qt 6.1.
 # If you are developing for iOS or macOS you should consider setting an
 # explicit, fixed bundle identifier manually though.
@@ -38,7 +42,9 @@ set_target_properties(LCAdmin PROPERTIES
 
 target_link_libraries(LCAdmin
     PRIVATE Qt6::Quick
+    PRIVATE Qt6::Sql
     SchemeHelper
+    DBExtension
 )
 target_link_libraries(LCAdmin PRIVATE Qt6::Widgets)
 

@@ -1,10 +1,8 @@
 #include "mainwindow.h"
 
 #include <QApplication>
-#include <QTranslator>
 #include <QLibraryInfo>
-#include <QApplication>
-#include <QApplication>
+#include <QTranslator>
 
 int main(int argc, char *argv[])
 {
@@ -26,4 +24,4 @@ int main(int argc, char *argv[])
   MainWindow window;
   window.show();
   return app.exec();
- }
+}
