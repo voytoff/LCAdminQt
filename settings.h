@@ -18,6 +18,13 @@ public:
   ColorScheme colorScheme(QVariant value = 0);
   QByteArray geometry(QByteArray value = QByteArray());
   QByteArray windowState(QByteArray value = QByteArray());
+  QByteArray splitter(QByteArray value = 0);
+
+  QString hostName(QString value = nullptr);
+  int hostPort(int value = 0);
+  QString databaseName(QString value = nullptr);
+  QString userName(QString value = nullptr);
+  QString password(QString value = nullptr);
 
 signals:
   void propertyChanged(QString name, QVariant value);
