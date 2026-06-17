@@ -14,6 +14,11 @@ SettingsDlg::SettingsDlg(Settings *settings, QWidget *parent)
   ui->colorScheme->setCurrentIndex(settings->colorScheme()-1);
 
   ui->tabWidget->setCurrentIndex(0);
+  ui->hostName->setText(settings->hostName());
+  ui->hostPort->setText(QString::number(settings->hostPort()));
+  ui->databaseName->setText(settings->databaseName());
+  ui->userName->setText(settings->userName());
+  ui->password->setText(settings->password());
 
   connect(this, &QDialog::finished, this, [this](int result) { accept(result); });
   //setWindowFlags(windowFlags() & ~Qt::WindowSystemMenuHint);
@@ -27,5 +32,10 @@ SettingsDlg::~SettingsDlg() {
 void SettingsDlg::accept(const int result) {
   if (result == QDialog::Accepted) {
     settings->colorScheme(ui->colorScheme->currentData());
+    settings->hostName(ui->hostName->text());
+    settings->hostPort(ui->hostPort->text().toInt());
+    settings->databaseName(ui->databaseName->text());
+    settings->userName(ui->userName->text());
+    settings->password(ui->password->text());
   }
 }

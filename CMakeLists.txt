@@ -27,6 +27,10 @@ qt_add_executable(LCAdmin
     settings.h settings.cpp
     ${PROJECT_RESOURCES}
     settingsdlg.h settingsdlg.cpp settingsdlg.ui
+    treecustomdelegate.h
+    treeview.h treeview.cpp
+    sqlheterogeneoustreemodel.h sqlheterogeneoustreemodel.cpp
+    treeitem.h treeitem.cpp
 )
 
 set(SCHEMEHELPEREDIR "../SchemeHelperQt")

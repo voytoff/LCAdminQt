@@ -1,5 +1,7 @@
 #include "mainwindow.h"
 #include "settingsdlg.h"
+#include "sqlheterogeneoustreemodel.h"
+
 #include <QGuiApplication>
 #include <QMenu>
 #include <QMenuBar>
@@ -8,7 +10,6 @@
 #include <QToolBar>
 #include <QAction>
 #include <QIcon>
-#include <QHeaderView>
 #include <QGridLayout>
 #include <QStyleHints>
 
@@ -16,27 +17,19 @@ MainWindow::MainWindow(QWidget *parent)
   : QMainWindow{parent}
   , schemeHelper(new SchemeHelper(this, ":/images/admin.png"))
   , settings(new Settings())
-  , db(new DB())
-  , treeView(new QTreeView(this))
+  , db(new DB(settings->hostName(), settings->hostPort(), settings->databaseName(), settings->userName(), settings->password()))
+  , treeView(new TreeView(settings, this))
   , tabWidget(new QTabWidget(this))
-  , splitter(new QSplitter(this)) {
+  , splitter(new QSplitter(this))
+  , toolbar(addToolBar("Главный")) {
 
-  QIcon::setThemeName("Material Symbols Outlined");
   setWindowTitle(title);
 
   createActions();
   createControlBar();
   statusBar()->setSizeGripEnabled(true);
-
   createControlBox();
-
-  QGridLayout *layout = new QGridLayout;
-  layout->addWidget(splitter, 0, 0);
-  layout->setContentsMargins(2, 1, 2, 0);
-
-  QWidget *widget = new QWidget;
-  widget->setLayout(layout);
-  setCentralWidget(widget);
+  loadData();
 
   restoreLayout();
 }
@@ -65,13 +58,35 @@ void MainWindow::createControlBar() {
   QMenu *toolMenu = menuBar()->addMenu(tr("Инструменты"));
   toolMenu->addAction(settingsAction);
 
-  auto toolbar = addToolBar("Главный");
   schemeHelper->setupToolbar(toolbar);
   toolbar->setObjectName("General");
   toolbar->addAction(openAction);
   toolbar->addAction(saveAction);
   toolbar->addSeparator();
   toolbar->addAction(settingsAction);
+}
+
+void MainWindow::createControlBox() {
+  //treeView->setModel(model);
+  //connect(treeView, &QTreeView::doubleClicked, this, &MainWindow::editSensor);
+
+  tabWidget->setTabsClosable(true);
+  connect(tabWidget, &QTabWidget::tabCloseRequested, this, [this](int index) {
+    QWidget* w = tabWidget->widget(index);
+    tabWidget->removeTab(index);
+    delete w;
+  });
+
+  splitter->addWidget(treeView);
+  splitter->addWidget(tabWidget);
+
+  QGridLayout *layout = new QGridLayout;
+  layout->addWidget(splitter, 0, 0);
+  layout->setContentsMargins(2, 1, 2, 0);
+
+  QWidget *widget = new QWidget;
+  widget->setLayout(layout);
+  setCentralWidget(widget);
 }
 
 void MainWindow::closeEvent(QCloseEvent *event) {
@@ -83,6 +98,16 @@ void MainWindow::saveLayout() {
   settings->geometry(saveGeometry());
   settings->windowState(saveState());
   settings->splitter(splitter->saveState());
+}
+
+void MainWindow::loadData() {
+  treeView->setModel(nullptr);
+  if (db->open()) {
+    treeView->setModel(new SqlHeterogeneousTreeModel(this));
+  } else {
+    statusBar()->showMessage(db->lastError().text());
+    qDebug() << db->lastError().text();
+  }
 }
 
 void MainWindow::doSettings() {
@@ -99,30 +124,5 @@ void MainWindow::restoreLayout() {
   restoreGeometry(settings->geometry());
   restoreState(settings->windowState());
   splitter->restoreState(settings->splitter());
-}
-
-
-void MainWindow::createControlBox() {
-  //treeView->setModel(model);
-  //adjustHeader();
-
-  treeView->setRootIsDecorated(false);
-  treeView->header()->setSectionResizeMode(QHeaderView::Stretch);
-  //connect(treeView, &QTreeView::doubleClicked, this, &MainWindow::editSensor);
-
-  QLocale locale = treeView->locale();
-  locale.setNumberOptions(QLocale::OmitGroupSeparator);
-  treeView->setLocale(locale);
-  //treeView->setItemDelegate(new CustomDelegate());
-
-  tabWidget->setTabsClosable(true);
-  connect(tabWidget, &QTabWidget::tabCloseRequested, this, [this](int index) {
-    QWidget* w = tabWidget->widget(index);
-    tabWidget->removeTab(index);
-    delete w;
-  });
-
-  splitter->addWidget(treeView);
-  splitter->addWidget(tabWidget);
 }
 

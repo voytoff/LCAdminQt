@@ -5,11 +5,11 @@
 #include <QMainWindow>
 #include <QSqlDatabase>
 #include <QSplitter>
-#include <QTreeView>
 
 #include "db.h"
 #include "schemehelper.h"
 #include "settings.h"
+#include "treeview.h"
 
 const QString title = "Администратор";
 
@@ -27,9 +27,9 @@ private:
   void createControlBox();
   void restoreLayout();
   void saveLayout();
+  void loadData();
 
   void doSettings();
-
 
   SchemeHelper *schemeHelper;
 
@@ -43,8 +43,9 @@ private:
   Settings *settings;
 
   QSplitter *splitter;
-  QTreeView *treeView;
+  TreeView *treeView;
   QTabWidget *tabWidget;
+  QToolBar *toolbar;
 
   DB *db;
 
