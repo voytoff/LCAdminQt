@@ -12,10 +12,6 @@
 #include "tabview.h"
 #include "treeview.h"
 
-const QString title = "Администратор";
-const QString ready = "Готово";
-const int readyTimeout = 5000;
-
 class MainWindow : public QMainWindow {
   Q_OBJECT
 public:
@@ -34,6 +30,8 @@ private:
   void saveLayout();
   void loadData();
   void reload();
+  void add();
+  void del();
 
   void doSettings();
 

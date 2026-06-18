@@ -27,11 +27,13 @@ qt_add_executable(LCAdmin
     mainwindow.h mainwindow.cpp
     settings.h settings.cpp
     settingsdlg.h settingsdlg.cpp settingsdlg.ui
-    treecustomdelegate.h
+    treecustomdelegate.h types.h
     treeview.h treeview.cpp
     sqltreemodel.h sqltreemodel.cpp
     treeitem.h treeitem.cpp
     tabview.h tabview.cpp
+    crateview.h crateview.cpp crateview.ui
+    moduleview.h moduleview.cpp moduleview.ui
 )
 
 set(SCHEMEHELPEREDIR "../SchemeHelperQt")

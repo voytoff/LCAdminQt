@@ -1,6 +1,9 @@
 #include "mainwindow.h"
+#include "crateview.h"
+#include "moduleview.h"
 #include "settingsdlg.h"
 #include "sqltreemodel.h"
+#include "types.h"
 
 #include <QGuiApplication>
 #include <QMenu>
@@ -20,7 +23,7 @@ MainWindow::MainWindow(QWidget *parent)
   , settings(new Settings())
   , db(new DB(settings->hostName(), settings->hostPort(), settings->databaseName(), settings->userName(), settings->password(), settings->timeout()))
   , treeView(new TreeView(settings, this))
-  , tabView(new QTabWidget(this))
+  , tabView(new TabView(this))
   , splitter(new QSplitter(this))
   , toolbar(addToolBar("Главный")) {
 
@@ -30,8 +33,6 @@ MainWindow::MainWindow(QWidget *parent)
   createControlBar();
   statusBar()->setSizeGripEnabled(true);
   createControlBox();
-
-  //connect(timer, &QTimer::timeout, this, [this]() {statusBar()->showMessage(ready);});
 
   restoreLayout();
 }
@@ -46,6 +47,8 @@ void MainWindow::createActions() {
   delAction = schemeHelper->create(tr("Удалить"), ":/images/tb/del.png", QKeySequence::Delete);
 
   connect(settingsAction, &QAction::triggered, this, &MainWindow::doSettings);
+  connect(addAction, &QAction::triggered, this, &MainWindow::add);
+  connect(delAction, &QAction::triggered, this, &MainWindow::del);
 
   schemeHelper->applayColorScheme(settings->colorScheme(), true);
 }
@@ -134,6 +137,17 @@ void MainWindow::loadData() {
 
 void MainWindow::reload() {
   //showMessage(treeView->selectionModel()->selection().)
+}
+
+void MainWindow::add() {
+  auto w = new CrateView(this);
+  tabView->append(w, "тест 1", documentType::crate, 1000);
+}
+
+void MainWindow::del() {
+  auto w = new ModuleView(this);
+  tabView->append(w, "тест 2", documentType::module, 99);
+
 }
 
 void MainWindow::doSettings() {
