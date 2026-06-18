@@ -9,9 +9,12 @@
 #include "db.h"
 #include "schemehelper.h"
 #include "settings.h"
+#include "tabview.h"
 #include "treeview.h"
 
 const QString title = "Администратор";
+const QString ready = "Готово";
+const int readyTimeout = 5000;
 
 class MainWindow : public QMainWindow {
   Q_OBJECT
@@ -20,14 +23,17 @@ public:
 
 protected:
   void closeEvent(QCloseEvent *event) override;
+  void showEvent(QShowEvent *event) override;
 
 private:
+  void showMessage(const QString &text);
   void createActions();
   void createControlBar();
   void createControlBox();
   void restoreLayout();
   void saveLayout();
   void loadData();
+  void reload();
 
   void doSettings();
 
@@ -38,13 +44,14 @@ private:
   QAction *openAction;
   QAction *saveAction;
   QAction *settingsAction;
-
+  QAction *addAction;
+  QAction *delAction;
 
   Settings *settings;
 
   QSplitter *splitter;
   TreeView *treeView;
-  QTabWidget *tabWidget;
+  TabView *tabView;
   QToolBar *toolbar;
 
   DB *db;

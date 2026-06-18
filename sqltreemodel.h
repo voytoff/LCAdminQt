@@ -1,15 +1,16 @@
-#ifndef SQLHETEROGENEOUSTREEMODEL_H
-#define SQLHETEROGENEOUSTREEMODEL_H
+#ifndef SQLTREEMODEL_H
+#define SQLTREEMODEL_H
 
+#include "db.h"
 #include "treeitem.h"
 #include <QAbstractItemModel>
 #include <QSqlQuery>
 
-class SqlHeterogeneousTreeModel : public QAbstractItemModel {
+class SqlTreeModel : public QAbstractItemModel {
   Q_OBJECT
 public:
-  explicit SqlHeterogeneousTreeModel(QObject *parent = nullptr);
-  ~SqlHeterogeneousTreeModel();
+  explicit SqlTreeModel(DB *db, QObject *parent = nullptr);
+  ~SqlTreeModel();
 
   QVariant data(const QModelIndex &index, int role) const override;
   Qt::ItemFlags flags(const QModelIndex &index) const override;
@@ -20,8 +21,9 @@ public:
   int columnCount(const QModelIndex &parent = QModelIndex()) const override;
 
 private:
+  DB *db;
   void loadChildren(TreeItem *parentItem) const;
   TreeItem *rootItem;
 };
 
-#endif // SQLHETEROGENEOUSTREEMODEL_H
+#endif // SQLTREEMODEL_H

@@ -17,6 +17,7 @@ public:
 private:
   Ui::SettingsDlg *ui;
   Settings* settings;
+  void test();
 
   void accept(const int result);
 };

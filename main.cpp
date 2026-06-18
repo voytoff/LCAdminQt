@@ -5,20 +5,20 @@
 #include <QTranslator>
 
 int main(int argc, char *argv[]) {
+  qSetMessagePattern("[%{time h:mm:ss.zzz}] [%{type}] %{function} - %{message}");
   QApplication app(argc, argv);
   app.setStyle("fusion");
 
   QTranslator qtTranslator;
   QString lang = QLocale::system().name();
   // Загружаем системный перевод (ищет файлы вида qt_ru.qm)
-  if (qtTranslator.load("qt_" + lang, QLibraryInfo::path(QLibraryInfo::TranslationsPath))) {
+  if (qtTranslator.load("qt_" + lang, QLibraryInfo::path(QLibraryInfo::TranslationsPath)))
     app.installTranslator(&qtTranslator);
-  }
+
   // Здесь загружается перевод для вашего собственного приложения
   QTranslator myTranslator;
-  if (myTranslator.load("acdanalizer_" + lang, ":/translations")) {
+  if (myTranslator.load("acdanalizer_" + lang, ":/translations"))
     app.installTranslator(&myTranslator);
-  }
 
   MainWindow window;
   window.show();

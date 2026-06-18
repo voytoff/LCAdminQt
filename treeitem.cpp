@@ -1,6 +1,6 @@
 #include "treeitem.h"
 
-TreeItem::TreeItem(const QVector<QVariant> &data, int id, int level, TreeItem *parent)
+TreeItem::TreeItem(const QVariantList &data, int id, int level, TreeItem *parent)
   : m_itemData(data), m_id(id), m_level(level), m_parentItem(parent), m_isLoaded(false) {
 
 }

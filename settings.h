@@ -25,6 +25,7 @@ public:
   QString databaseName(QString value = nullptr);
   QString userName(QString value = nullptr);
   QString password(QString value = nullptr);
+  int timeout(int value = 0);
 
 signals:
   void propertyChanged(QString name, QVariant value);

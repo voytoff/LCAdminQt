@@ -18,19 +18,20 @@ find_package(Qt6 6.2 REQUIRED COMPONENTS
 
 qt_standard_project_setup()
 
-set(RESOURCE_FILES res.qrc)
-qt6_add_resources(PROJECT_RESOURCES ${RESOURCE_FILES})
+set(ADMIN_RESOURCE_FILES res.qrc)
+qt6_add_resources(ADMIN_PROJECT_RESOURCES ${ADMIN_RESOURCE_FILES})
 
 qt_add_executable(LCAdmin
+    ${ADMIN_PROJECT_RESOURCES}
     main.cpp
     mainwindow.h mainwindow.cpp
     settings.h settings.cpp
-    ${PROJECT_RESOURCES}
     settingsdlg.h settingsdlg.cpp settingsdlg.ui
     treecustomdelegate.h
     treeview.h treeview.cpp
-    sqlheterogeneoustreemodel.h sqlheterogeneoustreemodel.cpp
+    sqltreemodel.h sqltreemodel.cpp
     treeitem.h treeitem.cpp
+    tabview.h tabview.cpp
 )
 
 set(SCHEMEHELPEREDIR "../SchemeHelperQt")

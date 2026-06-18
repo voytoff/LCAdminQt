@@ -61,3 +61,9 @@ QString Settings::password(QString value) {
     this->setValue("password", value);
   return this->value("password").toString();
 }
+
+int Settings::timeout(int value) {
+  if (value > 0)
+    this->setValue("timeout", value);
+  return this->value("timeout").toInt();
+}

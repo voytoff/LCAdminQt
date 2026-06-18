@@ -1,12 +1,12 @@
 #ifndef TREEITEM_H
 #define TREEITEM_H
 
-#include <QVariant>
-#include <QVector>
+#include <QVariantList>
+#include <QStandardItem>
 
-class TreeItem {
+class TreeItem : public QStandardItem  {
 public:
-  TreeItem(const QVector<QVariant> &data, int id, int level, TreeItem *parent = nullptr);
+  TreeItem(const QVariantList &data, int id, int level, TreeItem *parent = nullptr);
   ~TreeItem();
 
   void appendChild(TreeItem *child) { m_childItems.append(child); }

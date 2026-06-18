@@ -6,5 +6,10 @@
         <file>images/tb/save.png</file>
         <file>images/admin.png</file>
         <file>images/tb/settings.png</file>
+        <file>images/check.png</file>
+        <file>images/db/crate.png</file>
+        <file>images/db/module.png</file>
+        <file>images/tb/add.png</file>
+        <file>images/tb/del.png</file>
     </qresource>
 </RCC>
