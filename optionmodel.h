@@ -1,16 +1,16 @@
-#ifndef SQLTREEMODEL_H
-#define SQLTREEMODEL_H
+#ifndef OPTIONMODEL_H
+#define OPTIONMODEL_H
 
 #include "db.h"
 #include "treeitem.h"
 #include <QAbstractItemModel>
 #include <QSqlQuery>
 
-class SqlTreeModel : public QAbstractItemModel {
+class OptionModel : public QAbstractItemModel {
   Q_OBJECT
 public:
-  explicit SqlTreeModel(DB *db, QObject *parent = nullptr);
-  ~SqlTreeModel();
+  explicit OptionModel(DB *db, QObject *parent = nullptr);
+  ~OptionModel();
 
   QVariant data(const QModelIndex &index, int role) const override;
   Qt::ItemFlags flags(const QModelIndex &index) const override;
@@ -26,4 +26,4 @@ private:
   TreeItem *rootItem;
 };
 
-#endif // SQLTREEMODEL_H
+#endif // OPTIONMODEL_H

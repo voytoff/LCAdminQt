@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <ui version="4.0">
  <class>ModuleView</class>
- <widget class="QScrollArea" name="ModuleView">
+ <widget class="QDockWidget" name="ModuleView">
   <property name="geometry">
    <rect>
     <x>0</x>
@@ -10,9 +10,27 @@
     <height>300</height>
    </rect>
   </property>
-  <property name="windowTitle">
-   <string>ScrollArea</string>
+  <property name="features">
+   <set>QDockWidget::DockWidgetFeature::DockWidgetClosable</set>
   </property>
+  <property name="allowedAreas">
+   <set>Qt::DockWidgetArea::LeftDockWidgetArea</set>
+  </property>
+  <property name="windowTitle">
+   <string>DockWidget</string>
+  </property>
+  <widget class="QWidget" name="dockWidgetContents">
+   <widget class="QComboBox" name="comboBox">
+    <property name="geometry">
+     <rect>
+      <x>140</x>
+      <y>110</y>
+      <width>78</width>
+      <height>23</height>
+     </rect>
+    </property>
+   </widget>
+  </widget>
  </widget>
  <resources/>
  <connections/>

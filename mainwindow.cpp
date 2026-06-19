@@ -1,8 +1,9 @@
 #include "mainwindow.h"
 #include "crateview.h"
+#include "leftview.h"
 #include "moduleview.h"
 #include "settingsdlg.h"
-#include "sqltreemodel.h"
+#include "optionmodel.h"
 #include "types.h"
 
 #include <QGuiApplication>
@@ -20,15 +21,17 @@
 MainWindow::MainWindow(QWidget *parent)
   : QMainWindow{parent}
   , schemeHelper(new SchemeHelper(this, ":/images/admin.png"))
-  , settings(new Settings())
-  , db(new DB(settings->hostName(), settings->hostPort(), settings->databaseName(), settings->userName(), settings->password(), settings->timeout()))
-  , treeView(new TreeView(settings, this))
+  , settings(new Settings(this))
+  , db(new DB(settings->hostName(), settings->hostPort(), settings->databaseName(), settings->userName(), settings->password(), settings->timeout(), this))
+  , optionView(new TreeView("Установки", this))
+  , dictionView(new TreeView("Справочник", this))
   , tabView(new TabView(this))
   , splitter(new QSplitter(this))
   , toolbar(addToolBar("Главный")) {
 
-  setWindowTitle(title);
+  leftView = new LeftView(dictionView, optionView);
 
+  setWindowTitle(title);
   createActions();
   createControlBar();
   statusBar()->setSizeGripEnabled(true);
@@ -79,7 +82,7 @@ void MainWindow::createControlBar() {
 void MainWindow::createControlBox() {
   //treeView->setModel(model);
   //connect(treeView, &QTreeView::doubleClicked, this, &MainWindow::editSensor);
-  connect(treeView->selectionModel(), &QItemSelectionModel::selectionChanged, this, &MainWindow::reload);
+  connect(optionView->selectionModel(), &QItemSelectionModel::selectionChanged, this, &MainWindow::reload);
 
   tabView->setTabsClosable(true);
   connect(tabView, &QTabWidget::tabCloseRequested, this, [this](int index) {
@@ -88,10 +91,10 @@ void MainWindow::createControlBox() {
     delete w;
   });
 
-  splitter->addWidget(treeView);
+  splitter->addWidget(leftView);
   splitter->addWidget(tabView);
 
-  QGridLayout *layout = new QGridLayout;
+  QGridLayout *layout = new QGridLayout();
   layout->addWidget(splitter, 0, 0);
   layout->setContentsMargins(2, 1, 2, 0);
 
@@ -122,13 +125,14 @@ void MainWindow::saveLayout() {
   settings->geometry(saveGeometry());
   settings->windowState(saveState());
   settings->splitter(splitter->saveState());
+  settings->splitter2(leftView->saveState());
 }
 
 void MainWindow::loadData() {
-  treeView->setModel(nullptr);
+  optionView->setModel(nullptr);
   if (db->open()) {
-    auto model = new SqlTreeModel(db, this);
-    treeView->setModel(model);
+    auto model = new OptionModel(db, this);
+    optionView->setModel(model);
   } else {
     showMessage(db->lastError().text());
     QMessageBox::critical(this, title, db->lastError().text());
@@ -168,5 +172,6 @@ void MainWindow::restoreLayout() {
   restoreGeometry(settings->geometry());
   restoreState(settings->windowState());
   splitter->restoreState(settings->splitter());
+  leftView->restoreState(settings->splitter2());
 }
 

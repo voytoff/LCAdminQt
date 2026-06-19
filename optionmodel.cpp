@@ -1,23 +1,23 @@
-#include "sqltreemodel.h"
+#include "optionmodel.h"
 #include <QSqlError>
 #include <QIcon>
 
-SqlTreeModel::SqlTreeModel(DB *db, QObject *parent)
+OptionModel::OptionModel(DB *db, QObject *parent)
   : QAbstractItemModel(parent)
   , db(db) {
   // Создаем корневой скрытый элемент (Level -1)
   rootItem = new TreeItem({ "Название", "Инфо" }, 0, -1);
 }
 
-SqlTreeModel::~SqlTreeModel() {
+OptionModel::~OptionModel() {
   delete rootItem;
 }
 
-int SqlTreeModel::columnCount(const QModelIndex &parent) const {
+int OptionModel::columnCount(const QModelIndex &parent) const {
   return rootItem->columnCount();
 }
 
-QVariant SqlTreeModel::data(const QModelIndex &index, int role) const {
+QVariant OptionModel::data(const QModelIndex &index, int role) const {
   if (!index.isValid()) return QVariant();
   else if (role == Qt::DecorationRole && index.column() == 0) {
     TreeItem *item = static_cast<TreeItem*>(index.internalPointer());
@@ -33,17 +33,17 @@ QVariant SqlTreeModel::data(const QModelIndex &index, int role) const {
   return QVariant();
 }
 
-Qt::ItemFlags SqlTreeModel::flags(const QModelIndex &index) const {
+Qt::ItemFlags OptionModel::flags(const QModelIndex &index) const {
   if (!index.isValid()) return Qt::NoItemFlags;
   return QAbstractItemModel::flags(index);
 }
 
-QVariant SqlTreeModel::headerData(int section, Qt::Orientation orientation, int role) const {
+QVariant OptionModel::headerData(int section, Qt::Orientation orientation, int role) const {
   if (orientation == Qt::Horizontal && role == Qt::DisplayRole) return rootItem->data(section);
   return QVariant();
 }
 
-QModelIndex SqlTreeModel::index(int row, int column, const QModelIndex &parent) const {
+QModelIndex OptionModel::index(int row, int column, const QModelIndex &parent) const {
   if (!hasIndex(row, column, parent)) return QModelIndex();
 
   TreeItem *parentItem = parent.isValid() ? static_cast<TreeItem*>(parent.internalPointer()) : rootItem;
@@ -58,7 +58,7 @@ QModelIndex SqlTreeModel::index(int row, int column, const QModelIndex &parent) 
   return QModelIndex();
 }
 
-QModelIndex SqlTreeModel::parent(const QModelIndex &index) const {
+QModelIndex OptionModel::parent(const QModelIndex &index) const {
   if (!index.isValid()) return QModelIndex();
 
   TreeItem *childItem = static_cast<TreeItem*>(index.internalPointer());
@@ -68,7 +68,7 @@ QModelIndex SqlTreeModel::parent(const QModelIndex &index) const {
   return createIndex(parentItem->row(), 0, parentItem);
 }
 
-int SqlTreeModel::rowCount(const QModelIndex &parent) const {
+int OptionModel::rowCount(const QModelIndex &parent) const {
   if (parent.column() > 0) return 0;
 
   TreeItem *parentItem = parent.isValid() ? static_cast<TreeItem*>(parent.internalPointer()) : rootItem;
@@ -81,7 +81,7 @@ int SqlTreeModel::rowCount(const QModelIndex &parent) const {
 }
 
 // Логика динамической загрузки из разных таблиц в зависимости от уровня (Level)
-void SqlTreeModel::loadChildren(TreeItem *parentItem) const {
+void OptionModel::loadChildren(TreeItem *parentItem) const {
   // Приведение к неконстантному указателю для изменения флага и добавления детей
   TreeItem *item = const_cast<TreeItem*>(parentItem);
   item->setLoaded(true);

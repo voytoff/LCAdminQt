@@ -7,6 +7,7 @@
 #include <QSplitter>
 
 #include "db.h"
+#include "leftview.h"
 #include "schemehelper.h"
 #include "settings.h"
 #include "tabview.h"
@@ -48,7 +49,9 @@ private:
   Settings *settings;
 
   QSplitter *splitter;
-  TreeView *treeView;
+  LeftView *leftView;
+  TreeView *optionView;
+  TreeView *dictionView;
   TabView *tabView;
   QToolBar *toolbar;
 

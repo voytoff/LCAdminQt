@@ -1,13 +1,13 @@
 #ifndef MODULEVIEW_H
 #define MODULEVIEW_H
 
-#include <QScrollArea>
+#include <QDockWidget>
 
 namespace Ui {
 class ModuleView;
 }
 
-class ModuleView : public QScrollArea
+class ModuleView : public QDockWidget
 {
   Q_OBJECT
 

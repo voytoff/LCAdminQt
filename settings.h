@@ -13,12 +13,13 @@ class Settings : public QSettings
 {
   Q_OBJECT
 public:
-  Settings();
+  Settings(QObject *parent = nullptr);
 
   ColorScheme colorScheme(QVariant value = 0);
   QByteArray geometry(QByteArray value = QByteArray());
   QByteArray windowState(QByteArray value = QByteArray());
   QByteArray splitter(QByteArray value = 0);
+  QByteArray splitter2(QByteArray value = 0);
 
   QString hostName(QString value = nullptr);
   int hostPort(int value = 0);

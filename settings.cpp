@@ -1,8 +1,8 @@
 #include "settings.h"
 #include <QSettings>
 
-Settings::Settings()
-  : QSettings(Company, AppName)
+Settings::Settings(QObject *parent)
+  : QSettings(Company, AppName, parent)
 {}
 
 ColorScheme Settings::colorScheme(QVariant value) {
@@ -30,6 +30,12 @@ QByteArray Settings::splitter(QByteArray value) {
   if (!value.isEmpty())
     this->setValue("splitter", value);
   return this->value("splitter").toByteArray();
+}
+
+QByteArray Settings::splitter2(QByteArray value) {
+  if (!value.isEmpty())
+    this->setValue("splitter2", value);
+  return this->value("splitter2").toByteArray();
 }
 
 QString Settings::hostName(QString value) {

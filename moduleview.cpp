@@ -2,7 +2,7 @@
 #include "ui_moduleview.h"
 
 ModuleView::ModuleView(QWidget *parent)
-  : QScrollArea(parent)
+  : QDockWidget(parent)
   , ui(new Ui::ModuleView)
 {
   ui->setupUi(this);
