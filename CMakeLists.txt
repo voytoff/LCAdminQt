@@ -37,8 +37,10 @@ qt_add_executable(LCAdmin
     leftview.h leftview.cpp
     dictionmodel.h dictionmodel.cpp
     modeltreebase.h modeltreebase.cpp
-    modeltablebase.h modeltablebase.cpp
     tableview.h tableview.cpp
+    db/modeltablemodule.h db/modeltablemodule.cpp
+    db/modeltablebase.cpp db/modeltablebase.h
+    db/modeltablecrate.h db/modeltablecrate.cpp
 )
 
 set(SCHEMEHELPEREDIR "../SchemeHelperQt")
@@ -48,6 +50,8 @@ add_subdirectory(${SCHEMEHELPEREDIR} SchemeHelper)
 set(DBEXTENSIONDIR "../DBExtensionQt")
 include_directories(${DBEXTENSIONDIR}/lib)
 add_subdirectory(${DBEXTENSIONDIR} DBExtension)
+
+include_directories(db)
 
 # Qt for iOS sets MACOSX_BUNDLE_GUI_IDENTIFIER automatically since Qt 6.1.
 # If you are developing for iOS or macOS you should consider setting an

@@ -1,13 +1,14 @@
 #ifndef TABLEVIEW_H
 #define TABLEVIEW_H
 
+#include "modeltablebase.h"
 #include <QTableView>
 
 class TableView : public QTableView
 {
   Q_OBJECT
 public:
-  explicit TableView(const QString &table, QWidget *parent = nullptr);
+  explicit TableView(ModelTableBase *model, QWidget *parent = nullptr);
 
 signals:
 };

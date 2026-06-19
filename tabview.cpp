@@ -2,8 +2,7 @@
 #include <QTabBar>
 
 TabView::TabView(QWidget *parent)
-  : QTabWidget{parent}
-  , tabs(new QVector<DocumentID*>) {
+  : QTabWidget{parent} {
 
   setTabsClosable(true);
 
@@ -11,13 +10,15 @@ TabView::TabView(QWidget *parent)
     auto w = widget(index);
     widget(index)->close();
     //removeTab(index);
-    tabs->remove(index);
+    //if (tabs->length() > index)
+    //  tabs->remove(index);
   });
 }
 
 void TabView::remove(const int &index) {
   removeTab(index);
-  tabs->remove(index);
+  //if (tabs->length() > index)
+  //  tabs->remove(index);
 }
 
 void TabView::closeAll() {
@@ -27,7 +28,7 @@ void TabView::closeAll() {
     removeTab(0);
     delete w;
   }
-  tabs->clear();
+  //tabs->clear();
 }
 
 int TabView::indexOf(const QVariantList &data) const {

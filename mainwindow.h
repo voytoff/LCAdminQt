@@ -7,9 +7,9 @@
 #include <QSplitter>
 
 #include "db.h"
+#include "optionmodel.h"
 #include "dictionmodel.h"
 #include "leftview.h"
-#include "optionmodel.h"
 #include "schemehelper.h"
 #include "settings.h"
 #include "tabview.h"
@@ -60,10 +60,11 @@ private:
 
   DB *db;
 
-protected slots:
-  void openTable();
+private slots:
+  void openTable(const QModelIndex &index);
 
 signals:
+
 };
 
 #endif // MAINWINDOW_H

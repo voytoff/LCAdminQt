@@ -19,10 +19,8 @@ public:
 
 protected:
   int indexOf(const QVariantList &data) const;
-//  void setTabData(const documentType &type, const int &id = 0);
 
 private:
-  QVector<DocumentID*> *tabs;
 
 signals:
 
