@@ -1,9 +1,10 @@
 #include "mainwindow.h"
 #include "crateview.h"
 #include "leftview.h"
+#include "modeltablebase.h"
 #include "moduleview.h"
 #include "settingsdlg.h"
-#include "optionmodel.h"
+#include "tableview.h"
 #include "types.h"
 
 #include <QGuiApplication>
@@ -80,9 +81,9 @@ void MainWindow::createControlBar() {
 }
 
 void MainWindow::createControlBox() {
-  //treeView->setModel(model);
   //connect(treeView, &QTreeView::doubleClicked, this, &MainWindow::editSensor);
-  connect(optionView->selectionModel(), &QItemSelectionModel::selectionChanged, this, &MainWindow::reload);
+  //onnect(optionView->selectionModel(), &QItemSelectionModel::selectionChanged, this, &MainWindow::reload);
+  connect(dictionView, &QTreeView::doubleClicked, this, &MainWindow::openTable);
 
   tabView->setTabsClosable(true);
   connect(tabView, &QTabWidget::tabCloseRequested, this, [this](int index) {
@@ -121,26 +122,31 @@ void MainWindow::showMessage(const QString &text) {
   });
 }
 
+void MainWindow::restoreLayout() {
+  restoreGeometry(settings->geometry());
+  restoreState(settings->windowState());
+  splitter->restoreState(settings->splitter());
+  leftView->restoreState(settings->splitter2());
+}
+
 void MainWindow::saveLayout() {
   settings->geometry(saveGeometry());
   settings->windowState(saveState());
   settings->splitter(splitter->saveState());
   settings->splitter2(leftView->saveState());
+  settings->colorScheme(schemeHelper->colorScheme());
 }
 
 void MainWindow::loadData() {
   optionView->setModel(nullptr);
   if (db->open()) {
-    auto model = new OptionModel(db, this);
-    optionView->setModel(model);
+    dictionView->setModel(optionModel = new OptionModel(db, {"Название", "Инфо"}, {":/images/db/crate.png", ":/images/db/table.png"}, this));
+    optionView->setModel(dictionModel = new DictionModel(db, {"Название"}, {":/images/db/crate.png", ":/images/db/module.png"}, this));
+    optionView->setHeaderHidden(true);
   } else {
     showMessage(db->lastError().text());
     QMessageBox::critical(this, title, db->lastError().text());
   }
-}
-
-void MainWindow::reload() {
-  //showMessage(treeView->selectionModel()->selection().)
 }
 
 void MainWindow::add() {
@@ -151,7 +157,6 @@ void MainWindow::add() {
 void MainWindow::del() {
   auto w = new ModuleView(this);
   tabView->append(w, "тест 2", documentType::module, 99);
-
 }
 
 void MainWindow::doSettings() {
@@ -161,6 +166,7 @@ void MainWindow::doSettings() {
     auto colorScheme = settings->colorScheme();
     if ((Qt::ColorScheme)colorScheme != QGuiApplication::styleHints()->colorScheme())
       schemeHelper->applayColorScheme(colorScheme);
+    tabView->closeAll();
     db->close();
     delete db;
     db = new DB(settings->hostName(), settings->hostPort(), settings->databaseName(), settings->userName(), settings->password(), settings->timeout());
@@ -168,10 +174,12 @@ void MainWindow::doSettings() {
   }
 }
 
-void MainWindow::restoreLayout() {
-  restoreGeometry(settings->geometry());
-  restoreState(settings->windowState());
-  splitter->restoreState(settings->splitter());
-  leftView->restoreState(settings->splitter2());
+void MainWindow::openTable() {
+  QModelIndex index = dictionView->currentIndex();
+  if (index.isValid()) {
+    auto table = dictionModel->get(dictionModel->index(index.row(), 2)).toString();
+    ModelTableBase *model = new ModelTableBase(table);
+    TableView tableView = new TableView()
+  }
 }
 

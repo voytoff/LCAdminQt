@@ -20,6 +20,16 @@ void TabView::remove(const int &index) {
   tabs->remove(index);
 }
 
+void TabView::closeAll() {
+  while (count() > 0) {
+    // Get the widget at the very first index
+    QWidget* w = widget(0);
+    removeTab(0);
+    delete w;
+  }
+  tabs->clear();
+}
+
 int TabView::indexOf(const QVariantList &data) const {
   int length = data.length();
   for (int i = 0; i < count(); ++i) {

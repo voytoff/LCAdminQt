@@ -7,7 +7,9 @@
 #include <QSplitter>
 
 #include "db.h"
+#include "dictionmodel.h"
 #include "leftview.h"
+#include "optionmodel.h"
 #include "schemehelper.h"
 #include "settings.h"
 #include "tabview.h"
@@ -30,7 +32,6 @@ private:
   void restoreLayout();
   void saveLayout();
   void loadData();
-  void reload();
   void add();
   void del();
 
@@ -52,10 +53,15 @@ private:
   LeftView *leftView;
   TreeView *optionView;
   TreeView *dictionView;
+  DictionModel *dictionModel;
+  OptionModel *optionModel;
   TabView *tabView;
   QToolBar *toolbar;
 
   DB *db;
+
+protected slots:
+  void openTable();
 
 signals:
 };

@@ -23,11 +23,10 @@ qt6_add_resources(ADMIN_PROJECT_RESOURCES ${ADMIN_RESOURCE_FILES})
 
 qt_add_executable(LCAdmin
     ${ADMIN_PROJECT_RESOURCES}
-    main.cpp
+    main.cpp types.h
     mainwindow.h mainwindow.cpp
     settings.h settings.cpp
     settingsdlg.h settingsdlg.cpp settingsdlg.ui
-    types.h
     treeview.h treeview.cpp
     optionmodel.h optionmodel.cpp
     treeitem.h treeitem.cpp
@@ -36,7 +35,10 @@ qt_add_executable(LCAdmin
     moduleview.h moduleview.cpp moduleview.ui
     docbase.h docbase.cpp
     leftview.h leftview.cpp
-
+    dictionmodel.h dictionmodel.cpp
+    modeltreebase.h modeltreebase.cpp
+    modeltablebase.h modeltablebase.cpp
+    tableview.h tableview.cpp
 )
 
 set(SCHEMEHELPEREDIR "../SchemeHelperQt")

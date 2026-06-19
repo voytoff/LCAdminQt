@@ -15,6 +15,7 @@ public:
   int append(QWidget *control, const QString &title, const documentType &type, const int &id = 0);
   int append(QWidget *control, const QString &title, const QVariantList &data);
   void remove(const int &index);
+  void closeAll();
 
 protected:
   int indexOf(const QVariantList &data) const;

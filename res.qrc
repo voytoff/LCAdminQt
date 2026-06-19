@@ -11,5 +11,6 @@
         <file>images/db/module.png</file>
         <file>images/tb/add.png</file>
         <file>images/tb/del.png</file>
+        <file>images/db/table.png</file>
     </qresource>
 </RCC>
