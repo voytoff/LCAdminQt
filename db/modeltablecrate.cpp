@@ -3,5 +3,5 @@
 ModelTableCrate::ModelTableCrate(const QString &table, QWidget *parent)
   : ModelTableBase{table, parent} {
 
-  setHeaderData(1, Qt::Horizontal, tr("Название"));
+  setHeaderData(fieldIndex("name"), Qt::Horizontal, tr("Название"));
 }

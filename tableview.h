@@ -10,6 +10,11 @@ class TableView : public QTableView
 public:
   explicit TableView(ModelTableBase *model, QWidget *parent = nullptr);
 
+  int index(const QString & fieldName) const;
+
+private:
+  ModelTableBase *model;
+
 signals:
 };
 

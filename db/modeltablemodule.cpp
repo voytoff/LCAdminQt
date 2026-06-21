@@ -4,8 +4,8 @@
 ModelTableModule::ModelTableModule(const QString &table, QWidget *parent)
   : ModelTableBase{table, parent} {
 
-  setHeaderData(1, Qt::Horizontal, tr("Крейт"));
-  setHeaderData(2, Qt::Horizontal, tr("Название"));
+  setHeaderData(fieldIndex("crate_id"), Qt::Horizontal, tr("Крейт"));
+  setHeaderData(fieldIndex("name"), Qt::Horizontal, tr("Название"));
 
-  setRelation(1, QSqlRelation("crate", "id", "name"));
+  setRelation(fieldIndex("crate_id"), QSqlRelation("crate", "id", "name"));
 }
