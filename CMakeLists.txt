@@ -34,13 +34,16 @@ qt_add_executable(LCAdmin
     crateview.h crateview.cpp crateview.ui
     moduleview.h moduleview.cpp moduleview.ui
     docbase.h docbase.cpp
-    leftview.h leftview.cpp
     dictionmodel.h dictionmodel.cpp
+    leftview.h leftview.cpp
     modeltreebase.h modeltreebase.cpp
     tableview.h tableview.cpp
     db/modeltablemodule.h db/modeltablemodule.cpp
     db/modeltablebase.cpp db/modeltablebase.h
     db/modeltablecrate.h db/modeltablecrate.cpp
+    db/modeltablecratetype.h db/modeltablecratetype.cpp
+    db/modeltablemoduletype.h db/modeltablemoduletype.cpp
+    db/modeltablecalibration.h db/modeltablecalibration.cpp
 )
 
 set(SCHEMEHELPEREDIR "../SchemeHelperQt")

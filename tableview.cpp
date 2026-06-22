@@ -11,6 +11,8 @@ TableView::TableView(ModelTableBase *model, QWidget *parent)
   int id = index("id");
   if (id >= 0) // Скрываем id столбец
     setColumnHidden(id, true);
+
+  resizeColumnsToContents();
 }
 
 int TableView::index(const QString &fieldName) const {

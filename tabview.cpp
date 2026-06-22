@@ -1,34 +1,28 @@
 #include "tabview.h"
 #include <QTabBar>
+#include <QIcon>
 
 TabView::TabView(QWidget *parent)
   : QTabWidget{parent} {
 
   setTabsClosable(true);
+  //setIconSize(QSize(16, 16));
 
   connect(this, &QTabWidget::tabCloseRequested, this, [this](int index) {
-    auto w = widget(index);
     widget(index)->close();
-    //removeTab(index);
-    //if (tabs->length() > index)
-    //  tabs->remove(index);
   });
 }
 
 void TabView::remove(const int &index) {
   removeTab(index);
-  //if (tabs->length() > index)
-  //  tabs->remove(index);
 }
 
 void TabView::closeAll() {
   while (count() > 0) {
-    // Get the widget at the very first index
     QWidget* w = widget(0);
     removeTab(0);
     delete w;
   }
-  //tabs->clear();
 }
 
 int TabView::indexOf(const QVariantList &data) const {
@@ -48,16 +42,18 @@ int TabView::indexOf(const QVariantList &data) const {
   return -1;
 }
 
-int TabView::append(QWidget *control, const QString &title, const documentType &type, const int &id) {
-  auto data = QVariantList({type, id});
+int TabView::append(QWidget *control, const QString &title, const documentType &type, const int &id, const QString &icon) {
+  auto data = QVariantList({type, id, icon});
   int index = append(control, title, data);
+  if (icon.length() > 0)
+    setTabIcon(index, QIcon(icon));
   return index;
 }
 
 int TabView::append(QWidget *control, const QString &title, const QVariantList &data) {
   int index = indexOf(data);
   if (index < 0) {
-    int index = addTab(control, title);
+    index = addTab(control, title);
     tabBar()->setTabData(index, data);
     setCurrentIndex(index);
   }

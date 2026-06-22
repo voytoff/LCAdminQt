@@ -12,7 +12,16 @@ class TabView : public QTabWidget {
 public:
   explicit TabView(QWidget *parent = nullptr);
 
-  int append(QWidget *control, const QString &title, const documentType &type, const int &id = 0);
+  /** Добавит новый или откроит существующий документ
+   * @brief append
+   * @param control Элемент управления
+   * @param title Заголовок
+   * @param type Тип документа
+   * @param id Дополнтельный идентификатор
+   * @param icon Иконка
+   * @return
+   */
+  int append(QWidget *control, const QString &title, const documentType &type, const int &id = 0, const QString &icon = nullptr);
   int append(QWidget *control, const QString &title, const QVariantList &data);
   void remove(const int &index);
   void closeAll();

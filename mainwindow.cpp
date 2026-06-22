@@ -83,7 +83,7 @@ void MainWindow::createControlBar() {
 
 void MainWindow::createControlBox() {
   //connect(treeView, &QTreeView::doubleClicked, this, &MainWindow::editSensor);
-  //onnect(optionView->selectionModel(), &QItemSelectionModel::selectionChanged, this, &MainWindow::reload);
+  //сonnect(optionView->selectionModel(), &QItemSelectionModel::selectionChanged, this, &MainWindow::reload);
 
   tabView->setTabsClosable(true);
   connect(tabView, &QTabWidget::tabCloseRequested, this, [this](int index) {
@@ -140,8 +140,8 @@ void MainWindow::saveLayout() {
 void MainWindow::loadData() {
   optionView->setModel(nullptr);
   if (db->open()) {
-    optionView->setModel(optionModel = new OptionModel(db, {"Название", "Инфо"}, {":/images/db/crate.png", ":/images/db/table.png"}, this));
-    dictionView->setModel(dictionModel = new DictionModel(db, {"Название"}, {":/images/db/crate.png", ":/images/db/module.png"}, this));
+    optionView->setModel(optionModel = new OptionModel(db, {"Название", "Инфо"}, {icon_crate, ":/images/db/table.png"}, this));
+    dictionView->setModel(dictionModel = new DictionModel(db, {"Название"}, {icon_crate, icon_module}, this));
     dictionView->setHeaderHidden(true);
     //connect(optionView, &QTreeView::doubleClicked, this, &MainWindow::openTable);
     connect(dictionView, &QTreeView::doubleClicked, this, &MainWindow::openTable);
@@ -177,18 +177,14 @@ void MainWindow::doSettings() {
 }
 
 void MainWindow::openTable(const QModelIndex &index) {
-  //QModelIndex index = dictionView->currentIndex();
   if (index.isValid()) {
-    auto table = dictionModel->get(index.row(), 2).toString();
-    if (table.length() > 0) {
-      auto type = (documentType)dictionModel->get(index.row(), 0).toInt();
-      ModelTableBase *model = ModelTableBase::create(type, table);
-      if (model) {
-        TableView *tableView = new TableView(model, this);
-        tabView->append(tableView, dictionModel->get(index.row(), 1).toString(), type, dictionModel->get(index.row(), 0).toInt());
-        model->select();
-        tableView->setItemDelegate(new QSqlRelationalDelegate(tableView));
-      }
+    auto data = dictionModel->get(index.row());
+    ModelTableBase *model = ModelTableBase::create(data.type, data.table);
+    if (model) {
+      TableView *tableView = new TableView(model, this);
+      tabView->append(tableView, data.title, data.type, data.type, data.icon);
+      //model->select();
+      tableView->setItemDelegate(new QSqlRelationalDelegate(tableView));
     }
   }
 }

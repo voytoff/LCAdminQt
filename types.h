@@ -8,9 +8,19 @@ const QString title = "Администратор";
 const QString ready = "Готово";
 const int readyTimeout = 5000;
 
+/* Иконки */
+const QString icon_crate = ":/images/db/crate.png";
+const QString icon_cratetype = ":/images/db/cratetype.png";
+const QString icon_module = ":/images/db/module.png";
+const QString icon_moduletype = ":/images/db/moduletype.png";
+const QString icon_calibration = ":/images/db/calibration.png";
+
 enum documentType : int {
+  cratetype,
   crate,
+  moduletype,
   module,
+  calibration,
 };
 
 class DocumentID {

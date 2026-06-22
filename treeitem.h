@@ -1,8 +1,26 @@
 #ifndef TREEITEM_H
 #define TREEITEM_H
 
-#include <QVariantList>
+#include "types.h"
+#include <QVariant>
 #include <QStandardItem>
+
+struct TreeItemType {
+  documentType type; /*тип документа*/
+  QString title; /*заголовок*/
+  QString table; /*имя таблицы*/
+  QString icon; /*иконка*/
+  QVariant at(const int &index) const {
+    switch (index) {
+    case 0: return type;
+    case 1: return title;
+    case 2: return table;
+    case 3: return icon;
+    default: return QVariant();
+    }
+  }
+  static int length() {return 4;}
+};
 
 class TreeItem : public QStandardItem  {
 public:
