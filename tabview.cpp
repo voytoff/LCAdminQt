@@ -1,4 +1,5 @@
 #include "tabview.h"
+#include "mainwindow.h"
 #include <QTabBar>
 #include <QIcon>
 
@@ -8,16 +9,20 @@ TabView::TabView(QWidget *parent)
   setTabsClosable(true);
   setIconSize(QSize(16, 16));
 
-  connect(this, &QTabWidget::tabCloseRequested, this, [this](int index) {
-    removeTab(index);
-  });
+  connect(this, &QTabWidget::tabCloseRequested, this, &TabView::removeTab);
+
+  auto mainWindow = (MainWindow*)parentWidget();
+  connect(this, &QTabWidget::currentChanged, mainWindow, &MainWindow::updateWindowMenu);
+  //connect(this, &QTabWidget::tabBarClicked, mainWindow, &MainWindow::updateWindowMenu);
+  connect(this, &TabView::inserted, mainWindow, &MainWindow::updateWindowMenu);
+  connect(this, &TabView::removed, mainWindow, &MainWindow::updateWindowMenu);
 }
 
 void TabView::removeTab(int index) {
   QWidget *w = widget(index);
   if (w && w->close()) {
     QTabWidget::removeTab(index);
-    delete w; // ???
+    delete w;
   }
 }
 
@@ -41,6 +46,16 @@ int TabView::indexOf(const QVariantList &data) const {
     if (equal) return i;
   }
   return -1;
+}
+
+void TabView::tabRemoved(int index) {
+  QTabWidget::tabRemoved(index);
+  emit removed(index);
+}
+
+void TabView::tabInserted(int index) {
+  QTabWidget::tabInserted(index);
+  emit inserted(index);
 }
 
 int TabView::append(QWidget *control, const QString &title, const documentType &type, const int &id, const QString &icon) {

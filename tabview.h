@@ -28,10 +28,12 @@ public:
 
 protected:
   int indexOf(const QVariantList &data) const;
-
-private:
+  void tabRemoved(int index) override;
+  void tabInserted(int index) override;
 
 signals:
+  void inserted(int index);
+  void removed(int index);
 
 };
 

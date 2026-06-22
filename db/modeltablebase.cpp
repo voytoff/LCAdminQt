@@ -10,7 +10,6 @@ ModelTableBase::ModelTableBase(const QString &table, QObject *parent)
 
   setEditStrategy(QSqlTableModel::OnManualSubmit); // OnFieldChange
   setTable(table);
-  select();
 }
 
 ModelTableBase *ModelTableBase::create(documentType type, const QString &table) {
@@ -34,21 +33,22 @@ ModelTableBase *ModelTableBase::create(documentType type, const QString &table) 
   default: return nullptr;
   }
   result->init();
+  result->setJoinMode(QSqlRelationalTableModel::LeftJoin);
+  result->select();
   return result;
 }
 
 void ModelTableBase::init() {
-  foreach (auto column, columns()) {
-    int index = fieldIndex(column.first);
-    if (index > -1)
-      setHeaderData(index, Qt::Horizontal, column.second);
-  }
-
   foreach (auto relation, relations()) {
     int index = fieldIndex(relation.first);
     if (index > -1) {
       auto p = relation.second.split(";");
       setRelation(index, QSqlRelation(p.at(0), p.at(1), p.at(2)));
     }
+  }
+  foreach (auto column, columns()) {
+    int index = fieldIndex(column.first);
+    if (index > -1)
+      setHeaderData(index, Qt::Horizontal, column.second);
   }
 }

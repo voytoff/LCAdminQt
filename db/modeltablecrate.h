@@ -7,11 +7,11 @@
 class ModelTableCrate : public ModelTableBase {
   Q_OBJECT
 public:
-  explicit ModelTableCrate(const QString &table, QWidget *parent = nullptr);
+  explicit ModelTableCrate(const QString &table, QObject *parent = nullptr);
 
 protected:
   QList<StringPair> columns() const override;
-  //QList<StringPair> relations() const override;
+  QList<StringPair> relations() const override;
 
 signals:
 };

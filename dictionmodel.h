@@ -31,7 +31,6 @@ protected:
     {documentType::module, "Модуль", "module", icon_module},
     {documentType::calibration, "Градуировки", "calibration", icon_calibration}
   };
-
 };
 
 #endif // DICTIONMODEL_H

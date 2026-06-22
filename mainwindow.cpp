@@ -20,7 +20,7 @@
 #include <QStyleHints>
 #include <QTimer>
 
-MainWindow* MainWindow::instance = nullptr;
+//MainWindow* MainWindow::instance = nullptr;
 
 MainWindow::MainWindow(QWidget *parent)
   : QMainWindow{parent}
@@ -31,9 +31,13 @@ MainWindow::MainWindow(QWidget *parent)
   , dictionView(new TreeView("Справочник", this))
   , tabView(new TabView(this))
   , splitter(new QSplitter(this))
-  , toolbar(addToolBar("Главный")) {
+  , toolbar(addToolBar("Главный"))
+  , windowActionGroup(new QActionGroup(this)) {
 
-  instance = this;
+  //instance = this;
+
+  windowActionGroup->setExclusive(true);
+  connect(windowActionGroup, &QActionGroup::triggered, this, &MainWindow::switchTab);
 
   leftView = new LeftView(dictionView, optionView);
 
@@ -46,10 +50,6 @@ MainWindow::MainWindow(QWidget *parent)
   restoreLayout();
 }
 
-MainWindow* MainWindow::getInstance() {
-  return instance;
-}
-
 void MainWindow::createActions() {
   openAction = schemeHelper->create(tr("Открыть..."), ":/images/tb/open.png", QKeySequence::Open);
   saveAction = schemeHelper->create(tr("Сохранить"), ":/images/tb/save.png", QKeySequence::Save);
@@ -58,12 +58,15 @@ void MainWindow::createActions() {
   settingsAction = schemeHelper->create(tr("Установки..."), ":/images/tb/settings.png");
   addAction = schemeHelper->create(tr("Добавить..."), ":/images/tb/add.png", QKeySequence::InsertLineSeparator);
   delAction = schemeHelper->create(tr("Удалить"), ":/images/tb/del.png", QKeySequence::Delete);
+  aboutAction = schemeHelper->create(tr("&О программе..."));
+
   toggleOptionAction = leftView->toggleOptionAction();
   toggleDictionAction = leftView->toggleDictionAction();
 
   connect(settingsAction, &QAction::triggered, this, &MainWindow::doSettings);
   connect(addAction, &QAction::triggered, this, &MainWindow::add);
   connect(delAction, &QAction::triggered, this, &MainWindow::del);
+  connect(aboutAction, &QAction::triggered, this, &MainWindow::about);
 
   schemeHelper->applayColorScheme(settings->colorScheme(), true);
 }
@@ -83,6 +86,10 @@ void MainWindow::createControlBar() {
   QMenu *toolMenu = menuBar()->addMenu(tr("Инструменты"));
   toolMenu->addAction(settingsAction);
 
+  windowMenu = menuBar()->addMenu(tr("Окно"));
+  windowMenu->addAction(aboutAction);
+  windowMenu->addSeparator();
+
   schemeHelper->setupToolbar(toolbar);
   toolbar->setObjectName("General");
   toolbar->addAction(openAction);
@@ -97,13 +104,6 @@ void MainWindow::createControlBar() {
 void MainWindow::createControlBox() {
   //connect(treeView, &QTreeView::doubleClicked, this, &MainWindow::editSensor);
   //сonnect(optionView->selectionModel(), &QItemSelectionModel::selectionChanged, this, &MainWindow::reload);
-
-  //tabView->setTabsClosable(true);
-  //connect(tabView, &QTabWidget::tabCloseRequested, this, [this](int index) {
-  //  QWidget* w = tabView->widget(index);
-  //  tabView->removeTab(index);
-  //  delete w;
-  //});
 
   splitter->addWidget(leftView);
   splitter->addWidget(tabView);
@@ -196,9 +196,40 @@ void MainWindow::openTable(const QModelIndex &index) {
     if (model) {
       TableView *tableView = new TableView(model, data.title, this);
       tabView->append(tableView, data.title, data.type, data.type, data.icon);
-      //model->select();
       tableView->setItemDelegate(new QSqlRelationalDelegate(tableView));
     }
   }
+}
+
+void MainWindow::switchTab(QAction *action) {
+  int index = action->data().toInt();
+  tabView->setCurrentIndex(index);
+}
+
+void MainWindow::updateWindowMenu() {
+  //windowMenu->clear();
+  foreach (auto action, windowActionGroup->actions()) {
+    windowMenu->removeAction(action);
+  }
+
+  for (int i = 0; i < tabView->count(); ++i) {
+    QString tabName = tabView->tabText(i);
+    QAction *action = windowMenu->addAction(tabName);
+    action->setCheckable(true);
+    action->setChecked(i == tabView->currentIndex());
+    action->setData(i); // Store the tab index inside the action
+
+    windowActionGroup->addAction(action);
+  }
+}
+
+void MainWindow::about() {
+  QMessageBox::about(
+    this,
+    tr("О программе..."),
+    tr("<p><b>Администратор</b> программа управления справочником и настройками "
+      "обработки экспериментов с датчиков регистрации параметров испытаний "
+      "компанентов и изделий на стендах НИИХМ.</p>"));
+
 }
 

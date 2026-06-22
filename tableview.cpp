@@ -1,5 +1,6 @@
 #include "tableview.h"
 #include "mainwindow.h"
+#include "types.h"
 #include <QHeaderView>
 #include <QMessageBox>
 #include <QString>
@@ -16,6 +17,7 @@ TableView::TableView(ModelTableBase *model, const QString &title, QWidget *paren
   int id = index("id");
   if (id > -1) // Скрываем id столбец
     setColumnHidden(id, true);
+  horizontalHeader()->setMinimumSectionSize(minColumnSize);
   resizeColumnsToContents();
 }
 
@@ -37,7 +39,7 @@ void TableView::cancel() {
 
 void TableView::closeEvent(QCloseEvent *event) {
   if (isModified()) {
-    auto response = QMessageBox::question(MainWindow::getInstance(), title, QString("Данные таблицы '%1' изменены. Сохранить эти изменения?").arg(name), QMessageBox::Yes | QMessageBox::No | QMessageBox::Cancel);
+    auto response = QMessageBox::question((MainWindow*)parent(), title, QString("Данные таблицы '%1' изменены. Сохранить эти изменения?").arg(name), QMessageBox::Yes | QMessageBox::No | QMessageBox::Cancel);
     if (response == QMessageBox::Yes)
       save();
     else if (response == QMessageBox::Cancel) {

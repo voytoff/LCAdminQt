@@ -5,6 +5,8 @@
 #include <QMainWindow>
 #include <QSqlDatabase>
 #include <QSplitter>
+#include <QMenu>
+#include <QActionGroup>
 
 #include "db.h"
 #include "optionmodel.h"
@@ -19,7 +21,7 @@ class MainWindow : public QMainWindow {
   Q_OBJECT
 public:
   explicit MainWindow(QWidget *parent = nullptr);
-  static MainWindow* getInstance();
+  //static MainWindow* getInstance() {return instance;}
 
 protected:
   void closeEvent(QCloseEvent *event) override;
@@ -47,8 +49,12 @@ private:
   QAction *settingsAction;
   QAction *addAction;
   QAction *delAction;
+  QAction *aboutAction;
   QAction *toggleOptionAction;
   QAction *toggleDictionAction;
+
+  QMenu *windowMenu;
+  QActionGroup *windowActionGroup;
 
   Settings *settings;
 
@@ -63,11 +69,15 @@ private:
 
   DB *db;
 
-private:
-  static MainWindow* instance;
+//private:
+  //static MainWindow* instance;
 
 private slots:
   void openTable(const QModelIndex &index);
+  void switchTab(QAction *action);
+  void about();
+public:
+  void updateWindowMenu();
 
 signals:
 

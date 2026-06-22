@@ -7,7 +7,7 @@
 class ModelTableModule : public ModelTableBase {
   Q_OBJECT
 public:
-  explicit ModelTableModule(const QString &table, QWidget *parent = nullptr);
+  explicit ModelTableModule(const QString &table, QObject *parent = nullptr);
 
 protected:
   QList<StringPair> columns() const override;

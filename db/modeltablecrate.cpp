@@ -1,9 +1,7 @@
 #include "modeltablecrate.h"
 
-ModelTableCrate::ModelTableCrate(const QString &table, QWidget *parent)
-  : ModelTableBase{table, parent} {
-    setRelation(fieldIndex("cratetype_id"), QSqlRelation("cratetype", "id", "name"));
-}
+ModelTableCrate::ModelTableCrate(const QString &table, QObject *parent)
+  : ModelTableBase{table, parent} {}
 
 QList<StringPair> ModelTableCrate::columns() const {
   return QList<StringPair> {
@@ -14,8 +12,8 @@ QList<StringPair> ModelTableCrate::columns() const {
   };
 }
 
-//QList<StringPair> ModelTableCrate::relations() const {
-//  return QList<StringPair> {
-//    {"cratetype_id", "cratetype;id;name"}
-//  };
-//}
+QList<StringPair> ModelTableCrate::relations() const {
+  return QList<StringPair> {
+    {"cratetype_id", "cratetype;id;name"}
+  };
+}
