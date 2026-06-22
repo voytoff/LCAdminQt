@@ -9,6 +9,10 @@ class ModelTableModule : public ModelTableBase {
 public:
   explicit ModelTableModule(const QString &table, QWidget *parent = nullptr);
 
+protected:
+  QList<StringPair> columns() const override;
+  QList<StringPair> relations() const override;
+
 signals:
 };
 

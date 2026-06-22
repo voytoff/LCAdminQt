@@ -1,5 +1,4 @@
 #include "leftview.h"
-#include "docbase.h"
 
 LeftView::LeftView(TreeView *dictionView, TreeView *optionView, QWidget *parent)
   : QWidget{parent}
@@ -8,8 +7,10 @@ LeftView::LeftView(TreeView *dictionView, TreeView *optionView, QWidget *parent)
 
   splitter = new QSplitter(Qt::Vertical);
   splitter->setContentsMargins(0, 0, 0, 0);
-  splitter->addWidget(new DocBase(dictionView));
-  splitter->addWidget(new DocBase(optionView));
+  dictionDoc = new DocBase(dictionView);
+  splitter->addWidget(dictionDoc);
+  optionDoc = new DocBase(optionView);
+  splitter->addWidget(optionDoc);
   QGridLayout *layout = new QGridLayout;
   layout->setContentsMargins(0, 0, 0, 0);
   layout->addWidget(splitter);
@@ -22,4 +23,12 @@ QByteArray LeftView::saveState() const {
 
 bool LeftView::restoreState(const QByteArray &state) {
  return splitter->restoreState(state);
+}
+
+QAction *LeftView::toggleOptionAction() const {
+  return optionDoc->toggleViewAction();
+}
+
+QAction *LeftView::toggleDictionAction() const {
+  return dictionDoc->toggleViewAction();
 }

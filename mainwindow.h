@@ -19,6 +19,7 @@ class MainWindow : public QMainWindow {
   Q_OBJECT
 public:
   explicit MainWindow(QWidget *parent = nullptr);
+  static MainWindow* getInstance();
 
 protected:
   void closeEvent(QCloseEvent *event) override;
@@ -46,6 +47,8 @@ private:
   QAction *settingsAction;
   QAction *addAction;
   QAction *delAction;
+  QAction *toggleOptionAction;
+  QAction *toggleDictionAction;
 
   Settings *settings;
 
@@ -59,6 +62,9 @@ private:
   QToolBar *toolbar;
 
   DB *db;
+
+private:
+  static MainWindow* instance;
 
 private slots:
   void openTable(const QModelIndex &index);

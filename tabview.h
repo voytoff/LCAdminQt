@@ -23,7 +23,7 @@ public:
    */
   int append(QWidget *control, const QString &title, const documentType &type, const int &id = 0, const QString &icon = nullptr);
   int append(QWidget *control, const QString &title, const QVariantList &data);
-  void remove(const int &index);
+  void removeTab(int index);
   void closeAll();
 
 protected:

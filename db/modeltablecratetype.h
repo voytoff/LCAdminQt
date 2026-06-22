@@ -9,6 +9,9 @@ class ModelTableCrateType : public ModelTableBase {
 public:
   explicit ModelTableCrateType(const QString &table, QObject *parent = nullptr);
 
+protected:
+  QList<StringPair> columns() const override;
+
 signals:
 };
 

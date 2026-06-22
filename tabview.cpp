@@ -6,23 +6,24 @@ TabView::TabView(QWidget *parent)
   : QTabWidget{parent} {
 
   setTabsClosable(true);
-  //setIconSize(QSize(16, 16));
+  setIconSize(QSize(16, 16));
 
   connect(this, &QTabWidget::tabCloseRequested, this, [this](int index) {
-    widget(index)->close();
+    removeTab(index);
   });
 }
 
-void TabView::remove(const int &index) {
-  removeTab(index);
+void TabView::removeTab(int index) {
+  QWidget *w = widget(index);
+  if (w && w->close()) {
+    QTabWidget::removeTab(index);
+    delete w; // ???
+  }
 }
 
 void TabView::closeAll() {
-  while (count() > 0) {
-    QWidget* w = widget(0);
+  while (count() > 0)
     removeTab(0);
-    delete w;
-  }
 }
 
 int TabView::indexOf(const QVariantList &data) const {

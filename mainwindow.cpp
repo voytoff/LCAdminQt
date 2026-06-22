@@ -20,6 +20,8 @@
 #include <QStyleHints>
 #include <QTimer>
 
+MainWindow* MainWindow::instance = nullptr;
+
 MainWindow::MainWindow(QWidget *parent)
   : QMainWindow{parent}
   , schemeHelper(new SchemeHelper(this, ":/images/admin.png"))
@@ -30,6 +32,8 @@ MainWindow::MainWindow(QWidget *parent)
   , tabView(new TabView(this))
   , splitter(new QSplitter(this))
   , toolbar(addToolBar("Главный")) {
+
+  instance = this;
 
   leftView = new LeftView(dictionView, optionView);
 
@@ -42,6 +46,10 @@ MainWindow::MainWindow(QWidget *parent)
   restoreLayout();
 }
 
+MainWindow* MainWindow::getInstance() {
+  return instance;
+}
+
 void MainWindow::createActions() {
   openAction = schemeHelper->create(tr("Открыть..."), ":/images/tb/open.png", QKeySequence::Open);
   saveAction = schemeHelper->create(tr("Сохранить"), ":/images/tb/save.png", QKeySequence::Save);
@@ -50,6 +58,8 @@ void MainWindow::createActions() {
   settingsAction = schemeHelper->create(tr("Установки..."), ":/images/tb/settings.png");
   addAction = schemeHelper->create(tr("Добавить..."), ":/images/tb/add.png", QKeySequence::InsertLineSeparator);
   delAction = schemeHelper->create(tr("Удалить"), ":/images/tb/del.png", QKeySequence::Delete);
+  toggleOptionAction = leftView->toggleOptionAction();
+  toggleDictionAction = leftView->toggleDictionAction();
 
   connect(settingsAction, &QAction::triggered, this, &MainWindow::doSettings);
   connect(addAction, &QAction::triggered, this, &MainWindow::add);
@@ -66,6 +76,9 @@ void MainWindow::createControlBar() {
   QMenu *viewMenu = menuBar()->addMenu(tr("Вид"));
   viewMenu->addAction(lightAction);
   viewMenu->addAction(darkAction);
+  viewMenu->addSeparator();
+  viewMenu->addAction(toggleOptionAction);
+  viewMenu->addAction(toggleDictionAction);
 
   QMenu *toolMenu = menuBar()->addMenu(tr("Инструменты"));
   toolMenu->addAction(settingsAction);
@@ -85,12 +98,12 @@ void MainWindow::createControlBox() {
   //connect(treeView, &QTreeView::doubleClicked, this, &MainWindow::editSensor);
   //сonnect(optionView->selectionModel(), &QItemSelectionModel::selectionChanged, this, &MainWindow::reload);
 
-  tabView->setTabsClosable(true);
-  connect(tabView, &QTabWidget::tabCloseRequested, this, [this](int index) {
-    QWidget* w = tabView->widget(index);
-    tabView->removeTab(index);
-    delete w;
-  });
+  //tabView->setTabsClosable(true);
+  //connect(tabView, &QTabWidget::tabCloseRequested, this, [this](int index) {
+  //  QWidget* w = tabView->widget(index);
+  //  tabView->removeTab(index);
+  //  delete w;
+  //});
 
   splitter->addWidget(leftView);
   splitter->addWidget(tabView);
@@ -181,7 +194,7 @@ void MainWindow::openTable(const QModelIndex &index) {
     auto data = dictionModel->get(index.row());
     ModelTableBase *model = ModelTableBase::create(data.type, data.table);
     if (model) {
-      TableView *tableView = new TableView(model, this);
+      TableView *tableView = new TableView(model, data.title, this);
       tabView->append(tableView, data.title, data.type, data.type, data.icon);
       //model->select();
       tableView->setItemDelegate(new QSqlRelationalDelegate(tableView));

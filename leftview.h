@@ -1,6 +1,7 @@
 #ifndef LEFTVIEW_H
 #define LEFTVIEW_H
 
+#include "docbase.h"
 #include "treeview.h"
 #include <QWidget>
 #include <QGridLayout>
@@ -15,8 +16,12 @@ public:
 
   QByteArray saveState() const;
   bool restoreState(const QByteArray &state);
+  QAction *toggleOptionAction() const;
+  QAction *toggleDictionAction() const;
 
 private:
+  DocBase *optionDoc;
+  DocBase *dictionDoc;
   TreeView *optionView;
   TreeView *dictionView;
   QSplitter *splitter;

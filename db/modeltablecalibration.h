@@ -9,6 +9,9 @@ class ModelTableCalibration : public ModelTableBase {
 public:
   explicit ModelTableCalibration(const QString &table, QObject *parent = nullptr);
 
+protected:
+  QList<StringPair> columns() const override;
+
 signals:
 };
 

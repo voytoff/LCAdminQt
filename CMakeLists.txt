@@ -44,6 +44,7 @@ qt_add_executable(LCAdmin
     db/modeltablecratetype.h db/modeltablecratetype.cpp
     db/modeltablemoduletype.h db/modeltablemoduletype.cpp
     db/modeltablecalibration.h db/modeltablecalibration.cpp
+    statewidget.h statewidget.cpp
 )
 
 set(SCHEMEHELPEREDIR "../SchemeHelperQt")

@@ -4,6 +4,8 @@
 #include <QString>
 #include <QObject>
 
+using StringPair = std::pair<QString, QString>;
+
 const QString title = "Администратор";
 const QString ready = "Готово";
 const int readyTimeout = 5000;
