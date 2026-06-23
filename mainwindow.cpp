@@ -1,5 +1,4 @@
 #include "mainwindow.h"
-#include "crateview.h"
 #include "leftview.h"
 #include "modeltablebase.h"
 #include "moduleview.h"
@@ -36,8 +35,10 @@ MainWindow::MainWindow(QWidget *parent)
 
   //instance = this;
 
+  /// группа акшенов открытых документов
   windowActionGroup->setExclusive(true);
   connect(windowActionGroup, &QActionGroup::triggered, this, &MainWindow::switchTab);
+  /// ==================================
 
   leftView = new LeftView(dictionView, optionView);
 
@@ -64,8 +65,8 @@ void MainWindow::createActions() {
   toggleDictionAction = leftView->toggleDictionAction();
 
   connect(settingsAction, &QAction::triggered, this, &MainWindow::doSettings);
-  connect(addAction, &QAction::triggered, this, &MainWindow::add);
-  connect(delAction, &QAction::triggered, this, &MainWindow::del);
+  connect(addAction, &QAction::triggered, this, &MainWindow::append);
+  connect(delAction, &QAction::triggered, this, &MainWindow::remove);
   connect(aboutAction, &QAction::triggered, this, &MainWindow::about);
 
   schemeHelper->applayColorScheme(settings->colorScheme(), true);
@@ -164,14 +165,40 @@ void MainWindow::loadData() {
   }
 }
 
-void MainWindow::add() {
-  auto w = new CrateView(this);
-  tabView->append(w, "тест 1", documentType::crate, 1000);
+void MainWindow::append() {
+  auto model = tabView->model<ModelTableBase>();
+  if (model) {
+    auto view = tabView->view<TableView>();
+    if (view) {
+      // Получаем индекс текущей выделенной строки
+      QModelIndex currentIndex = view->currentIndex();
+      int row = currentIndex.isValid() ? currentIndex.row() : 0;
+      // Вставляем новую строку перед текущей (или в конец, если таблица пуста)
+      model->insertRow(row);
+      // Переводим фокус и включаем режим редактирования для добавленной ячейки
+      QModelIndex newIndex = model->index(row, 0); // 0 - индекс первой колонки
+      view->setCurrentIndex(newIndex);
+      view->edit(newIndex);
+    }
+  }
 }
 
-void MainWindow::del() {
-  auto w = new ModuleView(this);
-  tabView->append(w, "тест 2", documentType::module, 99);
+void MainWindow::remove() {
+  auto model = tabView->model<ModelTableBase>();
+  if (model) {
+    auto view = tabView->view<TableView>();
+    if (view) {
+      // Получаем список всех выделенных индексов
+      QModelIndexList selectedIndexes = view->selectionModel()->selectedIndexes();
+
+      if (!selectedIndexes.isEmpty()) {
+        // Удаляем строку первого выделенного элемента
+        // Получаем именно номер строки, так как выделены могут быть разные ячейки
+        int rowToDelete = selectedIndexes.first().row();
+        model->removeRow(rowToDelete);
+      }
+    }
+  }
 }
 
 void MainWindow::doSettings() {

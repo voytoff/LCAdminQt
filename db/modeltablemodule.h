@@ -8,6 +8,7 @@ class ModelTableModule : public ModelTableBase {
   Q_OBJECT
 public:
   explicit ModelTableModule(const QString &table, QObject *parent = nullptr);
+  //void setItemDelegates(QTableView *view) override;
 
 protected:
   QList<StringPair> columns() const override;

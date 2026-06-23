@@ -31,6 +31,10 @@ void TabView::closeAll() {
     removeTab(0);
 }
 
+void TabView::closeEvent(QCloseEvent *event) {
+  closeAll();
+}
+
 int TabView::indexOf(const QVariantList &data) const {
   int length = data.length();
   for (int i = 0; i < count(); ++i) {

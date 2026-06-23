@@ -35,8 +35,8 @@ private:
   void restoreLayout();
   void saveLayout();
   void loadData();
-  void add();
-  void del();
+  void append();
+  void remove();
 
   void doSettings();
 
@@ -69,8 +69,8 @@ private:
 
   DB *db;
 
-//private:
-  //static MainWindow* instance;
+private:
+  static MainWindow* instance;
 
 private slots:
   void openTable(const QModelIndex &index);

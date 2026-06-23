@@ -5,6 +5,7 @@
 #include <QWidget>
 #include <QVector>
 
+#include "tableview.h"
 #include "types.h"
 
 class TabView : public QTabWidget {
@@ -25,8 +26,17 @@ public:
   int append(QWidget *control, const QString &title, const QVariantList &data);
   void removeTab(int index);
   void closeAll();
+  template<typename T>
+  T *view() const {
+    return qobject_cast<T*>(widget(currentIndex()));
+  }
+  template<typename T>
+  T *model() const {
+    return qobject_cast<T*>(view<TableView>()->model());
+  }
 
 protected:
+  void closeEvent(QCloseEvent *event) override;
   int indexOf(const QVariantList &data) const;
   void tabRemoved(int index) override;
   void tabInserted(int index) override;

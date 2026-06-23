@@ -18,9 +18,9 @@ public:
   bool isModified() const override;
   bool save() override;
   void cancel() override;
+  ModelTableBase *model() const {return qobject_cast<ModelTableBase*>(QAbstractItemView::model());}
 
 private:
-  ModelTableBase *model() const {return qobject_cast<ModelTableBase*>(QAbstractItemView::model());}
   QString title;
 
 protected:

@@ -25,14 +25,13 @@ protected:
   QVariant getIcon(const QModelIndex &index, TreeItem *item) const override;
   void loadChildren(TreeItem *parentItem) const override;
   QList<TreeItemType> defs = {
-    //{documentType::cratetype, "Тип крейта", "cratetype", icon_cratetype},
     {documentType::crate, "Крейт", "crate", icon_crate},
     {documentType::moduletype, "Тип модуля", "moduletype", icon_moduletype},
     {documentType::module, "Модуль", "module", icon_module},
     {documentType::calibration, "Градуировка", "calibration", icon_calibration},
-    {documentType::sensortype, "Типы датчиков", "sensortype", icon_sensortype},
-    {documentType::sensor, "Датчики", "sensor", icon_sensor},
-    {documentType::measureunit, "Единица измерений", "measureunit", icon_measureunit}
+    {documentType::sensortype, "Тип датчика", "sensortype", icon_sensortype},
+    {documentType::sensor, "Датчик", "sensor", icon_sensor},
+    {documentType::measureunit, "Единица измерения", "measureunit", icon_measureunit}
   };
 };
 

@@ -50,6 +50,9 @@ qt_add_executable(LCAdmin
     enums.h enums.cpp
     ctl/spinboxdelegate.h ctl/spinboxdelegate.cpp
     db/modeltablesensor.h db/modeltablesensor.cpp
+    db/modeltablesensortype.h db/modeltablesensortype.cpp
+    db/modeltablemeasureunit.h db/modeltablemeasureunit.cpp
+    ctl/checkboxdelegate.h ctl/checkboxdelegate.cpp
 )
 
 set(SCHEMEHELPEREDIR "../SchemeHelperQt")

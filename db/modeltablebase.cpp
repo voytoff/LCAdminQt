@@ -2,10 +2,12 @@
 #include "modeltablecalibration.h"
 #include "modeltablecrate.h"
 #include "modeltablecratetype.h"
+#include "modeltablemeasureunit.h"
 #include "modeltablemodule.h"
 #include "modeltablemoduletype.h"
+#include "modeltablesensortype.h"
 #include "modeltablesensor.h"
-#include <QStyledItemDelegate>
+#include <QSqlRelationalDelegate>
 
 ModelTableBase::ModelTableBase(const QString &table, QObject *parent)
   : QSqlRelationalTableModel{parent} {
@@ -32,8 +34,14 @@ ModelTableBase *ModelTableBase::create(documentType type, const QString &table) 
   case documentType::calibration:
     result = new ModelTableCalibration(table);
     break;
+  case documentType::sensortype:
+    result = new ModelTableSensorType(table);
+    break;
   case documentType::sensor:
     result = new ModelTableSensor(table);
+    break;
+  case documentType::measureunit:
+    result = new ModelTableMeasureUnit(table);
     break;
   default: return nullptr;
   }
@@ -44,7 +52,7 @@ ModelTableBase *ModelTableBase::create(documentType type, const QString &table) 
 }
 
 void ModelTableBase::setItemDelegates(QTableView *view) {
-  view->setItemDelegate(new QStyledItemDelegate(view));
+  view->setItemDelegate(new QSqlRelationalDelegate(view));
 }
 
 void ModelTableBase::init() {

@@ -19,10 +19,3 @@ QList<StringPair> ModelTableCrate::columns() const {
     {"port", "Порт"}
   };
 }
-/*
-QList<StringPair> ModelTableCrate::relations() const {
-  return QList<StringPair> {
-    {"cratetype", "cratetype;id;name"}
-  };
-}
-*/
