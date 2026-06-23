@@ -1,5 +1,4 @@
 #include "modeltablemodule.h"
-#include <QSqlRelation>
 
 ModelTableModule::ModelTableModule(const QString &table, QObject *parent)
   : ModelTableBase{table, parent} {}

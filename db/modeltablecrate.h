@@ -9,11 +9,11 @@ class ModelTableCrate : public ModelTableBase {
 public:
   explicit ModelTableCrate(const QString &table, QObject *parent = nullptr);
 
+  void setItemDelegates(QTableView *view) override;
+
 protected:
   QList<StringPair> columns() const override;
-  QList<StringPair> relations() const override;
 
-signals:
 };
 
 #endif // MODELTABLECRATE_H

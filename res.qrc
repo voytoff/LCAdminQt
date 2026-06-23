@@ -15,5 +15,9 @@
         <file>images/db/cratetype.png</file>
         <file>images/db/moduletype.png</file>
         <file>images/db/calibration.png</file>
+        <file>images/db/measureunit.png</file>
+        <file>images/db/sensor.png</file>
+        <file>images/db/sensortype.png</file>
+        <file>sql/init_db.sql</file>
     </qresource>
 </RCC>

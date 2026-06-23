@@ -20,8 +20,8 @@ public:
   void cancel() override;
 
 private:
-  ModelTableBase *model;
-  QString name;
+  ModelTableBase *model() const {return qobject_cast<ModelTableBase*>(QAbstractItemView::model());}
+  QString title;
 
 protected:
   void closeEvent(QCloseEvent *event) override;

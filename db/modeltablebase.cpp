@@ -4,6 +4,8 @@
 #include "modeltablecratetype.h"
 #include "modeltablemodule.h"
 #include "modeltablemoduletype.h"
+#include "modeltablesensor.h"
+#include <QStyledItemDelegate>
 
 ModelTableBase::ModelTableBase(const QString &table, QObject *parent)
   : QSqlRelationalTableModel{parent} {
@@ -30,12 +32,19 @@ ModelTableBase *ModelTableBase::create(documentType type, const QString &table) 
   case documentType::calibration:
     result = new ModelTableCalibration(table);
     break;
+  case documentType::sensor:
+    result = new ModelTableSensor(table);
+    break;
   default: return nullptr;
   }
   result->init();
   result->setJoinMode(QSqlRelationalTableModel::LeftJoin);
   result->select();
   return result;
+}
+
+void ModelTableBase::setItemDelegates(QTableView *view) {
+  view->setItemDelegate(new QStyledItemDelegate(view));
 }
 
 void ModelTableBase::init() {

@@ -24,6 +24,7 @@ qt6_add_resources(ADMIN_PROJECT_RESOURCES ${ADMIN_RESOURCE_FILES})
 qt_add_executable(LCAdmin
     ${ADMIN_PROJECT_RESOURCES}
     main.cpp types.h
+    istatewidget.h
     mainwindow.h mainwindow.cpp
     settings.h settings.cpp
     settingsdlg.h settingsdlg.cpp settingsdlg.ui
@@ -44,7 +45,11 @@ qt_add_executable(LCAdmin
     db/modeltablecratetype.h db/modeltablecratetype.cpp
     db/modeltablemoduletype.h db/modeltablemoduletype.cpp
     db/modeltablecalibration.h db/modeltablecalibration.cpp
-    istatewidget.h
+    ctl/fixedlistdelegate.h ctl/fixedlistdelegate.cpp
+    ctl/enumlistdelegate.h ctl/enumlistdelegate.cpp
+    enums.h enums.cpp
+    ctl/spinboxdelegate.h ctl/spinboxdelegate.cpp
+    db/modeltablesensor.h db/modeltablesensor.cpp
 )
 
 set(SCHEMEHELPEREDIR "../SchemeHelperQt")
@@ -55,7 +60,7 @@ set(DBEXTENSIONDIR "../DBExtensionQt")
 include_directories(${DBEXTENSIONDIR}/lib)
 add_subdirectory(${DBEXTENSIONDIR} DBExtension)
 
-include_directories(db)
+include_directories(db ctl)
 
 # Qt for iOS sets MACOSX_BUNDLE_GUI_IDENTIFIER automatically since Qt 6.1.
 # If you are developing for iOS or macOS you should consider setting an

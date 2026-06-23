@@ -196,7 +196,7 @@ void MainWindow::openTable(const QModelIndex &index) {
     if (model) {
       TableView *tableView = new TableView(model, data.title, this);
       tabView->append(tableView, data.title, data.type, data.type, data.icon);
-      tableView->setItemDelegate(new QSqlRelationalDelegate(tableView));
+      //tableView->setItemDelegate(new QSqlRelationalDelegate(tableView)); перенес вызов в TableView
     }
   }
 }
