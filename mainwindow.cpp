@@ -1,7 +1,6 @@
 #include "mainwindow.h"
 #include "leftview.h"
 #include "modeltablebase.h"
-#include "moduleview.h"
 #include "settingsdlg.h"
 #include "tableview.h"
 #include "types.h"
@@ -18,6 +17,7 @@
 #include <QGridLayout>
 #include <QStyleHints>
 #include <QTimer>
+#include <qevent.h>
 
 //MainWindow* MainWindow::instance = nullptr;
 
@@ -119,14 +119,15 @@ void MainWindow::createControlBox() {
 }
 
 void MainWindow::closeEvent(QCloseEvent *event) {
-  saveLayout();
-  QMainWindow::closeEvent(event);
+  if (tabView->closeAll()) {
+    event->accept();
+    saveLayout();
+    QMainWindow::closeEvent(event);
+  } else event->ignore();
 }
 
 void MainWindow::showEvent(QShowEvent *event) {
-  QTimer::singleShot(200, this, [this]() {
-    loadData();
-  });
+  QTimer::singleShot(200, this, [this]() {loadData();});
 }
 
 void MainWindow::showMessage(const QString &text) {

@@ -24,8 +24,8 @@ public:
    */
   int append(QWidget *control, const QString &title, const documentType &type, const int &id = 0, const QString &icon = nullptr);
   int append(QWidget *control, const QString &title, const QVariantList &data);
-  void removeTab(int index);
-  void closeAll();
+  bool removeTab(int index);
+  bool closeAll();
   template<typename T>
   T *view() const {
     return qobject_cast<T*>(widget(currentIndex()));

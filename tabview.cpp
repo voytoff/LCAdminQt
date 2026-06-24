@@ -18,17 +18,19 @@ TabView::TabView(QWidget *parent)
   connect(this, &TabView::removed, mainWindow, &MainWindow::updateWindowMenu);
 }
 
-void TabView::removeTab(int index) {
+bool TabView::removeTab(int index) {
   QWidget *w = widget(index);
   if (w && w->close()) {
     QTabWidget::removeTab(index);
     delete w;
-  }
+  } else return false;
+  return true;
 }
 
-void TabView::closeAll() {
+bool TabView::closeAll() {
   while (count() > 0)
-    removeTab(0);
+    if (!removeTab(0)) return false;
+  return true;
 }
 
 void TabView::closeEvent(QCloseEvent *event) {
