@@ -29,17 +29,12 @@ protected:
 
 private:
   void showMessage(const QString &text);
-  DocumentPair getDocument();
+  DocumentIdent getDocument();
   void createActions();
   void createControlBar();
   void createControlBox();
   void restoreLayout();
   void saveLayout();
-  void loadData();
-  void append();
-  void remove();
-  void save();
-  void cancel();
 
   void doSettings();
 
@@ -55,6 +50,9 @@ private:
   QAction *appendAction;
   QAction *removeAction;
   QAction *aboutAction;
+  QAction *copyAction;
+  QAction *pasteAction;
+
   QAction *toggleOptionAction;
   QAction *toggleDictionAction;
 
@@ -78,10 +76,19 @@ private:
   static MainWindow* instance;
 
 private slots:
+  void loadData();
   void openTable(const QModelIndex &index);
   void switchTab(QAction *action);
   void about();
-public:
+  void append();
+  void remove();
+  void save();
+  void cancel();
+  void clear();
+  void copy();
+  void paste();
+
+public slots:
   void updateWindowMenu();
 
 signals:

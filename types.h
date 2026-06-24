@@ -5,9 +5,16 @@
 #include <QObject>
 
 using StringPair = std::pair<QString, QString>;
+
 class ModelTableBase;
 class TableView;
-using DocumentPair = std::pair<ModelTableBase*, TableView*>;
+struct DocumentIdent {
+  ModelTableBase* model = nullptr;
+  TableView* view = nullptr;
+  bool isValid() {
+    return model && view;
+  }
+};
 
 template<typename TSource, typename TDest>
 TDest &cast(const TSource &source) {

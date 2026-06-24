@@ -17,9 +17,13 @@
    <item>
     <widget class="QTabWidget" name="tabWidget">
      <property name="currentIndex">
-      <number>0</number>
+      <number>1</number>
      </property>
      <widget class="QWidget" name="tabDatabase">
+      <attribute name="icon">
+       <iconset resource="res.qrc">
+        <normaloff>:/images/database.png</normaloff>:/images/database.png</iconset>
+      </attribute>
       <attribute name="title">
        <string>MariaDB</string>
       </attribute>
@@ -127,6 +131,10 @@
       </layout>
      </widget>
      <widget class="QWidget" name="tabOptions">
+      <attribute name="icon">
+       <iconset resource="res.qrc">
+        <normaloff>:/images/general.png</normaloff>:/images/general.png</iconset>
+      </attribute>
       <attribute name="title">
        <string>Настройки</string>
       </attribute>

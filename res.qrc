@@ -21,5 +21,9 @@
         <file>sql/init_db.sql</file>
         <file>images/tb/clear.png</file>
         <file>images/tb/cancel.png</file>
+        <file>images/tb/copy.png</file>
+        <file>images/tb/paste.png</file>
+        <file>images/database.png</file>
+        <file>images/general.png</file>
     </qresource>
 </RCC>

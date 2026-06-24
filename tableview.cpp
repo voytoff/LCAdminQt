@@ -13,7 +13,7 @@
 TableView::TableView(ModelTableBase *model, const QString &title, QWidget *parent)
   : QTableView{parent}
   //, model(model)
-  , title(title) {
+  , nodeName(title) {
 
   setModel(model);
   // Устанавливаем делегаты пользовательских редакторов
@@ -44,13 +44,21 @@ void TableView::cancel() {
   model()->revertAll();
 }
 
-QString TableView::text() const {
-  return title;
+void TableView::clear() {
+  model()->clearItemData(currentIndex());
 }
 
-void TableView::copySelection() {
+ModelTableBase *TableView::model() const {
+  return qobject_cast<ModelTableBase*>(QAbstractItemView::model());
+}
+
+QString TableView::text() const {
+  return nodeName;
+}
+
+bool TableView::copySelection() {
   QItemSelectionModel *selectModel = selectionModel();
-  if (!selectModel || !selectModel->hasSelection()) return;
+  if (!selectModel || !selectModel->hasSelection()) return false;
 
   QModelIndexList indexes = selectModel->selectedIndexes();
   // Сортируем индексы (Qt возвращает их в порядке кликов, а нам нужен порядок таблицы)
@@ -73,17 +81,18 @@ void TableView::copySelection() {
   copiedText += "\n";
 
   QApplication::clipboard()->setText(copiedText); // Публикуем в системный буфер
+  return true;
 }
 
-void TableView::pasteClipboard() {
+bool TableView::pasteClipboard() {
   // 1. Проверяем буфер обмена и наличие модели
   const QMimeData *mimeData = QApplication::clipboard()->mimeData();
   if (!mimeData || !mimeData->hasText() || !model()) {
-    return;
+    return false;
   }
 
   QString text = mimeData->text();
-  if (text.isEmpty()) return;
+  if (text.isEmpty()) return false;
 
   // 2. Логика определения начальной ячейки (row, col)
   QModelIndex currentIdx = currentIndex();
@@ -124,7 +133,7 @@ void TableView::pasteClipboard() {
   // 3. Подготовка текстовых данных
   text.replace("\r\n", "\n");
   QStringList rows = text.split('\n', Qt::SkipEmptyParts);
-  if (rows.isEmpty()) return;
+  if (rows.isEmpty()) return false;
 
   int totalRowsToInsert = rows.size();
   int currentModelRowCount = model()->rowCount();
@@ -134,7 +143,8 @@ void TableView::pasteClipboard() {
   if (lastRequiredRow >= currentModelRowCount) {
     int rowsNeeded = lastRequiredRow - currentModelRowCount + 1;
     if (!model()->insertRows(currentModelRowCount, rowsNeeded)) {
-      return; // Не удалось выделить строки в кэше
+      QMessageBox::information(parentWidget(), title, QString("Не удалось выделить дополнительные строки в таблице '%1'?").arg(nodeName));
+      return false; // Не удалось выделить строки в кэше
     }
   }
 
@@ -162,11 +172,12 @@ void TableView::pasteClipboard() {
   if (newFocusIndex.isValid()) {
     setCurrentIndex(newFocusIndex);
   }
+  return true;
 }
 
 void TableView::closeEvent(QCloseEvent *event) {
   if (isModified()) {
-    auto response = QMessageBox::question(qobject_cast<MainWindow*>(parent()), title, QString("Данные таблицы '%1' изменены. Сохранить эти изменения?").arg(title), QMessageBox::Yes | QMessageBox::No | QMessageBox::Cancel);
+    auto response = QMessageBox::question(qobject_cast<MainWindow*>(parent()), nodeName, QString("Данные таблицы '%1' изменены. Сохранить эти изменения?").arg(nodeName), QMessageBox::Yes | QMessageBox::No | QMessageBox::Cancel);
     if (response == QMessageBox::Yes)
       save();
     else if (response == QMessageBox::Cancel) {

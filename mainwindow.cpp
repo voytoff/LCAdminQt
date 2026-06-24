@@ -54,14 +54,16 @@ MainWindow::MainWindow(QWidget *parent)
 void MainWindow::createActions() {
   openAction = schemeHelper->create(tr("Открыть..."), ":/images/tb/open.png", QKeySequence::Open);
   saveAction = schemeHelper->create(tr("Сохранить"), ":/images/tb/save.png", QKeySequence::Save);
-  cancelAction = schemeHelper->create(tr("Отменить"), ":/images/tb/cancel.png", QKeySequence::Cancel);
-  clearAction = schemeHelper->create(tr("Очистить"), ":/images/tb/clear.png", QKeySequence::Delete);
+  cancelAction = schemeHelper->create(tr("Отменить"), ":/images/tb/cancel.png", QKeySequence(Qt::ALT | Qt::Key_Escape));
+  clearAction = schemeHelper->create(tr("Очистить"), ":/images/tb/clear.png", QKeySequence(Qt::SHIFT | Qt::Key_Backspace));
   lightAction = schemeHelper->createLightAction(tr("Дневной режим"), ":/images/tb/light.svg");
   darkAction = schemeHelper->createDarkAction(tr("Ночной режим"), ":/images/tb/dark.svg");
   settingsAction = schemeHelper->create(tr("Установки..."), ":/images/tb/settings.png");
-  appendAction = schemeHelper->create(tr("Добавить..."), ":/images/tb/add.png", QKeySequence::InsertLineSeparator);
-  removeAction = schemeHelper->create(tr("Удалить"), ":/images/tb/del.png", QKeySequence::Deselect);
+  appendAction = schemeHelper->create(tr("Добавить..."), ":/images/tb/add.png", QKeySequence(Qt::CTRL | Qt::Key_Insert));
+  removeAction = schemeHelper->create(tr("Удалить"), ":/images/tb/del.png", QKeySequence(Qt::CTRL | Qt::Key_Delete));
   aboutAction = schemeHelper->create(tr("&О программе..."));
+  copyAction = schemeHelper->create(tr("Скопировать"), ":/images/tb/copy.png", QKeySequence(Qt::SHIFT | Qt::CTRL | Qt::Key_C));
+  pasteAction = schemeHelper->create(tr("Вставить"), ":/images/tb/paste.png", QKeySequence(Qt::SHIFT | Qt::CTRL | Qt::Key_V));
 
   toggleOptionAction = leftView->toggleOptionAction();
   toggleDictionAction = leftView->toggleDictionAction();
@@ -72,6 +74,9 @@ void MainWindow::createActions() {
   connect(aboutAction, &QAction::triggered, this, &MainWindow::about);
   connect(saveAction, &QAction::triggered, this, &MainWindow::save);
   connect(cancelAction, &QAction::triggered, this, &MainWindow::cancel);
+  connect(clearAction, &QAction::triggered, this, &MainWindow::clear);
+  connect(copyAction, &QAction::triggered, this, &MainWindow::copy);
+  connect(pasteAction, &QAction::triggered, this, &MainWindow::paste);
 
   schemeHelper->applayColorScheme(settings->colorScheme(), true);
 }
@@ -80,6 +85,16 @@ void MainWindow::createControlBar() {
   QMenu *fileMenu = menuBar()->addMenu(tr("Файл"));
   fileMenu->addAction(openAction);
   fileMenu->addAction(saveAction);
+
+  QMenu *editMenu = menuBar()->addMenu(tr("Правка"));
+  editMenu->addAction(copyAction);
+  editMenu->addAction(pasteAction);
+  editMenu->addSeparator();
+  editMenu->addAction(appendAction);
+  editMenu->addAction(removeAction);
+  editMenu->addSeparator();
+  editMenu->addAction(cancelAction);
+  editMenu->addAction(clearAction);
 
   QMenu *viewMenu = menuBar()->addMenu(tr("Вид"));
   viewMenu->addAction(lightAction);
@@ -100,8 +115,13 @@ void MainWindow::createControlBar() {
   toolbar->addAction(openAction);
   toolbar->addAction(saveAction);
   toolbar->addSeparator();
+  toolbar->addAction(copyAction);
+  toolbar->addAction(pasteAction);
+  toolbar->addSeparator();
   toolbar->addAction(appendAction);
   toolbar->addAction(removeAction);
+  toolbar->addSeparator();
+  toolbar->addAction(clearAction);
   toolbar->addAction(cancelAction);
   toolbar->addSeparator();
   toolbar->addAction(settingsAction);
@@ -142,7 +162,7 @@ void MainWindow::showMessage(const QString &text) {
   });
 }
 
-DocumentPair MainWindow::getDocument() {
+DocumentIdent MainWindow::getDocument() {
   auto model = tabView->model<ModelTableBase>();
   if (model) {
     auto view = tabView->view<TableView>();
@@ -183,33 +203,31 @@ void MainWindow::loadData() {
 
 void MainWindow::append() {
   auto doc = getDocument();
-  if (doc.first) {
-    auto model = doc.first;
-    auto view = doc.second;
+  if (doc.isValid()) {
     // Получаем индекс текущей выделенной строки
-    QModelIndex currentIndex = view->currentIndex();
-    int row = currentIndex.isValid() ? currentIndex.row() : 0;
+    ///QModelIndex currentIndex = doc.view->currentIndex();
+    ///int row = currentIndex.isValid() ? currentIndex.row() : 0;
     // Вставляем новую строку перед текущей (или в конец, если таблица пуста)
-    model->insertRow(row);
+    // Вставляем новую строку перед за последней (или в конец, если таблица пуста)
+    int row = doc.model->rowCount();
+    doc.model->insertRow(row);
     // Переводим фокус и включаем режим редактирования для добавленной ячейки
-    QModelIndex newIndex = model->index(row, 0); // 0 - индекс первой колонки
-    view->setCurrentIndex(newIndex);
-    view->edit(newIndex);
+    QModelIndex newIndex = doc.model->index(row, 0); // 0 - индекс первой колонки
+    doc.view->setCurrentIndex(newIndex);
+    doc.view->edit(newIndex);
   }
 }
 
 void MainWindow::remove() {
   auto doc = getDocument();
-  if (doc.first) {
-    auto model = doc.first;
-    auto view = doc.second;
+  if (doc.isValid()) {
     // Получаем список всех выделенных индексов
-    QModelIndexList selectedIndexes = view->selectionModel()->selectedIndexes();
+    QModelIndexList selectedIndexes = doc.view->selectionModel()->selectedIndexes();
     if (!selectedIndexes.isEmpty()) {
       // Удаляем строку первого выделенного элемента
-      if (QMessageBox::question(this, title, QString("Удалить выделенные строки из таблицы '%1'?").arg(view->text())) == QMessageBox::Yes) {
+      if (QMessageBox::question(this, title, QString("Удалить выделенные строки из таблицы '%1'?").arg(doc.view->text())) == QMessageBox::Yes) {
         foreach (auto index, selectedIndexes)
-          model->removeRow(index.row());
+          doc.model->removeRow(index.row());
       }
     }
   }
@@ -217,20 +235,40 @@ void MainWindow::remove() {
 
 void MainWindow::save() {
   auto doc = getDocument();
-  if (doc.first) {
-    auto view = doc.second;
-    if (view->isModified())
-      view->save();
+  if (doc.isValid()) {
+    if (doc.view->isModified())
+      doc.view->save();
   }
 }
 
 void MainWindow::cancel() {
   auto doc = getDocument();
-  if (doc.first) {
-    auto view = doc.second;
-    if (view->isModified() && QMessageBox::question(this, title, QString("Отменить все изменения в таблице '%1'?").arg(view->text())) == QMessageBox::Yes)
-      view->cancel();
+  if (doc.isValid()) {
+    if (doc.view->isModified() && QMessageBox::question(this, title, QString("Отменить все изменения в таблице '%1'?").arg(doc.view->text())) == QMessageBox::Yes)
+      doc.view->cancel();
   }
+}
+
+void MainWindow::clear() {
+  auto doc = getDocument();
+  if (doc.isValid()) {
+    if (doc.view->isModified())
+      doc.view->clear();
+  }
+}
+
+void MainWindow::copy() {
+  auto doc = getDocument();
+  if (doc.isValid()) {
+    if (doc.view->copySelection())
+    QMessageBox::information(this, title, QString("Выделенные данные таблицы '%1' скопированы в буфер обмена.").arg(doc.view->text()));
+  }
+}
+
+void MainWindow::paste() {
+  auto doc = getDocument();
+  if (doc.isValid())
+     doc.view->pasteClipboard();
 }
 
 void MainWindow::doSettings() {

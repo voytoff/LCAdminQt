@@ -27,11 +27,12 @@ public:
   bool closeAll();
   template<typename T>
   T *view() const {
-    return qobject_cast<T*>(widget(currentIndex()));
+    return currentIndex() < 0 ? nullptr : qobject_cast<T*>(widget(currentIndex()));
   }
   template<typename T>
   T *model() const {
-    return qobject_cast<T*>(view<TableView>()->model());
+    auto vw = view<TableView>();
+    return vw ? qobject_cast<T*>(vw->model()) : nullptr;
   }
 
 protected:
