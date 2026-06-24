@@ -8,7 +8,6 @@ class ModelTableMeasureUnit : public ModelTableBase {
   Q_OBJECT
 public:
   explicit ModelTableMeasureUnit(const QString &table, QObject *parent = nullptr);
-  void setItemDelegates(QTableView *view) override;
 
 protected:
   QList<StringPair> columns() const override;

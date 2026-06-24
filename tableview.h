@@ -19,12 +19,17 @@ public:
   bool save() override;
   void cancel() override;
   ModelTableBase *model() const {return qobject_cast<ModelTableBase*>(QAbstractItemView::model());}
+  QString text() const;
 
 private:
+  void copySelection();
+  void pasteClipboard();
+
   QString title;
 
 protected:
   void closeEvent(QCloseEvent *event) override;
+  void keyPressEvent(QKeyEvent *event) override;
 
 signals:
 

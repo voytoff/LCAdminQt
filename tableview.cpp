@@ -5,6 +5,10 @@
 #include <QMessageBox>
 #include <QString>
 #include <QCloseEvent>
+#include <QApplication>
+#include <QClipboard>
+#include <QMimeData>
+#include <QItemSelectionModel>
 
 TableView::TableView(ModelTableBase *model, const QString &title, QWidget *parent)
   : QTableView{parent}
@@ -40,6 +44,126 @@ void TableView::cancel() {
   model()->revertAll();
 }
 
+QString TableView::text() const {
+  return title;
+}
+
+void TableView::copySelection() {
+  QItemSelectionModel *selectModel = selectionModel();
+  if (!selectModel || !selectModel->hasSelection()) return;
+
+  QModelIndexList indexes = selectModel->selectedIndexes();
+  // Сортируем индексы (Qt возвращает их в порядке кликов, а нам нужен порядок таблицы)
+  std::sort(indexes.begin(), indexes.end());
+
+  QString copiedText;
+  for (int i = 0; i < indexes.size(); ++i) {
+    // Извлекаем текст ячейки, который видит пользователь
+    copiedText += model()->data(indexes.at(i), Qt::DisplayRole).toString();
+
+    if (i < indexes.size() - 1) {
+      // Если следующая ячейка на той же строке — ставим Табуляцию, иначе — Перенос строки
+      if (indexes.at(i).row() == indexes.at(i + 1).row()) {
+        copiedText += "\t";
+      } else {
+        copiedText += "\n";
+      }
+    }
+  }
+  copiedText += "\n";
+
+  QApplication::clipboard()->setText(copiedText); // Публикуем в системный буфер
+}
+
+void TableView::pasteClipboard() {
+  // 1. Проверяем буфер обмена и наличие модели
+  const QMimeData *mimeData = QApplication::clipboard()->mimeData();
+  if (!mimeData || !mimeData->hasText() || !model()) {
+    return;
+  }
+
+  QString text = mimeData->text();
+  if (text.isEmpty()) return;
+
+  // 2. Логика определения начальной ячейки (row, col)
+  QModelIndex currentIdx = currentIndex();
+  int startRow = 0;
+  int startCol = 0;
+
+  if (currentIdx.isValid()) {
+    // Если ячейка выбрана — вставляем начиная с нее
+    startRow = currentIdx.row();
+    startCol = currentIdx.column();
+  } else {
+    // Если ячейка НЕ выбрана ИЛИ таблица пустая:
+    startRow = model()->rowCount(); // Вставляем в самый конец (для пустой будет 0)
+
+    // Ищем первый ВИДИМЫЙ столбец на основе заголовка таблицы
+    QHeaderView *header = horizontalHeader();
+    bool foundVisible = false;
+
+    if (header) {
+      // Проходим по колонкам в порядке их отображения на экране (visualIndex)
+      for (int visualIdx = 0; visualIdx < header->count(); ++visualIdx) {
+        int logicalIdx = header->logicalIndex(visualIdx);
+
+        if (!header->isSectionHidden(logicalIdx)) {
+          startCol = logicalIdx;
+          foundVisible = true;
+          break; // Нашли самый левый видимый столбец
+        }
+      }
+    }
+
+    // Фолбэк на случай, если заголовок недоступен или все колонки скрыты
+    if (!foundVisible) {
+      startCol = 0;
+    }
+  }
+
+  // 3. Подготовка текстовых данных
+  text.replace("\r\n", "\n");
+  QStringList rows = text.split('\n', Qt::SkipEmptyParts);
+  if (rows.isEmpty()) return;
+
+  int totalRowsToInsert = rows.size();
+  int currentModelRowCount = model()->rowCount();
+  int lastRequiredRow = startRow + totalRowsToInsert - 1;
+
+  // 4. Динамическое добавление строк в модель (OnManualSubmit)
+  if (lastRequiredRow >= currentModelRowCount) {
+    int rowsNeeded = lastRequiredRow - currentModelRowCount + 1;
+    if (!model()->insertRows(currentModelRowCount, rowsNeeded)) {
+      return; // Не удалось выделить строки в кэше
+    }
+  }
+
+  // 5. Поячеечная вставка данных
+  for (int i = 0; i < rows.size(); ++i) {
+    int currentRow = startRow + i;
+    QStringList columns = rows.at(i).split('\t');
+
+    for (int j = 0; j < columns.size(); ++j) {
+      int currentCol = startCol + j;
+
+      // Защита от выхода за пределы общего числа колонок СУБД
+      if (currentCol >= model()->columnCount()) break;
+
+      QModelIndex targetIndex = model()->index(currentRow, currentCol);
+      QString cellValue = columns.at(j).trimmed();
+
+      // Передаем данные в кэш модели
+      model()->setData(targetIndex, cellValue, Qt::EditRole);
+    }
+  }
+
+  // 6. Установка фокуса на стартовую ячейку вставки
+  QModelIndex newFocusIndex = model()->index(startRow, startCol);
+  if (newFocusIndex.isValid()) {
+    setCurrentIndex(newFocusIndex);
+  }
+}
+
 void TableView::closeEvent(QCloseEvent *event) {
   if (isModified()) {
     auto response = QMessageBox::question(qobject_cast<MainWindow*>(parent()), title, QString("Данные таблицы '%1' изменены. Сохранить эти изменения?").arg(title), QMessageBox::Yes | QMessageBox::No | QMessageBox::Cancel);
@@ -51,4 +175,20 @@ void TableView::closeEvent(QCloseEvent *event) {
     }
   }
   event->accept();
+}
+
+void TableView::keyPressEvent(QKeyEvent *event) {
+  // Перехватываем Ctrl+C (Копирование)
+  if (event->matches(QKeySequence::Copy)) {
+    copySelection();
+    event->accept();
+    return;
+  }
+  // Перехватываем Ctrl+V (Вставка)
+  if (event->matches(QKeySequence::Paste)) {
+    pasteClipboard();
+    event->accept();
+    return;
+  }
+  QTableView::keyPressEvent(event);
 }

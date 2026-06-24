@@ -5,6 +5,19 @@
 #include <QObject>
 
 using StringPair = std::pair<QString, QString>;
+class ModelTableBase;
+class TableView;
+using DocumentPair = std::pair<ModelTableBase*, TableView*>;
+
+template<typename TSource, typename TDest>
+TDest &cast(const TSource &source) {
+  return dynamic_cast<TDest>(source);
+}
+
+template<typename TSource, typename TDest>
+TDest &cast(const TSource &source, std::function<TDest(TSource)>& callback) {
+  return callback(source);
+}
 
 const QString title = "Администратор";
 const QString ready = "Готово";
@@ -20,17 +33,5 @@ const QString icon_calibration = ":/images/db/calibration.png";
 const QString icon_measureunit = ":/images/db/measureunit.png";
 const QString icon_sensortype = ":/images/db/sensortype.png";
 const QString icon_sensor = ":/images/db/sensor.png";
-
-/// Типы документов для идентификации в QTabWidget
-enum documentType : int {
-  cratetype,
-  crate,
-  moduletype,
-  module,
-  calibration,
-  measureunit,
-  sensortype,
-  sensor,
-};
 
 #endif // TYPES_H

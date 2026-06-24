@@ -29,6 +29,7 @@ protected:
 
 private:
   void showMessage(const QString &text);
+  DocumentPair getDocument();
   void createActions();
   void createControlBar();
   void createControlBox();
@@ -37,6 +38,8 @@ private:
   void loadData();
   void append();
   void remove();
+  void save();
+  void cancel();
 
   void doSettings();
 
@@ -46,9 +49,11 @@ private:
   QAction *darkAction;
   QAction *openAction;
   QAction *saveAction;
+  QAction *cancelAction;
+  QAction *clearAction;
   QAction *settingsAction;
-  QAction *addAction;
-  QAction *delAction;
+  QAction *appendAction;
+  QAction *removeAction;
   QAction *aboutAction;
   QAction *toggleOptionAction;
   QAction *toggleDictionAction;

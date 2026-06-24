@@ -11,6 +11,7 @@ public:
 
 protected:
   QList<StringPair> columns() const override;
+  QStringList boolFields() const override;
 
 signals:
 };

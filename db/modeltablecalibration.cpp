@@ -12,3 +12,7 @@ QList<StringPair> ModelTableCalibration::columns() const {
     {"date", "Дата регистрации"}
   };
 }
+
+QStringList ModelTableCalibration::boolFields() const {
+  return {"active"};
+}

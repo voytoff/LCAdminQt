@@ -64,7 +64,7 @@ void TabView::tabInserted(int index) {
   emit inserted(index);
 }
 
-int TabView::append(QWidget *control, const QString &title, const documentType &type, const int &id, const QString &icon) {
+int TabView::append(QWidget *control, const QString &title, const Enums::documentType &type, const int &id, const QString &icon) {
   auto data = QVariantList({type, id, icon});
   int index = append(control, title, data);
   if (icon.length() > 0)

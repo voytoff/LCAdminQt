@@ -8,7 +8,6 @@ class ModelTableCrate : public ModelTableBase {
   Q_OBJECT
 public:
   explicit ModelTableCrate(const QString &table, QObject *parent = nullptr);
-
   void setItemDelegates(QTableView *view) override;
 
 protected:

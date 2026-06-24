@@ -2,6 +2,8 @@
 #define MODELTABLEBASE_H
 
 #include "../types.h"
+#include "../enums.h"
+
 #include <QSqlRelationalTableModel>
 #include <QList>
 #include <QTableView>
@@ -11,15 +13,21 @@ class ModelTableBase : public QSqlRelationalTableModel {
 public:
   explicit ModelTableBase(const QString &table, QObject *parent = nullptr);
   virtual void setItemDelegates(QTableView *view);
+  Qt::ItemFlags flags(const QModelIndex &index) const override;
+  QVariant data(const QModelIndex &index, int role) const override;
+  bool setData(const QModelIndex &index, const QVariant &value, int role) override;
 
-  static ModelTableBase *create(documentType type, const QString &table);
+  static ModelTableBase *create(Enums::documentType type, const QString &table);
 
 private:
   QTableView *view;
+  QList<int> boolIds() const;
+  mutable QList<int> tmp;
 
 protected:
   virtual QList<StringPair> columns() const {return {};}
   virtual QList<StringPair> relations() const {return {};}
+  virtual QStringList boolFields() const {return {};}
   virtual void init();
 };
 

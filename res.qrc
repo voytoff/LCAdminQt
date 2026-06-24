@@ -19,5 +19,7 @@
         <file>images/db/sensor.png</file>
         <file>images/db/sensortype.png</file>
         <file>sql/init_db.sql</file>
+        <file>images/tb/clear.png</file>
+        <file>images/tb/cancel.png</file>
     </qresource>
 </RCC>

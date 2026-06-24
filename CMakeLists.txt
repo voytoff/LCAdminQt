@@ -24,7 +24,7 @@ qt6_add_resources(ADMIN_PROJECT_RESOURCES ${ADMIN_RESOURCE_FILES})
 qt_add_executable(LCAdmin
     ${ADMIN_PROJECT_RESOURCES}
     main.cpp types.h
-    istatewidget.h
+    istatewidget.h treeitemtype.h
     mainwindow.h mainwindow.cpp
     settings.h settings.cpp
     settingsdlg.h settingsdlg.cpp settingsdlg.ui
@@ -53,6 +53,7 @@ qt_add_executable(LCAdmin
     db/modeltablesensortype.h db/modeltablesensortype.cpp
     db/modeltablemeasureunit.h db/modeltablemeasureunit.cpp
     ctl/checkboxdelegate.h ctl/checkboxdelegate.cpp
+
 )
 
 set(SCHEMEHELPEREDIR "../SchemeHelperQt")

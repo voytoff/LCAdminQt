@@ -7,6 +7,7 @@ ModelTableCrate::ModelTableCrate(const QString &table, QObject *parent)
   : ModelTableBase{table, parent} {}
 
 void ModelTableCrate::setItemDelegates(QTableView *view) {
+  ModelTableBase::setItemDelegates(view);
   view->setItemDelegateForColumn(fieldIndex("cratetype"), new EnumListDelegate(Enums::create<Enums::crateType>(), view));
   view->setItemDelegateForColumn(fieldIndex("port"), new SpinBoxDelegate(0, 65000, this));
 }

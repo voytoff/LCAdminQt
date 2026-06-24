@@ -7,6 +7,7 @@
 #include "modeltablemoduletype.h"
 #include "modeltablesensortype.h"
 #include "modeltablesensor.h"
+
 #include <QSqlRelationalDelegate>
 
 ModelTableBase::ModelTableBase(const QString &table, QObject *parent)
@@ -16,31 +17,31 @@ ModelTableBase::ModelTableBase(const QString &table, QObject *parent)
   setTable(table);
 }
 
-ModelTableBase *ModelTableBase::create(documentType type, const QString &table) {
+ModelTableBase *ModelTableBase::create(Enums::documentType type, const QString &table) {
   ModelTableBase* result = nullptr;
   switch (type) {
-  case documentType::cratetype:
+  case Enums::documentType::cratetype:
     result = new ModelTableCrateType(table);
     break;
-  case documentType::crate:
+  case Enums::documentType::crate:
     result = new ModelTableCrate(table);
     break;
-  case documentType::moduletype:
+  case Enums::documentType::moduletype:
     result = new ModelTableModuleType(table);
     break;
-  case documentType::module:
+  case Enums::documentType::module:
     result = new ModelTableModule(table);
     break;
-  case documentType::calibration:
+  case Enums::documentType::calibration:
     result = new ModelTableCalibration(table);
     break;
-  case documentType::sensortype:
+  case Enums::documentType::sensortype:
     result = new ModelTableSensorType(table);
     break;
-  case documentType::sensor:
+  case Enums::documentType::sensor:
     result = new ModelTableSensor(table);
     break;
-  case documentType::measureunit:
+  case Enums::documentType::measureunit:
     result = new ModelTableMeasureUnit(table);
     break;
   default: return nullptr;
@@ -51,8 +52,49 @@ ModelTableBase *ModelTableBase::create(documentType type, const QString &table) 
   return result;
 }
 
+QList<int> ModelTableBase::boolIds() const {
+  QList<QString> source = boolFields();
+  if (tmp.length() == 0 && source.length() > 0) {
+    tmp.resize(source.length());
+    std::transform(source.begin(), source.end(), tmp.begin(), [this](const QString& s) {return fieldIndex(s);});
+  }
+  return tmp;
+}
+
 void ModelTableBase::setItemDelegates(QTableView *view) {
   view->setItemDelegate(new QSqlRelationalDelegate(view));
+  //foreach (int index, boolIds())
+  //  view->setItemDelegateForColumn(index, new CheckBoxDelegate(view));
+}
+
+Qt::ItemFlags ModelTableBase::flags(const QModelIndex &index) const {
+  if (boolIds().contains(index.column()))
+    return Qt::ItemIsUserCheckable | Qt::ItemIsEnabled | Qt::ItemIsSelectable | Qt::ItemIsEditable;
+  return QSqlRelationalTableModel::flags(index);
+}
+
+QVariant ModelTableBase::data(const QModelIndex &index, int role) const {
+  if (boolIds().contains(index.column())) {
+    QVariant rawValue = QSqlRelationalTableModel::data(index, Qt::DisplayRole);
+    // Безопасно приведим tinyint к bool (0 - false, всё остальное - true)
+    bool isTrue = rawValue.isValid() && !rawValue.isNull() && (rawValue.toInt() != 0);
+    if (role == Qt::CheckStateRole)
+      return isTrue ? Qt::Checked : Qt::Unchecked;
+    else if (role == Qt::DisplayRole || role == Qt::EditRole)
+      // Возвращаем пустую строку, чтобы поверх чекбокса не писались цифры 0 или 1
+      return QVariant();
+  }
+  return QSqlRelationalTableModel::data(index, role);
+}
+
+bool ModelTableBase::setData(const QModelIndex &index, const QVariant &value, int role) {
+  if (boolIds().contains(index.column()) && role == Qt::CheckStateRole) {
+    // Конвертируем клик мыши в понятный для базы данных формат (1 или 0)
+    int intValue = (value.toInt() == Qt::Checked) ? 1 : 0;
+    // Записываем в базу данных как обычное редактирование значения
+    return QSqlRelationalTableModel::setData(index, intValue, Qt::EditRole);
+  }
+  return QSqlRelationalTableModel::setData(index, value, role);
 }
 
 void ModelTableBase::init() {

@@ -4,6 +4,7 @@
 #include "db.h"
 #include "modeltreebase.h"
 #include "treeitem.h"
+#include "treeitemtype.h"
 #include "types.h"
 
 #include <QAbstractItemModel>
@@ -25,13 +26,13 @@ protected:
   QVariant getIcon(const QModelIndex &index, TreeItem *item) const override;
   void loadChildren(TreeItem *parentItem) const override;
   QList<TreeItemType> defs = {
-    {documentType::crate, "Крейт", "crate", icon_crate},
-    {documentType::moduletype, "Тип модуля", "moduletype", icon_moduletype},
-    {documentType::module, "Модуль", "module", icon_module},
-    {documentType::calibration, "Градуировка", "calibration", icon_calibration},
-    {documentType::sensortype, "Тип датчика", "sensortype", icon_sensortype},
-    {documentType::sensor, "Датчик", "sensor", icon_sensor},
-    {documentType::measureunit, "Единица измерения", "measureunit", icon_measureunit}
+    {Enums::documentType::crate, "Крейт", "crate", icon_crate},
+    //{Enums::documentType::moduletype, "Тип модуля", "moduletype", icon_moduletype},
+    {Enums::documentType::module, "Модуль", "module", icon_module},
+    {Enums::documentType::calibration, "Градуировка", "calibration", icon_calibration},
+    {Enums::documentType::sensortype, "Тип датчика", "sensortype", icon_sensortype},
+    {Enums::documentType::sensor, "Датчик", "sensor", icon_sensor},
+    {Enums::documentType::measureunit, "Единица измерения", "measureunit", icon_measureunit}
   };
 };
 

@@ -54,20 +54,24 @@ MainWindow::MainWindow(QWidget *parent)
 void MainWindow::createActions() {
   openAction = schemeHelper->create(tr("Открыть..."), ":/images/tb/open.png", QKeySequence::Open);
   saveAction = schemeHelper->create(tr("Сохранить"), ":/images/tb/save.png", QKeySequence::Save);
+  cancelAction = schemeHelper->create(tr("Отменить"), ":/images/tb/cancel.png", QKeySequence::Cancel);
+  clearAction = schemeHelper->create(tr("Очистить"), ":/images/tb/clear.png", QKeySequence::Delete);
   lightAction = schemeHelper->createLightAction(tr("Дневной режим"), ":/images/tb/light.svg");
   darkAction = schemeHelper->createDarkAction(tr("Ночной режим"), ":/images/tb/dark.svg");
   settingsAction = schemeHelper->create(tr("Установки..."), ":/images/tb/settings.png");
-  addAction = schemeHelper->create(tr("Добавить..."), ":/images/tb/add.png", QKeySequence::InsertLineSeparator);
-  delAction = schemeHelper->create(tr("Удалить"), ":/images/tb/del.png", QKeySequence::Delete);
+  appendAction = schemeHelper->create(tr("Добавить..."), ":/images/tb/add.png", QKeySequence::InsertLineSeparator);
+  removeAction = schemeHelper->create(tr("Удалить"), ":/images/tb/del.png", QKeySequence::Deselect);
   aboutAction = schemeHelper->create(tr("&О программе..."));
 
   toggleOptionAction = leftView->toggleOptionAction();
   toggleDictionAction = leftView->toggleDictionAction();
 
   connect(settingsAction, &QAction::triggered, this, &MainWindow::doSettings);
-  connect(addAction, &QAction::triggered, this, &MainWindow::append);
-  connect(delAction, &QAction::triggered, this, &MainWindow::remove);
+  connect(appendAction, &QAction::triggered, this, &MainWindow::append);
+  connect(removeAction, &QAction::triggered, this, &MainWindow::remove);
   connect(aboutAction, &QAction::triggered, this, &MainWindow::about);
+  connect(saveAction, &QAction::triggered, this, &MainWindow::save);
+  connect(cancelAction, &QAction::triggered, this, &MainWindow::cancel);
 
   schemeHelper->applayColorScheme(settings->colorScheme(), true);
 }
@@ -96,8 +100,9 @@ void MainWindow::createControlBar() {
   toolbar->addAction(openAction);
   toolbar->addAction(saveAction);
   toolbar->addSeparator();
-  toolbar->addAction(addAction);
-  toolbar->addAction(delAction);
+  toolbar->addAction(appendAction);
+  toolbar->addAction(removeAction);
+  toolbar->addAction(cancelAction);
   toolbar->addSeparator();
   toolbar->addAction(settingsAction);
 }
@@ -137,6 +142,16 @@ void MainWindow::showMessage(const QString &text) {
   });
 }
 
+DocumentPair MainWindow::getDocument() {
+  auto model = tabView->model<ModelTableBase>();
+  if (model) {
+    auto view = tabView->view<TableView>();
+    if (view)
+      return {model, view};
+  }
+  return {};
+}
+
 void MainWindow::restoreLayout() {
   restoreGeometry(settings->geometry());
   restoreState(settings->windowState());
@@ -167,38 +182,54 @@ void MainWindow::loadData() {
 }
 
 void MainWindow::append() {
-  auto model = tabView->model<ModelTableBase>();
-  if (model) {
-    auto view = tabView->view<TableView>();
-    if (view) {
-      // Получаем индекс текущей выделенной строки
-      QModelIndex currentIndex = view->currentIndex();
-      int row = currentIndex.isValid() ? currentIndex.row() : 0;
-      // Вставляем новую строку перед текущей (или в конец, если таблица пуста)
-      model->insertRow(row);
-      // Переводим фокус и включаем режим редактирования для добавленной ячейки
-      QModelIndex newIndex = model->index(row, 0); // 0 - индекс первой колонки
-      view->setCurrentIndex(newIndex);
-      view->edit(newIndex);
-    }
+  auto doc = getDocument();
+  if (doc.first) {
+    auto model = doc.first;
+    auto view = doc.second;
+    // Получаем индекс текущей выделенной строки
+    QModelIndex currentIndex = view->currentIndex();
+    int row = currentIndex.isValid() ? currentIndex.row() : 0;
+    // Вставляем новую строку перед текущей (или в конец, если таблица пуста)
+    model->insertRow(row);
+    // Переводим фокус и включаем режим редактирования для добавленной ячейки
+    QModelIndex newIndex = model->index(row, 0); // 0 - индекс первой колонки
+    view->setCurrentIndex(newIndex);
+    view->edit(newIndex);
   }
 }
 
 void MainWindow::remove() {
-  auto model = tabView->model<ModelTableBase>();
-  if (model) {
-    auto view = tabView->view<TableView>();
-    if (view) {
-      // Получаем список всех выделенных индексов
-      QModelIndexList selectedIndexes = view->selectionModel()->selectedIndexes();
-
-      if (!selectedIndexes.isEmpty()) {
-        // Удаляем строку первого выделенного элемента
-        // Получаем именно номер строки, так как выделены могут быть разные ячейки
-        int rowToDelete = selectedIndexes.first().row();
-        model->removeRow(rowToDelete);
+  auto doc = getDocument();
+  if (doc.first) {
+    auto model = doc.first;
+    auto view = doc.second;
+    // Получаем список всех выделенных индексов
+    QModelIndexList selectedIndexes = view->selectionModel()->selectedIndexes();
+    if (!selectedIndexes.isEmpty()) {
+      // Удаляем строку первого выделенного элемента
+      if (QMessageBox::question(this, title, QString("Удалить выделенные строки из таблицы '%1'?").arg(view->text())) == QMessageBox::Yes) {
+        foreach (auto index, selectedIndexes)
+          model->removeRow(index.row());
       }
     }
+  }
+}
+
+void MainWindow::save() {
+  auto doc = getDocument();
+  if (doc.first) {
+    auto view = doc.second;
+    if (view->isModified())
+      view->save();
+  }
+}
+
+void MainWindow::cancel() {
+  auto doc = getDocument();
+  if (doc.first) {
+    auto view = doc.second;
+    if (view->isModified() && QMessageBox::question(this, title, QString("Отменить все изменения в таблице '%1'?").arg(view->text())) == QMessageBox::Yes)
+      view->cancel();
   }
 }
 
