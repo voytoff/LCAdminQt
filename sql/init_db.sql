@@ -1,4 +1,4 @@
-/*M!999999\- enable the sandbox mode */ 
+/*M!999999\- enable the sandbox mode */
 -- MariaDB dump 10.19-11.7.2-MariaDB, for Win64 (AMD64)
 --
 -- Host: localhost    Database: 106org
@@ -45,6 +45,34 @@ INSERT INTO `__cratetype` VALUES
 UNLOCK TABLES;
 
 --
+-- Table structure for table `__moduletype`
+--
+
+DROP TABLE IF EXISTS `__moduletype`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8mb4 */;
+CREATE TABLE `__moduletype` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `name` varchar(50) DEFAULT NULL,
+  `depth` int(11) DEFAULT NULL,
+  `interface` smallint(11) DEFAULT NULL,
+  `description` varchar(256) DEFAULT NULL,
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_uca1400_ai_ci COMMENT='Типы модулей';
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Dumping data for table `__moduletype`
+--
+
+LOCK TABLES `__moduletype` WRITE;
+/*!40000 ALTER TABLE `__moduletype` DISABLE KEYS */;
+INSERT INTO `__moduletype` VALUES
+(1,'LTR11',14,11,'Универсальный модуль АЦП с последовательным опросом каналов');
+/*!40000 ALTER TABLE `__moduletype` ENABLE KEYS */;
+UNLOCK TABLES;
+
+--
 -- Table structure for table `calibration`
 --
 
@@ -70,7 +98,7 @@ CREATE TABLE `calibration` (
 LOCK TABLES `calibration` WRITE;
 /*!40000 ALTER TABLE `calibration` DISABLE KEYS */;
 INSERT INTO `calibration` VALUES
-(1,'first',NULL,NULL,NULL,'2026-06-11',NULL);
+(1,'first',NULL,NULL,1,'2026-06-11',NULL);
 /*!40000 ALTER TABLE `calibration` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -100,7 +128,7 @@ CREATE TABLE `crate` (
 LOCK TABLES `crate` WRITE;
 /*!40000 ALTER TABLE `crate` DISABLE KEYS */;
 INSERT INTO `crate` VALUES
-(1,0,'lcard1','127.0.0.1',11113,NULL),
+(1,3,'lcard1','127.0.0.1',11113,NULL),
 (3,2,'lcard2','127.0.0.1',11111,NULL);
 /*!40000 ALTER TABLE `crate` ENABLE KEYS */;
 UNLOCK TABLES;
@@ -114,8 +142,9 @@ DROP TABLE IF EXISTS `measureunit`;
 /*!40101 SET character_set_client = utf8mb4 */;
 CREATE TABLE `measureunit` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
+  `name` varchar(50) DEFAULT NULL,
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_uca1400_ai_ci COMMENT='Единицы измерений';
+) ENGINE=InnoDB AUTO_INCREMENT=406 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_uca1400_ai_ci COMMENT='Единицы измерений';
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -124,6 +153,142 @@ CREATE TABLE `measureunit` (
 
 LOCK TABLES `measureunit` WRITE;
 /*!40000 ALTER TABLE `measureunit` DISABLE KEYS */;
+INSERT INTO `measureunit` VALUES
+(271,'Гц'),
+(272,'В'),
+(273,'Ом'),
+(274,'А'),
+(275,'мА'),
+(276,'Вт'),
+(277,'кВт'),
+(278,'эрг/с'),
+(279,'кал/с'),
+(280,'°С'),
+(281,'К'),
+(282,'л/с'),
+(283,'мл/с'),
+(284,'м³/с'),
+(285,'Па'),
+(286,'бар'),
+(287,'мм рт.ст.'),
+(288,'атм'),
+(289,'ат'),
+(290,'ати'),
+(291,'ата'),
+(292,'кг/с'),
+(293,'г/с'),
+(294,'мг/с'),
+(295,'Па·с'),
+(296,'бар·с'),
+(297,'мм рт.ст.·с'),
+(298,'атм·с'),
+(299,'ат·с'),
+(300,'ати·с'),
+(301,'ата·с'),
+(302,'м'),
+(303,'мм'),
+(304,'см'),
+(305,'дюйм'),
+(306,'г/л'),
+(307,'кг/м³'),
+(308,'мг/см³'),
+(309,'кг'),
+(310,'г'),
+(311,'мг'),
+(312,'м²'),
+(313,'мм²'),
+(314,'см²'),
+(315,'кв.дюйм'),
+(316,'м/с'),
+(317,'мм/с'),
+(318,'см/с'),
+(319,'дюйм/с'),
+(320,'с'),
+(321,'мс'),
+(322,'мин'),
+(323,'ч'),
+(324,'Дж'),
+(325,'эрг'),
+(326,'кВт·ч'),
+(327,'кал'),
+(328,'ккал'),
+(329,'м³'),
+(330,'мм³'),
+(331,'см³'),
+(332,'л'),
+(333,'кгс'),
+(334,'гс'),
+(335,'тс'),
+(336,'мВ'),
+(337,'МПа'),
+(338,'Угловых °'),
+(339,'Рад'),
+(340,'об/мин'),
+(341,'Без размерности'),
+(342,'кгс/см²'),
+(343,'%'),
+(344,'°F'),
+(345,'гПа'),
+(346,'кПа'),
+(347,'мбар'),
+(348,'мм вод. ст.'),
+(349,'psi'),
+(350,'км/ч'),
+(351,'мкм/с'),
+(352,'м/с²'),
+(353,'мм/с²'),
+(354,'g'),
+(355,'м³/мин'),
+(356,'м³/ч'),
+(357,'л/мин'),
+(358,'л/ч'),
+(359,'кг/мин'),
+(360,'кг/ч'),
+(361,'т/с'),
+(362,'т/мин'),
+(363,'т/ч'),
+(364,'мкг'),
+(365,'т'),
+(366,'Н'),
+(367,'кН'),
+(368,'МВт'),
+(369,'ккал/с'),
+(370,'мкс'),
+(371,'об/с'),
+(372,'рад/с'),
+(373,'мкВ'),
+(374,'кВ'),
+(375,'мкА'),
+(376,'кА'),
+(377,'кОм'),
+(378,'МОм'),
+(379,'ГОм'),
+(380,'мОм'),
+(381,'кГц'),
+(382,'МГц'),
+(383,'кДж'),
+(384,'МПа'),
+(385,'кПа'),
+(386,'Па'),
+(387,'г/м³'),
+(388,'мкм'),
+(389,'км'),
+(390,'м/м'),
+(391,'мм/м'),
+(392,'мкм/м'),
+(393,'мВ/В'),
+(394,'Кл'),
+(395,'пКл'),
+(396,'кгс/см²'),
+(397,'кгс/мм²'),
+(398,'м'),
+(399,'мм'),
+(400,'см'),
+(401,'дюйм'),
+(402,'мкм'),
+(403,'км'),
+(404,'рад'),
+(405,'°');
 /*!40000 ALTER TABLE `measureunit` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -137,14 +302,12 @@ DROP TABLE IF EXISTS `module`;
 CREATE TABLE `module` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
   `crate_id` int(11) DEFAULT NULL COMMENT 'Связующий столбец с таблицей crate',
-  `moduletype_id` int(11) DEFAULT NULL,
+  `moduletype` int(11) DEFAULT NULL,
   `name` varchar(50) NOT NULL DEFAULT '',
   `description` varchar(256) DEFAULT NULL,
   PRIMARY KEY (`id`),
   KEY `FK_crate_module` (`crate_id`),
-  KEY `module_moduletype_FK` (`moduletype_id`),
-  CONSTRAINT `FK_crate_module` FOREIGN KEY (`crate_id`) REFERENCES `crate` (`id`) ON DELETE CASCADE ON UPDATE CASCADE,
-  CONSTRAINT `module_moduletype_FK` FOREIGN KEY (`moduletype_id`) REFERENCES `moduletype` (`id`)
+  KEY `module_moduletype_FK` (`moduletype`)
 ) ENGINE=InnoDB AUTO_INCREMENT=3 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_uca1400_ai_ci COMMENT='LTR-модуль крейта';
 /*!40101 SET character_set_client = @saved_cs_client */;
 
@@ -158,34 +321,6 @@ INSERT INTO `module` VALUES
 (1,1,1,'ltr11',NULL),
 (2,3,NULL,'ltr114',NULL);
 /*!40000 ALTER TABLE `module` ENABLE KEYS */;
-UNLOCK TABLES;
-
---
--- Table structure for table `moduletype`
---
-
-DROP TABLE IF EXISTS `moduletype`;
-/*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!40101 SET character_set_client = utf8mb4 */;
-CREATE TABLE `moduletype` (
-  `id` int(11) NOT NULL AUTO_INCREMENT,
-  `name` varchar(50) DEFAULT NULL,
-  `depth` int(11) DEFAULT NULL,
-  `interface` smallint(11) DEFAULT NULL,
-  `description` varchar(256) DEFAULT NULL,
-  PRIMARY KEY (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_uca1400_ai_ci COMMENT='Типы модулей';
-/*!40101 SET character_set_client = @saved_cs_client */;
-
---
--- Dumping data for table `moduletype`
---
-
-LOCK TABLES `moduletype` WRITE;
-/*!40000 ALTER TABLE `moduletype` DISABLE KEYS */;
-INSERT INTO `moduletype` VALUES
-(1,'LTR11',14,11,'Универсальный модуль АЦП с последовательным опросом каналов');
-/*!40000 ALTER TABLE `moduletype` ENABLE KEYS */;
 UNLOCK TABLES;
 
 --
@@ -207,7 +342,7 @@ CREATE TABLE `sensor` (
   KEY `sensor_calibration_FK` (`calibration_id`),
   CONSTRAINT `sensor_calibration_FK` FOREIGN KEY (`calibration_id`) REFERENCES `calibration` (`id`),
   CONSTRAINT `sensor_sensortype_FK` FOREIGN KEY (`sensortype_id`) REFERENCES `sensortype` (`id`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_uca1400_ai_ci COMMENT='Датчики';
+) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_uca1400_ai_ci COMMENT='Датчики';
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -216,6 +351,8 @@ CREATE TABLE `sensor` (
 
 LOCK TABLES `sensor` WRITE;
 /*!40000 ALTER TABLE `sensor` DISABLE KEYS */;
+INSERT INTO `sensor` VALUES
+(1,1,1,'NAME',0,NULL);
 /*!40000 ALTER TABLE `sensor` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -234,7 +371,7 @@ CREATE TABLE `sensortype` (
   `interpolation` int(11) DEFAULT NULL,
   `description` varchar(256) DEFAULT NULL,
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_uca1400_ai_ci COMMENT='Типы датчиков';
+) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_uca1400_ai_ci COMMENT='Типы датчиков';
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -243,6 +380,8 @@ CREATE TABLE `sensortype` (
 
 LOCK TABLES `sensortype` WRITE;
 /*!40000 ALTER TABLE `sensortype` DISABLE KEYS */;
+INSERT INTO `sensortype` VALUES
+(1,'TEST',1,2,3,'description');
 /*!40000 ALTER TABLE `sensortype` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -259,4 +398,4 @@ UNLOCK TABLES;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*M!100616 SET NOTE_VERBOSITY=@OLD_NOTE_VERBOSITY */;
 
--- Dump completed on 2026-06-23 16:27:25
+-- Dump completed on 2026-06-24 16:20:08
