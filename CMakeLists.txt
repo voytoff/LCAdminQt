@@ -21,8 +21,11 @@ qt_standard_project_setup()
 set(ADMIN_RESOURCE_FILES res.qrc)
 qt6_add_resources(ADMIN_PROJECT_RESOURCES ${ADMIN_RESOURCE_FILES})
 
+set(APP_ICON_RESOURCE_WINDOWS "appicon.rc")
+
 qt_add_executable(LCAdmin
     ${ADMIN_PROJECT_RESOURCES}
+    ${APP_ICON_RESOURCE_WINDOWS}
     main.cpp types.h
     istatewidget.h treeitemtype.h
     mainwindow.h mainwindow.cpp
@@ -53,7 +56,6 @@ qt_add_executable(LCAdmin
     db/modeltablesensortype.h db/modeltablesensortype.cpp
     db/modeltablemeasureunit.h db/modeltablemeasureunit.cpp
     ctl/checkboxdelegate.h ctl/checkboxdelegate.cpp
-
 )
 
 set(SCHEMEHELPEREDIR "../SchemeHelperQt")
