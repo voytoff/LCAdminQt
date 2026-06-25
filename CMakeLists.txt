@@ -27,6 +27,7 @@ qt_add_executable(LCAdmin
     ${ADMIN_PROJECT_RESOURCES}
     ${APP_ICON_RESOURCE_WINDOWS}
     main.cpp types.h
+    enums.h enums.cpp
     istatewidget.h treeitemtype.h
     mainwindow.h mainwindow.cpp
     settings.h settings.cpp
@@ -45,17 +46,20 @@ qt_add_executable(LCAdmin
     db/modeltablemodule.h db/modeltablemodule.cpp
     db/modeltablebase.cpp db/modeltablebase.h
     db/modeltablecrate.h db/modeltablecrate.cpp
-    db/modeltablecratetype.h db/modeltablecratetype.cpp
-    db/modeltablemoduletype.h db/modeltablemoduletype.cpp
+    #db/modeltablecratetype.h db/modeltablecratetype.cpp
+    #db/modeltablemoduletype.h db/modeltablemoduletype.cpp
     db/modeltablecalibration.h db/modeltablecalibration.cpp
     ctl/fixedlistdelegate.h ctl/fixedlistdelegate.cpp
     ctl/enumlistdelegate.h ctl/enumlistdelegate.cpp
-    enums.h enums.cpp
     ctl/spinboxdelegate.h ctl/spinboxdelegate.cpp
     db/modeltablesensor.h db/modeltablesensor.cpp
     db/modeltablesensortype.h db/modeltablesensortype.cpp
     db/modeltablemeasureunit.h db/modeltablemeasureunit.cpp
     ctl/checkboxdelegate.h ctl/checkboxdelegate.cpp
+    ctl/dateeditdelegate.h ctl/dateeditdelegate.cpp
+    ctl/datetimeeditdelegate.h
+    ctl/datetimeeditdelegate.cpp
+    ctl/sqlcombobox.h ctl/sqlcombobox.cpp
 )
 
 set(SCHEMEHELPEREDIR "../SchemeHelperQt")
@@ -65,6 +69,10 @@ add_subdirectory(${SCHEMEHELPEREDIR} SchemeHelper)
 set(DBEXTENSIONDIR "../DBExtensionQt")
 include_directories(${DBEXTENSIONDIR}/lib)
 add_subdirectory(${DBEXTENSIONDIR} DBExtension)
+
+set(SCHEMEHELPEREDIR "../LCardQt/lib")
+include_directories(${SCHEMEHELPEREDIR})
+add_subdirectory(${SCHEMEHELPEREDIR} LCard)
 
 include_directories(db ctl)
 
@@ -87,6 +95,7 @@ target_link_libraries(LCAdmin PRIVATE
     Qt6::Svg
     SchemeHelper
     DBExtension
+    LCard
 )
 
 include(GNUInstallDirs)

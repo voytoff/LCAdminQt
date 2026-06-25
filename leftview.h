@@ -7,6 +7,7 @@
 #include <QGridLayout>
 #include <QSplitter>
 #include <QByteArray>
+#include <QWidget>
 
 class LeftView : public QWidget
 {
@@ -20,11 +21,13 @@ public:
   QAction *toggleDictionAction() const;
 
 private:
-  DocBase *optionDoc;
   DocBase *dictionDoc;
+  DocBase *optionDoc;
   TreeView *optionView;
   TreeView *dictionView;
   QSplitter *splitter;
+
+  QLayout* createOptionView();
 
 signals:
 };

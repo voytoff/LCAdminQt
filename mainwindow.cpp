@@ -25,8 +25,8 @@ MainWindow::MainWindow(QWidget *parent)
   : QMainWindow{parent}
   , schemeHelper(new SchemeHelper(this, ":/images/admin.png"))
   , settings(new Settings(this))
-  , db(new DB(settings->hostName(), settings->hostPort(), settings->databaseName(), settings->userName(), settings->password(), settings->timeout(), this))
-  , optionView(new TreeView("Установки", this))
+  , db(new DB(DatabaseName, settings->hostName(), settings->hostPort(), settings->databaseName(), settings->userName(), settings->password(), settings->timeout(), this))
+  , optionView(new TreeView("Эксперимент", this))
   , dictionView(new TreeView("Справочник", this))
   , tabView(new TabView(this))
   , splitter(new QSplitter(this))
@@ -281,7 +281,7 @@ void MainWindow::doSettings() {
     tabView->closeAll();
     db->close();
     delete db;
-    db = new DB(settings->hostName(), settings->hostPort(), settings->databaseName(), settings->userName(), settings->password(), settings->timeout());
+    db = new DB(DatabaseName, settings->hostName(), settings->hostPort(), settings->databaseName(), settings->userName(), settings->password(), settings->timeout());
     loadData();
   }
 }

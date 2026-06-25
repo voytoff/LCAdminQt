@@ -4,6 +4,7 @@
 #include <QObject>
 #include <QMetaEnum>
 #include <QMap>
+#include "types.h"
 
 class Enums : public QObject {
   Q_OBJECT
@@ -11,12 +12,23 @@ public:
   explicit Enums(QObject *parent = nullptr);
 
   template <typename T>
-  static QMap<int, QString> create() {
+  static QMap<int, QString> create(QList<StringPair> replaces = {{"_", "-"}}) {
     QMap<int, QString> enumMap;
     QMetaEnum metaEnum = QMetaEnum::fromType<T>();
     for (int i = 0; i < metaEnum.keyCount(); ++i) {
-      QString name = i == 0 ? "" : QString::fromUtf8(metaEnum.key(i)).replace("_", "-");
-      if (name == "-") name = "";
+      QString name = i == 0 ? "" : QString::fromUtf8(metaEnum.key(i));
+      foreach (auto r, replaces)
+        name = name.replace(r.first, r.second);
+      enumMap.insert(metaEnum.value(i), name);
+    }
+    return enumMap;
+  }
+  template <typename T>
+  static QMap<int, QString> create(const EnumMap &map) {
+    QMap<int, QString> enumMap;
+    QMetaEnum metaEnum = QMetaEnum::fromType<T>();
+    for (int i = 0; i < metaEnum.keyCount(); ++i) {
+      QString name = metaEnum.key(i) == 0 ? "" : map.value(i).description;
       enumMap.insert(metaEnum.value(i), name);
     }
     return enumMap;
@@ -24,9 +36,9 @@ public:
 
   /// Типы документов для идентификации в QTabWidget
   enum documentType : int {
-    cratetype,
+    //cratetype,
     crate,
-    moduletype,
+    //moduletype,
     module,
     calibration,
     measureunit,
@@ -61,7 +73,47 @@ public:
     LTR24	= 24,   // Сигма-дельта АЦП для виброметрии, фазометрии, акустики, сейсмометрии
     LTR34 = 34,   // Многоканальный ЦАП для систем статического и динамического аналогового управления
   };
-  Q_ENUM(moduleType) // Предоставляет доступ к перечислению crateType системе метаобъектов
+  Q_ENUM(moduleType)
+
+  /// Тип градуировки
+  enum calibrationType : int {
+    __calibrationType = 0,
+    tabular = 1,          // Табличная
+    polynomial = 2,       // Полиномиальная
+    thermalResistance = 3,// Термосопротивление
+    multiRange = 4,       // Мультидиапазонная
+    thermoPair = 5,       // Термопара
+    strainGauge = 6,      // Тензометрическая
+  };
+  Q_ENUM(calibrationType)
+  // атрибуты градуировки (можно сделать static внутри класса или cpp-файла)
+  static const EnumMap calibrationTypeMap;
+
+  /// Источник градуировки
+  enum calibrationSource : int {
+    __calibrationSource = 0,
+    passport = 1,     // Паспорт
+    throughRoute = 2, // Сквозная градуировка
+  };
+  Q_ENUM(calibrationSource)
+  // атрибуты градуировки (можно сделать static внутри класса или cpp-файла)
+  static const EnumMap calibrationSourceMap;
+
+  /// Источник градуировки
+  enum interpolationType : int {
+    __interpolationType = 0,
+    piecewiseLine = 1,      // Кусочно-линейная
+    piecewiseLineExtra = 2, // Кусочно-линейная с экстраполяцией
+  };
+  Q_ENUM(interpolationType)
+  // атрибуты градуировки (можно сделать static внутри класса или cpp-файла)
+  static const EnumMap interpolationTypeMap;
+
+public slots:
+  EnumAttributes getAttributes(Enums::calibrationType value);
+  EnumAttributes getAttributes(Enums::calibrationSource value);
+  EnumAttributes getAttributes(Enums::interpolationType value);
+
 };
 
 #endif // ENUMS_H

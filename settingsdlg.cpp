@@ -39,7 +39,7 @@ SettingsDlg::~SettingsDlg() {
 }
 
 void SettingsDlg::test() {
-  DB db(ui->hostName->text(), ui->hostPort->text().toInt(), ui->databaseName->text(), ui->userName->text(), ui->password->text(), ui->timeout->value());
+  DB db(DatabaseName, ui->hostName->text(), ui->hostPort->text().toInt(), ui->databaseName->text(), ui->userName->text(), ui->password->text(), ui->timeout->value());
   if (db.open()) QMessageBox::information(this, title, QString("Подключение к узлу %1:%2 выполнено успешно.").arg(ui->hostName->text(), ui->hostPort->text()));
   else QMessageBox::critical(this, title,  QString("Указаны неверные параметры для подключения к узлу %1:%2, или база данных на узле отсутствует.").arg(ui->hostName->text(), ui->hostPort->text()));
 }

@@ -3,8 +3,15 @@
 
 #include <QString>
 #include <QObject>
+#include <QMap>
+
+struct EnumAttributes {
+  QString description;
+  QVariantList param;
+};
 
 using StringPair = std::pair<QString, QString>;
+using EnumMap = QMap<int, EnumAttributes>;
 
 class ModelTableBase;
 class TableView;
@@ -30,6 +37,8 @@ const QString title = "Администратор";
 const QString ready = "Готово";
 const int readyTimeout = 5000;
 const int minColumnSize = 100;
+const QString dateFormat = "dd.MM.yyyy";
+const QString dateTimeFormat = "dd.MM.yyyy HH:mm:ss";
 
 /// Иконки
 //const QString icon_cratetype = ":/images/db/cratetype.png";

@@ -17,6 +17,7 @@ QList<StringPair> ModelTableCrate::columns() const {
     {"cratetype", "Тип крейта"},
     {"name", "Название"},
     {"host", "Расположение"},
-    {"port", "Порт"}
+    {"port", "Порт"},
+    {"description", "Описание"}
   };
 }
