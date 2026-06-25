@@ -1,3 +1,4 @@
+#include "db.h"
 #include "modeltablebase.h"
 #include "modeltablecalibration.h"
 #include "modeltablecrate.h"
@@ -10,7 +11,7 @@
 #include <QSqlRelationalDelegate>
 
 ModelTableBase::ModelTableBase(const QString &table, QObject *parent)
-  : QSqlRelationalTableModel{parent} {
+  : QSqlRelationalTableModel{parent, DB::instance(DatabaseName)} {
 
   setEditStrategy(QSqlTableModel::OnManualSubmit); // OnFieldChange
   setTable(table);
@@ -62,8 +63,6 @@ QList<int> ModelTableBase::boolIds() const {
 
 void ModelTableBase::setItemDelegates(QTableView *view) {
   view->setItemDelegate(new QSqlRelationalDelegate(view));
-  //foreach (int index, boolIds())
-  //  view->setItemDelegateForColumn(index, new CheckBoxDelegate(view));
 }
 
 Qt::ItemFlags ModelTableBase::flags(const QModelIndex &index) const {

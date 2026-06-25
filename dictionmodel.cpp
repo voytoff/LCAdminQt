@@ -35,13 +35,6 @@ void DictionModel::loadChildren(TreeItem *parentItem) const {
       item->appendChild(child);
     }
   }
-  //else if (nextLevel == 1) {
-  //  // Уровень 1: LTR-Модули
-  //  foreach (dbModule *i, db->modules(item->id())) {
-  //    TreeItem *child = new TreeItem({ i->name }, i->id, nextLevel, item);
-  //    item->appendChild(child);
-  //  }
-  //}
   else {
     qDebug() << "Максимальная глубина достигнута";
   }

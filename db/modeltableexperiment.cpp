@@ -6,8 +6,8 @@ ModelTableExperiment::ModelTableExperiment(const QString &table, QObject *parent
 
 void ModelTableExperiment::setItemDelegates(QTableView *view) {
   ModelTableBase::setItemDelegates(view);
-  view->setItemDelegateForColumn(fieldIndex("date"), new DateTimeEditDelegate());
-  view->setItemDelegateForColumn(fieldIndex("date"), new DateTimeEditDelegate());
+  view->setItemDelegateForColumn(fieldIndex("startDate"), new DateTimeEditDelegate());
+  view->setItemDelegateForColumn(fieldIndex("stopDate"), new DateTimeEditDelegate());
 }
 
 QList<StringPair> ModelTableExperiment::columns() const {
