@@ -7,6 +7,12 @@ SqlComboBox::SqlComboBox(const QString &query, QWidget *parent)
   : QComboBox{parent}
   , query(query) {}
 
+bool SqlComboBox::setCurrentData(const QVariant &data) {
+  int index = findData(data);
+  if (index > -1) setCurrentIndex(index);
+  return index > -1;
+}
+
 void SqlComboBox::showPopup() {
   // Очищаем старые данные
   auto value = currentData();
@@ -19,9 +25,7 @@ void SqlComboBox::showPopup() {
     QString name = q.value("name").toString();
     addItem(name, id);
   }
-  int index = findData(value);
-  if (index > -1) setCurrentIndex(index);
-
+  setCurrentData(value);
   // Вызываем базовый метод, чтобы список корректно открылся
   QComboBox::showPopup();
 }

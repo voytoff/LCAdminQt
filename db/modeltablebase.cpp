@@ -1,6 +1,7 @@
 #include "modeltablebase.h"
 #include "modeltablecalibration.h"
 #include "modeltablecrate.h"
+#include "modeltableexperiment.h"
 #include "modeltablemeasureunit.h"
 #include "modeltablemodule.h"
 #include "modeltablesensortype.h"
@@ -18,9 +19,9 @@ ModelTableBase::ModelTableBase(const QString &table, QObject *parent)
 ModelTableBase *ModelTableBase::create(Enums::documentType type, const QString &table) {
   ModelTableBase* result = nullptr;
   switch (type) {
-  //case Enums::documentType::cratetype:
-  //  result = new ModelTableCrateType(table);
-  //  break;
+  case Enums::documentType::experiment:
+    result = new ModelTableExperiment(table);
+    break;
   case Enums::documentType::crate:
     result = new ModelTableCrate(table);
     break;

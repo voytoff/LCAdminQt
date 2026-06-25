@@ -36,8 +36,6 @@ qt_add_executable(LCAdmin
     optionmodel.h optionmodel.cpp
     treeitem.h treeitem.cpp
     tabview.h tabview.cpp
-    crateview.h crateview.cpp crateview.ui
-    moduleview.h moduleview.cpp moduleview.ui
     docbase.h docbase.cpp
     dictionmodel.h dictionmodel.cpp
     leftview.h leftview.cpp
@@ -46,7 +44,7 @@ qt_add_executable(LCAdmin
     db/modeltablemodule.h db/modeltablemodule.cpp
     db/modeltablebase.cpp db/modeltablebase.h
     db/modeltablecrate.h db/modeltablecrate.cpp
-    #db/modeltablecratetype.h db/modeltablecratetype.cpp
+    db/modeltableexperiment.h db/modeltableexperiment.cpp
     #db/modeltablemoduletype.h db/modeltablemoduletype.cpp
     db/modeltablecalibration.h db/modeltablecalibration.cpp
     ctl/fixedlistdelegate.h ctl/fixedlistdelegate.cpp

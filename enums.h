@@ -44,6 +44,7 @@ public:
     measureunit,
     sensortype,
     sensor,
+    experiment,
   };
   Q_ENUM(documentType)
 

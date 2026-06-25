@@ -1,6 +1,4 @@
 #include "leftview.h"
-#include "DBExtension_global.h"
-#include "db.h"
 #include "sqlcombobox.h"
 #include <QVBoxLayout>
 #include <QComboBox>

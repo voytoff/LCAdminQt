@@ -49,5 +49,6 @@ const QString icon_calibration = ":/images/db/calibration.png";
 const QString icon_measureunit = ":/images/db/measureunit.png";
 const QString icon_sensortype = ":/images/db/sensortype.png";
 const QString icon_sensor = ":/images/db/sensor.png";
+const QString icon_experiment = ":/images/db/experiment.png";
 
 #endif // TYPES_H
