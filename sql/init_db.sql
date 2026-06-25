@@ -82,8 +82,9 @@ DROP TABLE IF EXISTS `calibration`;
 CREATE TABLE `calibration` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
   `name` varchar(50) DEFAULT NULL,
+  `type` int(11) DEFAULT NULL COMMENT 'Тип градуировки',
   `source` int(11) DEFAULT NULL,
-  `type` int(11) DEFAULT NULL,
+  `interpolation` int(11) DEFAULT NULL,
   `active` tinyint(1) DEFAULT NULL,
   `date` date DEFAULT NULL,
   `description` varchar(256) DEFAULT NULL,
@@ -98,7 +99,7 @@ CREATE TABLE `calibration` (
 LOCK TABLES `calibration` WRITE;
 /*!40000 ALTER TABLE `calibration` DISABLE KEYS */;
 INSERT INTO `calibration` VALUES
-(1,'first',NULL,NULL,1,'2026-06-11',NULL);
+(1,'first',2,1,1,1,'2026-06-11','');
 /*!40000 ALTER TABLE `calibration` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -128,9 +129,38 @@ CREATE TABLE `crate` (
 LOCK TABLES `crate` WRITE;
 /*!40000 ALTER TABLE `crate` DISABLE KEYS */;
 INSERT INTO `crate` VALUES
-(1,3,'lcard1','127.0.0.1',11113,NULL),
+(1,3,'lcard1','127.0.0.1',11111,NULL),
 (3,2,'lcard2','127.0.0.1',11111,NULL);
 /*!40000 ALTER TABLE `crate` ENABLE KEYS */;
+UNLOCK TABLES;
+
+--
+-- Table structure for table `experiment`
+--
+
+DROP TABLE IF EXISTS `experiment`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8mb4 */;
+CREATE TABLE `experiment` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `name` varchar(50) NOT NULL,
+  `startDate` datetime DEFAULT NULL,
+  `stopDate` datetime DEFAULT NULL,
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB AUTO_INCREMENT=5 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_uca1400_ai_ci COMMENT='Эксперимент';
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Dumping data for table `experiment`
+--
+
+LOCK TABLES `experiment` WRITE;
+/*!40000 ALTER TABLE `experiment` DISABLE KEYS */;
+INSERT INTO `experiment` VALUES
+(1,'TEST1',NULL,NULL),
+(2,'TEST2',NULL,NULL),
+(4,'тест 3',NULL,NULL);
+/*!40000 ALTER TABLE `experiment` ENABLE KEYS */;
 UNLOCK TABLES;
 
 --
@@ -318,7 +348,7 @@ CREATE TABLE `module` (
 LOCK TABLES `module` WRITE;
 /*!40000 ALTER TABLE `module` DISABLE KEYS */;
 INSERT INTO `module` VALUES
-(1,1,1,'ltr11',NULL),
+(1,1,11,'ltr11',NULL),
 (2,3,NULL,'ltr114',NULL);
 /*!40000 ALTER TABLE `module` ENABLE KEYS */;
 UNLOCK TABLES;
@@ -398,4 +428,4 @@ UNLOCK TABLES;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*M!100616 SET NOTE_VERBOSITY=@OLD_NOTE_VERBOSITY */;
 
--- Dump completed on 2026-06-24 16:20:08
+-- Dump completed on 2026-06-25 16:24:00
