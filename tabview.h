@@ -21,8 +21,8 @@ public:
    * @param icon Иконка
    * @return
    */
-  int append(QWidget *control, const QString &title, const Enums::documentType &type, const int &id = 0, const QString &icon = nullptr);
-  int append(QWidget *control, const QString &title, const QVariantList &data);
+  int append(QWidget *widget, const QString &title, const Enums::documentType &type, const int &id = 0, const QString &icon = nullptr);
+  int append(QWidget *widget, const QString &title, const QVariantList &data);
   bool removeTab(int index);
   bool closeAll();
   template<typename T>

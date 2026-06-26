@@ -77,6 +77,7 @@ private:
 
 private slots:
   void loadData();
+  /** Открывает выбранную таблицу */
   void openTable(const QModelIndex &index);
   void switchTab(QAction *action);
   void about();

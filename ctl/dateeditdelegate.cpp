@@ -15,12 +15,10 @@ QWidget* DateEditDelegate::createEditor(QWidget* parent, const QStyleOptionViewI
 void DateEditDelegate::setEditorData(QWidget* editor, const QModelIndex& index) const {
   QDate date = index.model()->data(index, Qt::EditRole).toDate();
   QDateEdit* dateEdit = qobject_cast<QDateEdit*>(editor);
-  if (dateEdit)
-    dateEdit->setDate(date);
+  if (dateEdit) dateEdit->setDate(date);
 }
 
 void DateEditDelegate::setModelData(QWidget* editor, QAbstractItemModel* model, const QModelIndex& index) const {
   QDateEdit* dateEdit = qobject_cast<QDateEdit*>(editor);
-  if (dateEdit)
-    model->setData(index, dateEdit->date(), Qt::EditRole);
+  if (dateEdit) model->setData(index, dateEdit->date(), Qt::EditRole);
 }

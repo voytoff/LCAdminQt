@@ -1,12 +1,12 @@
 #include "db.h"
 #include "modeltablebase.h"
-#include "modeltablecalibration.h"
 #include "modeltablecrate.h"
 #include "modeltableexperiment.h"
 #include "modeltablemeasureunit.h"
 #include "modeltablemodule.h"
 #include "modeltablesensortype.h"
 #include "modeltablesensor.h"
+#include "../tableview.h"
 
 #include <QSqlRelationalDelegate>
 
@@ -32,9 +32,9 @@ ModelTableBase *ModelTableBase::create(Enums::documentType type, const QString &
   case Enums::documentType::module:
     result = new ModelTableModule(table);
     break;
-  case Enums::documentType::calibration:
-    result = new ModelTableCalibration(table);
-    break;
+  //case Enums::documentType::calibration:
+  //  result = new ModelTableCalibration(table);
+  //  break;
   case Enums::documentType::sensortype:
     result = new ModelTableSensorType(table);
     break;
@@ -50,6 +50,10 @@ ModelTableBase *ModelTableBase::create(Enums::documentType type, const QString &
   result->setJoinMode(QSqlRelationalTableModel::LeftJoin);
   result->select();
   return result;
+}
+
+QWidget *ModelTableBase::createEditView(const QString &title, QWidget *parent) {
+  return new TableView(this, title);
 }
 
 QList<int> ModelTableBase::boolIds() const {

@@ -291,9 +291,8 @@ void MainWindow::openTable(const QModelIndex &index) {
     auto data = dictionModel->get(index.row());
     ModelTableBase *model = ModelTableBase::create(data.type, data.table);
     if (model) {
-      TableView *tableView = new TableView(model, data.title, this);
-      tabView->append(tableView, data.title, data.type, data.type, data.icon);
-      //tableView->setItemDelegate(new QSqlRelationalDelegate(tableView)); перенес вызов в TableView
+      QWidget *editor = model->createEditView(data.title, this);// new TableView(model, data.title, this);
+      tabView->append(editor, data.title, data.type, data.type, data.icon);
     }
   }
 }

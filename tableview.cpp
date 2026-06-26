@@ -12,7 +12,6 @@
 
 TableView::TableView(ModelTableBase *model, const QString &title, QWidget *parent)
   : QTableView{parent}
-  //, model(model)
   , nodeName(title) {
 
   setModel(model);
@@ -26,6 +25,7 @@ TableView::TableView(ModelTableBase *model, const QString &title, QWidget *paren
     setColumnHidden(id, true);
   horizontalHeader()->setMinimumSectionSize(minColumnSize);
   resizeColumnsToContents();
+  setStyleSheet("QTableView { border: none; }"); // Убираем рамку
 }
 
 int TableView::index(const QString &fieldName) const {

@@ -15,5 +15,6 @@ public:
   void setEditorData(QWidget* editor, const QModelIndex& index) const override;
   // Сохраняет измененную дату из QDateEdit обратно в модель
   void setModelData(QWidget* editor, QAbstractItemModel* model, const QModelIndex& index) const override;
+  QString displayText(const QVariant &value, const QLocale &locale) const override;
 };
 #endif // DATETIMEEDITDELEGATE_H

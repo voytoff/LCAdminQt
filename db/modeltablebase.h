@@ -18,6 +18,7 @@ public:
   bool setData(const QModelIndex &index, const QVariant &value, int role) override;
 
   static ModelTableBase *create(Enums::documentType type, const QString &table);
+  virtual QWidget *createEditView(const QString &title, QWidget *parent);
 
 private:
   QTableView *view;

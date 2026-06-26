@@ -20,6 +20,7 @@ public:
   QByteArray windowState(QByteArray value = QByteArray());
   QByteArray splitter(QByteArray value = 0);
   QByteArray splitter2(QByteArray value = 0);
+  QByteArray splitter3(QByteArray value = 0);
 
   QString hostName(QString value = nullptr);
   int hostPort(int value = 0);

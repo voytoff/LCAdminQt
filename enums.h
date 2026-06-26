@@ -36,14 +36,13 @@ public:
 
   /// Типы документов для идентификации в QTabWidget
   enum documentType : int {
-    //cratetype,
     crate,
-    //moduletype,
     module,
-    calibration,
     measureunit,
-    sensortype,
     sensor,
+    sensortype,
+    sensorcalibration,
+    sensortypecalibration,
     experiment,
   };
   Q_ENUM(documentType)

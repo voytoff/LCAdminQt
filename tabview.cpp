@@ -13,7 +13,6 @@ TabView::TabView(QWidget *parent)
 
   auto mainWindow = (MainWindow*)parentWidget();
   connect(this, &QTabWidget::currentChanged, mainWindow, &MainWindow::updateWindowMenu);
-  //connect(this, &QTabWidget::tabBarClicked, mainWindow, &MainWindow::updateWindowMenu);
   connect(this, &TabView::inserted, mainWindow, &MainWindow::updateWindowMenu);
   connect(this, &TabView::removed, mainWindow, &MainWindow::updateWindowMenu);
 }
@@ -64,9 +63,9 @@ void TabView::tabInserted(int index) {
   emit inserted(index);
 }
 
-int TabView::append(QWidget *control, const QString &title, const Enums::documentType &type, const int &id, const QString &icon) {
+int TabView::append(QWidget *widget, const QString &title, const Enums::documentType &type, const int &id, const QString &icon) {
   auto data = QVariantList({type, id, icon});
-  int index = append(control, title, data);
+  int index = append(widget, title, data);
   if (icon.length() > 0)
     setTabIcon(index, QIcon(icon));
   return index;

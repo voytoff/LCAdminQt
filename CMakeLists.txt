@@ -58,21 +58,37 @@ qt_add_executable(LCAdmin
     ctl/datetimeeditdelegate.h
     ctl/datetimeeditdelegate.cpp
     ctl/sqlcombobox.h ctl/sqlcombobox.cpp
+    ctl/styledelegatebase.h ctl/styledelegatebase.cpp
+    vw/customviewbase.h vw/customviewbase.cpp
+    vw/sensorview.h vw/sensorview.cpp
 )
 
 set(SCHEMEHELPEREDIR "../SchemeHelperQt")
 include_directories(${SCHEMEHELPEREDIR})
-add_subdirectory(${SCHEMEHELPEREDIR} SchemeHelper)
+if (NOT TARGET SchemeHelper)
+    add_subdirectory(${SCHEMEHELPEREDIR} SchemeHelper)
+endif()
 
-set(DBEXTENSIONDIR "../DBExtensionQt")
-include_directories(${DBEXTENSIONDIR}/lib)
-add_subdirectory(${DBEXTENSIONDIR} DBExtension)
+set(DBEXTENSIONDIR "../DBExtensionQt/lib")
+include_directories(${DBEXTENSIONDIR})
+if (NOT TARGET DBExtension)
+    add_subdirectory(${DBEXTENSIONDIR} DBExtension)
+endif()
 
-set(SCHEMEHELPEREDIR "../LCardQt/lib")
-include_directories(${SCHEMEHELPEREDIR})
-add_subdirectory(${SCHEMEHELPEREDIR} LCard)
+set(LCARDDIR "../LCardQt/lib")
+include_directories(${LCARDDIR})
+if (NOT TARGET LCard)
+    add_subdirectory(${LCARDDIR} LCard)
+endif()
 
-include_directories(db ctl)
+set(GLOBALLIBDIR "../GlobalLibQt")
+include_directories(${GLOBALLIBDIR})
+if (NOT TARGET GlobalLib)
+    add_subdirectory(${GLOBALLIBDIR} GlobalLib)
+endif()
+
+
+include_directories(db ctl vw)
 
 # Qt for iOS sets MACOSX_BUNDLE_GUI_IDENTIFIER automatically since Qt 6.1.
 # If you are developing for iOS or macOS you should consider setting an
@@ -94,6 +110,7 @@ target_link_libraries(LCAdmin PRIVATE
     SchemeHelper
     DBExtension
     LCard
+    GlobalLib
 )
 
 include(GNUInstallDirs)

@@ -38,6 +38,12 @@ QByteArray Settings::splitter2(QByteArray value) {
   return this->value("splitter2").toByteArray();
 }
 
+QByteArray Settings::splitter3(QByteArray value) {
+  if (!value.isEmpty())
+    this->setValue("splitter3", value);
+  return this->value("splitter3").toByteArray();
+}
+
 QString Settings::hostName(QString value) {
   if (!value.isEmpty())
     this->setValue("hostName", value);

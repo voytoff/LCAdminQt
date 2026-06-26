@@ -28,7 +28,7 @@ protected:
   QList<TreeItemType> defs = {
     {Enums::documentType::crate, "Крейт", "crate", icon_crate},
     {Enums::documentType::module, "Модуль", "module", icon_module},
-    {Enums::documentType::calibration, "Градуировка", "calibration", icon_calibration},
+    //{Enums::documentType::calibration, "Градуировка", "calibration", icon_calibration},
     {Enums::documentType::sensortype, "Тип датчика", "sensortype", icon_sensortype},
     {Enums::documentType::sensor, "Датчик", "sensor", icon_sensor},
     {Enums::documentType::measureunit, "Единица измерения", "measureunit", icon_measureunit},
