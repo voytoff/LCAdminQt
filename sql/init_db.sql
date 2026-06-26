@@ -1,7 +1,7 @@
 /*M!999999\- enable the sandbox mode */
 -- MariaDB dump 10.19-11.7.2-MariaDB, for Win64 (AMD64)
 --
--- Host: localhost    Database: 106org
+-- Host: 192.168.10.213    Database: 106org
 -- ------------------------------------------------------
 -- Server version	12.3.2-MariaDB
 
@@ -15,6 +15,37 @@
 /*!40014 SET @OLD_FOREIGN_KEY_CHECKS=@@FOREIGN_KEY_CHECKS, FOREIGN_KEY_CHECKS=0 */;
 /*!40101 SET @OLD_SQL_MODE=@@SQL_MODE, SQL_MODE='NO_AUTO_VALUE_ON_ZERO' */;
 /*M!100616 SET @OLD_NOTE_VERBOSITY=@@NOTE_VERBOSITY, NOTE_VERBOSITY=0 */;
+
+--
+-- Table structure for table `__calibration`
+--
+
+DROP TABLE IF EXISTS `__calibration`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8mb4 */;
+CREATE TABLE `__calibration` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `name` varchar(50) DEFAULT NULL,
+  `type` int(11) DEFAULT NULL COMMENT 'Тип градуировки',
+  `source` int(11) DEFAULT NULL,
+  `interpolation` int(11) DEFAULT NULL,
+  `active` tinyint(1) DEFAULT NULL,
+  `date` date DEFAULT NULL,
+  `description` varchar(256) DEFAULT NULL,
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_uca1400_ai_ci COMMENT='Градуировки';
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Dumping data for table `__calibration`
+--
+
+LOCK TABLES `__calibration` WRITE;
+/*!40000 ALTER TABLE `__calibration` DISABLE KEYS */;
+INSERT INTO `__calibration` VALUES
+(1,'first',2,1,1,1,'2026-06-11','');
+/*!40000 ALTER TABLE `__calibration` ENABLE KEYS */;
+UNLOCK TABLES;
 
 --
 -- Table structure for table `__cratetype`
@@ -73,37 +104,6 @@ INSERT INTO `__moduletype` VALUES
 UNLOCK TABLES;
 
 --
--- Table structure for table `calibration`
---
-
-DROP TABLE IF EXISTS `calibration`;
-/*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!40101 SET character_set_client = utf8mb4 */;
-CREATE TABLE `calibration` (
-  `id` int(11) NOT NULL AUTO_INCREMENT,
-  `name` varchar(50) DEFAULT NULL,
-  `type` int(11) DEFAULT NULL COMMENT 'Тип градуировки',
-  `source` int(11) DEFAULT NULL,
-  `interpolation` int(11) DEFAULT NULL,
-  `active` tinyint(1) DEFAULT NULL,
-  `date` date DEFAULT NULL,
-  `description` varchar(256) DEFAULT NULL,
-  PRIMARY KEY (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_uca1400_ai_ci COMMENT='Градуировки';
-/*!40101 SET character_set_client = @saved_cs_client */;
-
---
--- Dumping data for table `calibration`
---
-
-LOCK TABLES `calibration` WRITE;
-/*!40000 ALTER TABLE `calibration` DISABLE KEYS */;
-INSERT INTO `calibration` VALUES
-(1,'first',2,1,1,1,'2026-06-11','');
-/*!40000 ALTER TABLE `calibration` ENABLE KEYS */;
-UNLOCK TABLES;
-
---
 -- Table structure for table `crate`
 --
 
@@ -157,7 +157,7 @@ CREATE TABLE `experiment` (
 LOCK TABLES `experiment` WRITE;
 /*!40000 ALTER TABLE `experiment` DISABLE KEYS */;
 INSERT INTO `experiment` VALUES
-(1,'TEST1',NULL,NULL),
+(1,'TEST1','2023-06-15 06:02:45',NULL),
 (2,'TEST2',NULL,NULL),
 (4,'тест 3',NULL,NULL);
 /*!40000 ALTER TABLE `experiment` ENABLE KEYS */;
@@ -174,7 +174,7 @@ CREATE TABLE `measureunit` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
   `name` varchar(50) DEFAULT NULL,
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=406 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_uca1400_ai_ci COMMENT='Единицы измерений';
+) ENGINE=InnoDB AUTO_INCREMENT=541 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_uca1400_ai_ci COMMENT='Единицы измерений';
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -184,141 +184,141 @@ CREATE TABLE `measureunit` (
 LOCK TABLES `measureunit` WRITE;
 /*!40000 ALTER TABLE `measureunit` DISABLE KEYS */;
 INSERT INTO `measureunit` VALUES
-(271,'Гц'),
-(272,'В'),
-(273,'Ом'),
-(274,'А'),
-(275,'мА'),
-(276,'Вт'),
-(277,'кВт'),
-(278,'эрг/с'),
-(279,'кал/с'),
-(280,'°С'),
-(281,'К'),
-(282,'л/с'),
-(283,'мл/с'),
-(284,'м³/с'),
-(285,'Па'),
-(286,'бар'),
-(287,'мм рт.ст.'),
-(288,'атм'),
-(289,'ат'),
-(290,'ати'),
-(291,'ата'),
-(292,'кг/с'),
-(293,'г/с'),
-(294,'мг/с'),
-(295,'Па·с'),
-(296,'бар·с'),
-(297,'мм рт.ст.·с'),
-(298,'атм·с'),
-(299,'ат·с'),
-(300,'ати·с'),
-(301,'ата·с'),
-(302,'м'),
-(303,'мм'),
-(304,'см'),
-(305,'дюйм'),
-(306,'г/л'),
-(307,'кг/м³'),
-(308,'мг/см³'),
-(309,'кг'),
-(310,'г'),
-(311,'мг'),
-(312,'м²'),
-(313,'мм²'),
-(314,'см²'),
-(315,'кв.дюйм'),
-(316,'м/с'),
-(317,'мм/с'),
-(318,'см/с'),
-(319,'дюйм/с'),
-(320,'с'),
-(321,'мс'),
-(322,'мин'),
-(323,'ч'),
-(324,'Дж'),
-(325,'эрг'),
-(326,'кВт·ч'),
-(327,'кал'),
-(328,'ккал'),
-(329,'м³'),
-(330,'мм³'),
-(331,'см³'),
-(332,'л'),
-(333,'кгс'),
-(334,'гс'),
-(335,'тс'),
-(336,'мВ'),
-(337,'МПа'),
-(338,'Угловых °'),
-(339,'Рад'),
-(340,'об/мин'),
-(341,'Без размерности'),
-(342,'кгс/см²'),
-(343,'%'),
-(344,'°F'),
-(345,'гПа'),
-(346,'кПа'),
-(347,'мбар'),
-(348,'мм вод. ст.'),
-(349,'psi'),
-(350,'км/ч'),
-(351,'мкм/с'),
-(352,'м/с²'),
-(353,'мм/с²'),
-(354,'g'),
-(355,'м³/мин'),
-(356,'м³/ч'),
-(357,'л/мин'),
-(358,'л/ч'),
-(359,'кг/мин'),
-(360,'кг/ч'),
-(361,'т/с'),
-(362,'т/мин'),
-(363,'т/ч'),
-(364,'мкг'),
-(365,'т'),
-(366,'Н'),
-(367,'кН'),
-(368,'МВт'),
-(369,'ккал/с'),
-(370,'мкс'),
-(371,'об/с'),
-(372,'рад/с'),
-(373,'мкВ'),
-(374,'кВ'),
-(375,'мкА'),
-(376,'кА'),
-(377,'кОм'),
-(378,'МОм'),
-(379,'ГОм'),
-(380,'мОм'),
-(381,'кГц'),
-(382,'МГц'),
-(383,'кДж'),
-(384,'МПа'),
-(385,'кПа'),
-(386,'Па'),
-(387,'г/м³'),
-(388,'мкм'),
-(389,'км'),
-(390,'м/м'),
-(391,'мм/м'),
-(392,'мкм/м'),
-(393,'мВ/В'),
-(394,'Кл'),
-(395,'пКл'),
-(396,'кгс/см²'),
-(397,'кгс/мм²'),
-(398,'м'),
-(399,'мм'),
-(400,'см'),
-(401,'дюйм'),
-(402,'мкм'),
-(403,'км'),
-(404,'рад'),
-(405,'°');
+(406,'Гц'),
+(407,'В'),
+(408,'Ом'),
+(409,'А'),
+(410,'мА'),
+(411,'Вт'),
+(412,'кВт'),
+(413,'эрг/с'),
+(414,'кал/с'),
+(415,'°С'),
+(416,'К'),
+(417,'л/с'),
+(418,'мл/с'),
+(419,'м³/с'),
+(420,'Па'),
+(421,'бар'),
+(422,'мм рт.ст.'),
+(423,'атм'),
+(424,'ат'),
+(425,'ати'),
+(426,'ата'),
+(427,'кг/с'),
+(428,'г/с'),
+(429,'мг/с'),
+(430,'Па·с'),
+(431,'бар·с'),
+(432,'мм рт.ст.·с'),
+(433,'атм·с'),
+(434,'ат·с'),
+(435,'ати·с'),
+(436,'ата·с'),
+(437,'м'),
+(438,'мм'),
+(439,'см'),
+(440,'дюйм'),
+(441,'г/л'),
+(442,'кг/м³'),
+(443,'мг/см³'),
+(444,'кг'),
+(445,'г'),
+(446,'мг'),
+(447,'м²'),
+(448,'мм²'),
+(449,'см²'),
+(450,'кв.дюйм'),
+(451,'м/с'),
+(452,'мм/с'),
+(453,'см/с'),
+(454,'дюйм/с'),
+(455,'с'),
+(456,'мс'),
+(457,'мин'),
+(458,'ч'),
+(459,'Дж'),
+(460,'эрг'),
+(461,'кВт·ч'),
+(462,'кал'),
+(463,'ккал'),
+(464,'м³'),
+(465,'мм³'),
+(466,'см³'),
+(467,'л'),
+(468,'кгс'),
+(469,'гс'),
+(470,'тс'),
+(471,'мВ'),
+(472,'МПа'),
+(473,'Угловых °'),
+(474,'Рад'),
+(475,'об/мин'),
+(476,'Без размерности'),
+(477,'кгс/см²'),
+(478,'%'),
+(479,'°F'),
+(480,'гПа'),
+(481,'кПа'),
+(482,'мбар'),
+(483,'мм вод. ст.'),
+(484,'psi'),
+(485,'км/ч'),
+(486,'мкм/с'),
+(487,'м/с²'),
+(488,'мм/с²'),
+(489,'g'),
+(490,'м³/мин'),
+(491,'м³/ч'),
+(492,'л/мин'),
+(493,'л/ч'),
+(494,'кг/мин'),
+(495,'кг/ч'),
+(496,'т/с'),
+(497,'т/мин'),
+(498,'т/ч'),
+(499,'мкг'),
+(500,'т'),
+(501,'Н'),
+(502,'кН'),
+(503,'МВт'),
+(504,'ккал/с'),
+(505,'мкс'),
+(506,'об/с'),
+(507,'рад/с'),
+(508,'мкВ'),
+(509,'кВ'),
+(510,'мкА'),
+(511,'кА'),
+(512,'кОм'),
+(513,'МОм'),
+(514,'ГОм'),
+(515,'мОм'),
+(516,'кГц'),
+(517,'МГц'),
+(518,'кДж'),
+(519,'МПа'),
+(520,'кПа'),
+(521,'Па'),
+(522,'г/м³'),
+(523,'мкм'),
+(524,'км'),
+(525,'м/м'),
+(526,'мм/м'),
+(527,'мкм/м'),
+(528,'мВ/В'),
+(529,'Кл'),
+(530,'пКл'),
+(531,'кгс/см²'),
+(532,'кгс/мм²'),
+(533,'м'),
+(534,'мм'),
+(535,'см'),
+(536,'дюйм'),
+(537,'мкм'),
+(538,'км'),
+(539,'рад'),
+(540,'°');
 /*!40000 ALTER TABLE `measureunit` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -370,9 +370,9 @@ CREATE TABLE `sensor` (
   PRIMARY KEY (`id`),
   KEY `sensor_sensortype_FK` (`sensortype_id`),
   KEY `sensor_calibration_FK` (`calibration_id`),
-  CONSTRAINT `sensor_calibration_FK` FOREIGN KEY (`calibration_id`) REFERENCES `calibration` (`id`),
+  CONSTRAINT `sensor_calibration_FK` FOREIGN KEY (`calibration_id`) REFERENCES `__calibration` (`id`),
   CONSTRAINT `sensor_sensortype_FK` FOREIGN KEY (`sensortype_id`) REFERENCES `sensortype` (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_uca1400_ai_ci COMMENT='Датчики';
+) ENGINE=InnoDB AUTO_INCREMENT=4 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_uca1400_ai_ci COMMENT='Датчики';
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -382,8 +382,37 @@ CREATE TABLE `sensor` (
 LOCK TABLES `sensor` WRITE;
 /*!40000 ALTER TABLE `sensor` DISABLE KEYS */;
 INSERT INTO `sensor` VALUES
-(1,1,1,'NAME',0,NULL);
+(1,1,1,'NAME',1,NULL),
+(2,1,NULL,'',0,NULL),
+(3,1,NULL,'123',1,NULL);
 /*!40000 ALTER TABLE `sensor` ENABLE KEYS */;
+UNLOCK TABLES;
+
+--
+-- Table structure for table `sensorcalibration`
+--
+
+DROP TABLE IF EXISTS `sensorcalibration`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8mb4 */;
+CREATE TABLE `sensorcalibration` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `sensor_id` int(11) DEFAULT NULL,
+  `x` double DEFAULT NULL,
+  `y` double DEFAULT NULL,
+  PRIMARY KEY (`id`),
+  KEY `sensorcalibration_sensor_FK` (`sensor_id`),
+  CONSTRAINT `sensor_calibration_sensor_FK` FOREIGN KEY (`sensor_id`) REFERENCES `sensor` (`id`) ON DELETE CASCADE ON UPDATE CASCADE
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_uca1400_ai_ci COMMENT='Градуировки (значения) датчика индивидуальные';
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Dumping data for table `sensorcalibration`
+--
+
+LOCK TABLES `sensorcalibration` WRITE;
+/*!40000 ALTER TABLE `sensorcalibration` DISABLE KEYS */;
+/*!40000 ALTER TABLE `sensorcalibration` ENABLE KEYS */;
 UNLOCK TABLES;
 
 --
@@ -401,7 +430,7 @@ CREATE TABLE `sensortype` (
   `interpolation` int(11) DEFAULT NULL,
   `description` varchar(256) DEFAULT NULL,
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_uca1400_ai_ci COMMENT='Типы датчиков';
+) ENGINE=InnoDB AUTO_INCREMENT=3 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_uca1400_ai_ci COMMENT='Типы датчиков';
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -411,8 +440,35 @@ CREATE TABLE `sensortype` (
 LOCK TABLES `sensortype` WRITE;
 /*!40000 ALTER TABLE `sensortype` DISABLE KEYS */;
 INSERT INTO `sensortype` VALUES
-(1,'TEST',1,2,3,'description');
+(1,'TEST',1,2,3,'description'),
+(2,'TEST2',0,0,0,NULL);
 /*!40000 ALTER TABLE `sensortype` ENABLE KEYS */;
+UNLOCK TABLES;
+
+--
+-- Table structure for table `sensortypecalibration`
+--
+
+DROP TABLE IF EXISTS `sensortypecalibration`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8mb4 */;
+CREATE TABLE `sensortypecalibration` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `sensortype_id` int(11) DEFAULT NULL,
+  `x` double DEFAULT NULL,
+  `y` double DEFAULT NULL,
+  PRIMARY KEY (`id`),
+  CONSTRAINT `sensortypecalibration_sensortype_FK` FOREIGN KEY (`id`) REFERENCES `sensortype` (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_uca1400_ai_ci COMMENT='Градуировки (значения) датчика типовые';
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Dumping data for table `sensortypecalibration`
+--
+
+LOCK TABLES `sensortypecalibration` WRITE;
+/*!40000 ALTER TABLE `sensortypecalibration` DISABLE KEYS */;
+/*!40000 ALTER TABLE `sensortypecalibration` ENABLE KEYS */;
 UNLOCK TABLES;
 
 --
@@ -428,4 +484,4 @@ UNLOCK TABLES;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*M!100616 SET NOTE_VERBOSITY=@OLD_NOTE_VERBOSITY */;
 
--- Dump completed on 2026-06-25 16:24:00
+-- Dump completed on 2026-06-26 15:17:17
