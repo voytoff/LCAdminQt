@@ -1,5 +1,6 @@
 #include "db.h"
 #include "modeltablebase.h"
+#include "modeltablecalibration.h"
 #include "modeltablecrate.h"
 #include "modeltableexperiment.h"
 #include "modeltablemeasureunit.h"
@@ -26,15 +27,15 @@ ModelTableBase *ModelTableBase::create(Enums::documentType type, const QString &
   case Enums::documentType::crate:
     result = new ModelTableCrate(table);
     break;
-  //case Enums::documentType::moduletype:
-  //  result = new ModelTableModuleType(table);
-  //  break;
   case Enums::documentType::module:
     result = new ModelTableModule(table);
     break;
-  //case Enums::documentType::calibration:
-  //  result = new ModelTableCalibration(table);
-  //  break;
+  case Enums::documentType::sensorcalibration:
+    result = new ModelTableCalibration(table);
+    break;
+  case Enums::documentType::sensortypecalibration:
+    result = new ModelTableCalibration(table);
+    break;
   case Enums::documentType::sensortype:
     result = new ModelTableSensorType(table);
     break;
@@ -46,14 +47,25 @@ ModelTableBase *ModelTableBase::create(Enums::documentType type, const QString &
     break;
   default: return nullptr;
   }
-  result->init();
+  result->init(type);
   result->setJoinMode(QSqlRelationalTableModel::LeftJoin);
   result->select();
   return result;
 }
 
 QWidget *ModelTableBase::createEditView(const QString &title, QWidget *parent) {
-  return new TableView(this, title);
+  TableView *view = new TableView(this, title);
+  // Запоминаем название таблицы
+  view->setWindowTitle(title);
+  return view;
+}
+
+QString ModelTableBase::title() const {
+  return view ? "" : view->windowTitle();
+}
+
+Enums::documentType ModelTableBase::documentType() const {
+  return type;
 }
 
 QList<int> ModelTableBase::boolIds() const {
@@ -99,7 +111,8 @@ bool ModelTableBase::setData(const QModelIndex &index, const QVariant &value, in
   return QSqlRelationalTableModel::setData(index, value, role);
 }
 
-void ModelTableBase::init() {
+void ModelTableBase::init(const Enums::documentType &type) {
+  this->type = type;
   foreach (auto relation, relations()) {
     int index = fieldIndex(relation.first);
     if (index > -1) {
@@ -107,6 +120,7 @@ void ModelTableBase::init() {
       setRelation(index, QSqlRelation(p.at(0), p.at(1), p.at(2)));
     }
   }
+
   foreach (auto column, columns()) {
     int index = fieldIndex(column.first);
     if (index > -1)

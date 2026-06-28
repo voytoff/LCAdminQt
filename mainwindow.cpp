@@ -131,6 +131,10 @@ void MainWindow::createControlBox() {
   //connect(treeView, &QTreeView::doubleClicked, this, &MainWindow::editSensor);
   //сonnect(optionView->selectionModel(), &QItemSelectionModel::selectionChanged, this, &MainWindow::reload);
 
+  // Включаем контекстное меню элемента закладок
+  tabView->setContextMenuPolicy(Qt::CustomContextMenu);
+  connect(tabView, &QTabBar::customContextMenuRequested, this, &MainWindow::showTabContextMenu);
+
   splitter->addWidget(leftView);
   splitter->addWidget(tabView);
 
@@ -160,16 +164,6 @@ void MainWindow::showMessage(const QString &text) {
   QTimer::singleShot(readyTimeout, this, [this]() {
     statusBar()->showMessage(ready);
   });
-}
-
-DocumentIdent MainWindow::getDocument() {
-  auto model = tabView->model<ModelTableBase>();
-  if (model) {
-    auto view = tabView->view<TableView>();
-    if (view)
-      return {model, view};
-  }
-  return {};
 }
 
 void MainWindow::restoreLayout() {
@@ -202,30 +196,28 @@ void MainWindow::loadData() {
 }
 
 void MainWindow::append() {
-  auto doc = getDocument();
-  if (doc.isValid()) {
+  auto doc = tabView->document();
+  if (doc.hasTable()) {
     // Получаем индекс текущей выделенной строки
-    ///QModelIndex currentIndex = doc.view->currentIndex();
-    ///int row = currentIndex.isValid() ? currentIndex.row() : 0;
     // Вставляем новую строку перед текущей (или в конец, если таблица пуста)
     // Вставляем новую строку перед за последней (или в конец, если таблица пуста)
     int row = doc.model->rowCount();
     doc.model->insertRow(row);
     // Переводим фокус и включаем режим редактирования для добавленной ячейки
-    QModelIndex newIndex = doc.model->index(row, 0); // 0 - индекс первой колонки
-    doc.view->setCurrentIndex(newIndex);
-    doc.view->edit(newIndex);
+    QModelIndex newIndex = doc.model->index(row, doc.model->fieldIndex("name"));
+    doc.table->setCurrentIndex(newIndex);
+    doc.table->edit(newIndex);
   }
 }
 
 void MainWindow::remove() {
-  auto doc = getDocument();
-  if (doc.isValid()) {
+  auto doc = tabView->document();
+  if (doc.hasTable()) {
     // Получаем список всех выделенных индексов
-    QModelIndexList selectedIndexes = doc.view->selectionModel()->selectedIndexes();
+    QModelIndexList selectedIndexes = doc.table->selectionModel()->selectedIndexes();
     if (!selectedIndexes.isEmpty()) {
-      // Удаляем строку первого выделенного элемента
-      if (QMessageBox::question(this, title, QString("Удалить выделенные строки из таблицы '%1'?").arg(doc.view->text())) == QMessageBox::Yes) {
+      // Удаляем все выделенные строки
+      if (QMessageBox::question(this, title, QString("Удалить выделенные строки из таблицы '%1'?").arg(doc.model->title())) == QMessageBox::Yes) {
         foreach (auto index, selectedIndexes)
           doc.model->removeRow(index.row());
       }
@@ -234,41 +226,39 @@ void MainWindow::remove() {
 }
 
 void MainWindow::save() {
-  auto doc = getDocument();
+  auto doc = tabView->document();
   if (doc.isValid()) {
-    if (doc.view->isModified())
-      doc.view->save();
+    if (doc.widget->isModified())
+      doc.widget->save();
   }
 }
 
 void MainWindow::cancel() {
-  auto doc = getDocument();
+  auto doc = tabView->document();
   if (doc.isValid()) {
-    if (doc.view->isModified() && QMessageBox::question(this, title, QString("Отменить все изменения в таблице '%1'?").arg(doc.view->text())) == QMessageBox::Yes)
-      doc.view->cancel();
+    if (doc.widget->isModified() && QMessageBox::question(this, title, QString("Отменить все изменения в таблице '%1'?").arg(doc.model->title())) == QMessageBox::Yes)
+      doc.widget->cancel();
   }
 }
 
 void MainWindow::clear() {
-  auto doc = getDocument();
-  if (doc.isValid()) {
-    if (doc.view->isModified())
-      doc.view->clear();
-  }
+  auto doc = tabView->document();
+  if (doc.hasTable())
+    doc.widget->clear();
 }
 
 void MainWindow::copy() {
-  auto doc = getDocument();
-  if (doc.isValid()) {
-    if (doc.view->copySelection())
-    QMessageBox::information(this, title, QString("Выделенные данные таблицы '%1' скопированы в буфер обмена.").arg(doc.view->text()));
+  auto doc = tabView->document();
+  if (doc.hasTable()) {
+    if (doc.table->copySelection())
+    QMessageBox::information(this, title, QString("Выделенные данные таблицы '%1' скопированы в буфер обмена.").arg(doc.model->title()));
   }
 }
 
 void MainWindow::paste() {
-  auto doc = getDocument();
-  if (doc.isValid())
-     doc.view->pasteClipboard();
+  auto doc = tabView->document();
+  if (doc.hasTable())
+     doc.table->pasteClipboard();
 }
 
 void MainWindow::doSettings() {
@@ -291,7 +281,7 @@ void MainWindow::openTable(const QModelIndex &index) {
     auto data = dictionModel->get(index.row());
     ModelTableBase *model = ModelTableBase::create(data.type, data.table);
     if (model) {
-      QWidget *editor = model->createEditView(data.title, this);// new TableView(model, data.title, this);
+      QWidget *editor = model->createEditView(data.title, this);
       tabView->append(editor, data.title, data.type, data.type, data.icon);
     }
   }
@@ -326,6 +316,20 @@ void MainWindow::about() {
     tr("<p><b>Администратор</b> программа управления справочником и настройками "
       "обработки экспериментов с датчиков регистрации параметров испытаний "
       "компанентов и изделий на стендах НИИХМ.</p>"));
+}
 
+void MainWindow::contextMenuEvent(QContextMenuEvent *event) {
+}
+
+void MainWindow::showTabContextMenu(const QPoint &pos) {
+  auto doc = tabView->document();
+  if (doc.hasTable()) {
+    QMenu menu(this);
+    menu.addAction(appendAction);
+    menu.addAction(saveAction);
+    menu.addSeparator();
+    menu.addAction(clearAction);
+    menu.exec(tabView->mapToGlobal(pos));
+  }
 }
 

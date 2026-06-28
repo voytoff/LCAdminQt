@@ -10,6 +10,14 @@ class SensorView : public CustomViewBase {
 public:
   explicit SensorView(ModelTableBase *model, const QString &title, QWidget *parent = nullptr);
 
+  bool isModified() const override;
+  bool save() override;
+  void cancel() override;
+  void clear() override;
+
+private:
+  ModelTableBase *addCalibrationTable();
+
 signals:
 };
 

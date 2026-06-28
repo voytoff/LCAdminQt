@@ -45,8 +45,8 @@ qt_add_executable(LCAdmin
     db/modeltablebase.cpp db/modeltablebase.h
     db/modeltablecrate.h db/modeltablecrate.cpp
     db/modeltableexperiment.h db/modeltableexperiment.cpp
-    #db/modeltablemoduletype.h db/modeltablemoduletype.cpp
     db/modeltablecalibration.h db/modeltablecalibration.cpp
+     db/modeltablecalibration.h db/modeltablecalibration.cpp
     ctl/fixedlistdelegate.h ctl/fixedlistdelegate.cpp
     ctl/enumlistdelegate.h ctl/enumlistdelegate.cpp
     ctl/spinboxdelegate.h ctl/spinboxdelegate.cpp
@@ -61,6 +61,7 @@ qt_add_executable(LCAdmin
     ctl/styledelegatebase.h ctl/styledelegatebase.cpp
     vw/customviewbase.h vw/customviewbase.cpp
     vw/sensorview.h vw/sensorview.cpp
+    vw/tableviewcache.h vw/tableviewcache.cpp
 )
 
 set(SCHEMEHELPEREDIR "../SchemeHelperQt")

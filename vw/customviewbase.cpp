@@ -1,4 +1,6 @@
 #include "customviewbase.h"
+#include <QCloseEvent>
+#include <QApplication>
 
 CustomViewBase::CustomViewBase(QWidget *parent)
   : QWidget{parent}
@@ -20,10 +22,39 @@ void CustomViewBase::addWidget(QWidget *widget) {
   splitter->addWidget(widget);
 }
 
+void CustomViewBase::addTable(Enums::documentType type, TableView *table) {
+  splitter->addWidget(table);
+  tables.insert(type, table);
+}
+
 void CustomViewBase::addLayout(QLayout *layout) {
   QWidget *widget = new QWidget(splitter);
   widget->setLayout(layout);
   addWidget(widget);
+}
+
+bool CustomViewBase::isModified() const {
+  return tables.isModified();
+}
+
+bool CustomViewBase::save() {
+  return tables.save();
+}
+
+void CustomViewBase::cancel() {
+  tables.cancel();
+}
+
+void CustomViewBase::clear() {
+  tables.clear();
+}
+
+TableView *CustomViewBase::table() {
+  auto w = QApplication::focusWidget();
+  TableView *table = qobject_cast<TableView*>(w);
+  if (!table)
+    table = tables.first();
+  return table;
 }
 
 QSplitter *CustomViewBase::getSplitter() {
@@ -31,6 +62,12 @@ QSplitter *CustomViewBase::getSplitter() {
 }
 
 void CustomViewBase::closeEvent(QCloseEvent *event) {
+  foreach (auto table, tables) {
+    if (!table->close()) {
+      event->ignore();
+      return;
+    }
+  }
   saveLayout();
 }
 

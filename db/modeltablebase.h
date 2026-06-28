@@ -19,9 +19,14 @@ public:
 
   static ModelTableBase *create(Enums::documentType type, const QString &table);
   virtual QWidget *createEditView(const QString &title, QWidget *parent);
+  QString title() const;
+  Enums::documentType documentType() const;
+
+  virtual QStringList hideFields() const {return {};}
 
 private:
-  QTableView *view;
+  Enums::documentType type;
+  QTableView *view = nullptr;
   QList<int> boolIds() const;
   mutable QList<int> tmp;
 
@@ -29,7 +34,7 @@ protected:
   virtual QList<StringPair> columns() const {return {};}
   virtual QList<StringPair> relations() const {return {};}
   virtual QStringList boolFields() const {return {};}
-  virtual void init();
+  virtual void init(const Enums::documentType &type);
 };
 
 #endif // MODELTABLEBASE_H

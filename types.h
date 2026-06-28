@@ -1,6 +1,7 @@
 #ifndef TYPES_H
 #define TYPES_H
 
+#include "istatewidget.h"
 #include <QString>
 #include <QObject>
 #include <QMap>
@@ -16,10 +17,14 @@ using EnumMap = QMap<int, EnumAttributes>;
 class ModelTableBase;
 class TableView;
 struct DocumentIdent {
+  IStateWidget* widget = nullptr;
   ModelTableBase* model = nullptr;
-  TableView* view = nullptr;
+  TableView *table = nullptr;
   bool isValid() {
-    return model && view;
+    return model && widget;
+  }
+  bool hasTable() {
+    return table;
   }
 };
 

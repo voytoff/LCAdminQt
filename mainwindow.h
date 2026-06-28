@@ -26,10 +26,11 @@ public:
 protected:
   void closeEvent(QCloseEvent *event) override;
   void showEvent(QShowEvent *event) override;
+  void contextMenuEvent(QContextMenuEvent *event) override;
+  void showTabContextMenu(const QPoint &pos);
 
 private:
   void showMessage(const QString &text);
-  DocumentIdent getDocument();
   void createActions();
   void createControlBar();
   void createControlBox();
@@ -83,10 +84,15 @@ private slots:
   void about();
   void append();
   void remove();
+  /** Сохранить изменения текущего элемента в базу данных */
   void save();
+  /** Отмена предыдущих изменений */
   void cancel();
+  /** Очистка выделения */
   void clear();
+  /** Копирует выделенные данные в буфер обмена */
   void copy();
+  /** Вставляет данные в фокус-элемент из буфера обмена */
   void paste();
 
 public slots:

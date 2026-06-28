@@ -20,16 +20,21 @@ TableView::TableView(ModelTableBase *model, const QString &title, QWidget *paren
   // Внешний вид
   verticalHeader()->setSectionResizeMode(QHeaderView::Fixed);
   verticalHeader()->setDefaultSectionSize(22); // pixels
-  int id = index("id");
-  if (id > -1) // Скрываем id столбец
-    setColumnHidden(id, true);
   horizontalHeader()->setMinimumSectionSize(minColumnSize);
   resizeColumnsToContents();
   setStyleSheet("QTableView { border: none; }"); // Убираем рамку
 }
 
+ModelTableBase *TableView::model() const {
+  return qobject_cast<ModelTableBase*>(QAbstractItemView::model());
+}
+
 int TableView::index(const QString &fieldName) const {
   return model()->fieldIndex(fieldName);
+}
+
+TableView *TableView::table() {
+  return this;
 }
 
 bool TableView::isModified() const {
@@ -48,12 +53,50 @@ void TableView::clear() {
   model()->clearItemData(currentIndex());
 }
 
-ModelTableBase *TableView::model() const {
-  return qobject_cast<ModelTableBase*>(QAbstractItemView::model());
+void TableView::setModel(QAbstractItemModel *model) {
+  QTableView::setModel(model);
+  auto m = qobject_cast<ModelTableBase*>(model);
+  if (m) {
+
+    // Скрываем служебные поля
+    int id = m->fieldIndex("id");
+    if (id > -1) // Скрываем id столбец
+      hideColumn(id);
+    foreach (auto column, m->hideFields()) {
+      int index = m->fieldIndex(column);
+      if (index > -1)
+        hideColumn(index);
+    }
+
+  }
 }
 
-QString TableView::text() const {
+QString TableView::title() const {
   return nodeName;
+}
+
+void TableView::hide(const int &index, const bool &hidden) {
+  setColumnHidden(index, hidden);
+}
+
+void TableView::hide(const QString &name, const bool &hidden) {
+  setColumnHidden(model()->fieldIndex(name), hidden);
+}
+
+void TableView::keyPressEvent(QKeyEvent *event) {
+  // Перехватываем Ctrl+C (Копирование)
+  if (event->matches(QKeySequence::Copy)) {
+    copySelection();
+    event->accept();
+    return;
+  }
+  // Перехватываем Ctrl+V (Вставка)
+  if (event->matches(QKeySequence::Paste)) {
+    pasteClipboard();
+    event->accept();
+    return;
+  }
+  QTableView::keyPressEvent(event);
 }
 
 bool TableView::copySelection() {
@@ -143,7 +186,7 @@ bool TableView::pasteClipboard() {
   if (lastRequiredRow >= currentModelRowCount) {
     int rowsNeeded = lastRequiredRow - currentModelRowCount + 1;
     if (!model()->insertRows(currentModelRowCount, rowsNeeded)) {
-      QMessageBox::information(parentWidget(), title, QString("Не удалось выделить дополнительные строки в таблице '%1'?").arg(nodeName));
+      QMessageBox::information(parentWidget(), ::title, QString("Не удалось выделить дополнительные строки в таблице '%1'?").arg(nodeName));
       return false; // Не удалось выделить строки в кэше
     }
   }
@@ -186,20 +229,4 @@ void TableView::closeEvent(QCloseEvent *event) {
     }
   }
   event->accept();
-}
-
-void TableView::keyPressEvent(QKeyEvent *event) {
-  // Перехватываем Ctrl+C (Копирование)
-  if (event->matches(QKeySequence::Copy)) {
-    copySelection();
-    event->accept();
-    return;
-  }
-  // Перехватываем Ctrl+V (Вставка)
-  if (event->matches(QKeySequence::Paste)) {
-    pasteClipboard();
-    event->accept();
-    return;
-  }
-  QTableView::keyPressEvent(event);
 }

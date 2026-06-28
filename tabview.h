@@ -25,14 +25,16 @@ public:
   int append(QWidget *widget, const QString &title, const QVariantList &data);
   bool removeTab(int index);
   bool closeAll();
+  DocumentIdent document();
+  TableView *table();
   template<typename T>
-  T *view() const {
+  T *currentWidget() const {
     return currentIndex() < 0 ? nullptr : qobject_cast<T*>(widget(currentIndex()));
   }
   template<typename T>
-  T *model() const {
-    auto vw = view<TableView>();
-    return vw ? qobject_cast<T*>(vw->model()) : nullptr;
+  T *model() {
+    TableView *t = table();
+    return t ? qobject_cast<T*>(t->model()) : nullptr;
   }
 
 protected:

@@ -32,6 +32,23 @@ bool TabView::closeAll() {
   return true;
 }
 
+DocumentIdent TabView::document() {
+  IStateWidget *widget = currentWidget<IStateWidget>();
+  if (widget) {
+    auto t = table();
+    if (t) {
+      auto m = model<ModelTableBase>();
+      if (m) return {widget, m, t};
+    }
+  }
+  return {};
+}
+
+TableView *TabView::table() {
+  IStateWidget *widget = currentWidget<IStateWidget>();
+  return widget ? widget->table() : nullptr;
+}
+
 void TabView::closeEvent(QCloseEvent *event) {
   closeAll();
 }

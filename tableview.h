@@ -15,12 +15,17 @@ public:
   explicit TableView(ModelTableBase *model, const QString &title, QWidget *parent = nullptr);
 
   int index(const QString & fieldName) const;
+  //QWidget *widget() override;
+  TableView *table() override;
   bool isModified() const override;
   bool save() override;
   void cancel() override;
-  void clear();
+  void clear() override;
+  void setModel(QAbstractItemModel *model) override;
   ModelTableBase *model() const;
-  QString text() const;
+  QString title() const;
+  void hide(const int &index, const bool &hidden = true);
+  void hide(const QString &name, const bool &hidden = true);
 
 protected:
   void closeEvent(QCloseEvent *event) override;
