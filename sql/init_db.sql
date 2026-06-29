@@ -1,7 +1,7 @@
 /*M!999999\- enable the sandbox mode */
 -- MariaDB dump 10.19-11.7.2-MariaDB, for Win64 (AMD64)
 --
--- Host: 192.168.10.213    Database: 106org
+-- Host: localhost    Database: 106org
 -- ------------------------------------------------------
 -- Server version	12.3.2-MariaDB
 
@@ -363,14 +363,11 @@ DROP TABLE IF EXISTS `sensor`;
 CREATE TABLE `sensor` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
   `sensortype_id` int(11) DEFAULT NULL,
-  `calibration_id` int(11) DEFAULT NULL,
   `sn` varchar(50) DEFAULT NULL,
   `active` tinyint(1) DEFAULT NULL,
   `description` varchar(256) DEFAULT NULL,
   PRIMARY KEY (`id`),
   KEY `sensor_sensortype_FK` (`sensortype_id`),
-  KEY `sensor_calibration_FK` (`calibration_id`),
-  CONSTRAINT `sensor_calibration_FK` FOREIGN KEY (`calibration_id`) REFERENCES `__calibration` (`id`),
   CONSTRAINT `sensor_sensortype_FK` FOREIGN KEY (`sensortype_id`) REFERENCES `sensortype` (`id`)
 ) ENGINE=InnoDB AUTO_INCREMENT=4 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_uca1400_ai_ci COMMENT='Датчики';
 /*!40101 SET character_set_client = @saved_cs_client */;
@@ -382,9 +379,9 @@ CREATE TABLE `sensor` (
 LOCK TABLES `sensor` WRITE;
 /*!40000 ALTER TABLE `sensor` DISABLE KEYS */;
 INSERT INTO `sensor` VALUES
-(1,1,1,'NAME',1,NULL),
-(2,1,NULL,'',0,NULL),
-(3,1,NULL,'123',1,NULL);
+(1,1,'NAME',1,NULL),
+(2,1,'',0,NULL),
+(3,1,'123',1,NULL);
 /*!40000 ALTER TABLE `sensor` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -398,12 +395,13 @@ DROP TABLE IF EXISTS `sensorcalibration`;
 CREATE TABLE `sensorcalibration` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
   `sensor_id` int(11) DEFAULT NULL,
+  `index` smallint(6) DEFAULT NULL,
   `x` double DEFAULT NULL,
   `y` double DEFAULT NULL,
   PRIMARY KEY (`id`),
   KEY `sensorcalibration_sensor_FK` (`sensor_id`),
   CONSTRAINT `sensor_calibration_sensor_FK` FOREIGN KEY (`sensor_id`) REFERENCES `sensor` (`id`) ON DELETE CASCADE ON UPDATE CASCADE
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_uca1400_ai_ci COMMENT='Градуировки (значения) датчика индивидуальные';
+) ENGINE=InnoDB AUTO_INCREMENT=3 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_uca1400_ai_ci COMMENT='Градуировки (значения) датчика индивидуальные';
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -412,6 +410,9 @@ CREATE TABLE `sensorcalibration` (
 
 LOCK TABLES `sensorcalibration` WRITE;
 /*!40000 ALTER TABLE `sensorcalibration` DISABLE KEYS */;
+INSERT INTO `sensorcalibration` VALUES
+(1,1,1,2,3),
+(2,1,0,2.5,3.2);
 /*!40000 ALTER TABLE `sensorcalibration` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -484,4 +485,4 @@ UNLOCK TABLES;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*M!100616 SET NOTE_VERBOSITY=@OLD_NOTE_VERBOSITY */;
 
--- Dump completed on 2026-06-26 15:17:17
+-- Dump completed on 2026-06-29 16:31:15
