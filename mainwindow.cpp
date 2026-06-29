@@ -132,6 +132,7 @@ void MainWindow::createControlBar() {
   toolbar->addAction(cancelAction);
   toolbar->addSeparator();
   toolbar->addAction(settingsAction);
+  toolbar->addAction(calibrationAction);
 }
 
 void MainWindow::createControlBox() {

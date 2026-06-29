@@ -64,7 +64,18 @@ void TableView::cancel() {
 }
 
 void TableView::clear() {
-  model()->clearItemData(currentIndex());
+  // Получаем список всех выделенных ячеек
+  QModelIndexList selectedIndexes = selectionModel()->selectedIndexes();
+  // Проверяем, есть ли выделенные ячейки
+  if (selectedIndexes.isEmpty()) {
+    return;
+  }
+  // Записываем пустые значения в модель
+  foreach (auto index, selectedIndexes) {
+    // Проверяем, можно ли редактировать ячейку (опционально)
+    //if (index.flags() & Qt::ItemIsEditable)
+    model()->setData(index, QVariant(), Qt::EditRole);
+  }
 }
 
 QString TableView::title() const {

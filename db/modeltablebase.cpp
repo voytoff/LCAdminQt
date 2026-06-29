@@ -32,10 +32,10 @@ ModelTableBase *ModelTableBase::create(Enums::documentType type) {
     result = new ModelTableModule(tableName);
     break;
   case Enums::documentType::sensorcalibration:
-    result = new ModelTableCalibration(tableName);
+    result = new ModelTableCalibration(tableName, "sensor_id");
     break;
   case Enums::documentType::sensortypecalibration:
-    result = new ModelTableCalibration(tableName);
+    result = new ModelTableCalibration(tableName, "sensortype_id");
     break;
   case Enums::documentType::sensortype:
     result = new ModelTableSensorType(tableName);
@@ -157,4 +157,36 @@ void ModelTableBase::init(const Enums::documentType &type) {
     if (index > -1)
       setHeaderData(index, Qt::Horizontal, column.second);
   }
+}
+
+const int ModelTableBase::indexColumn() const {
+  return fieldIndex(indexName);
+}
+
+bool ModelTableBase::moveRow(int row, int direction) {
+  // Проверяем границы
+  int targetRow = row + direction;
+  if (targetRow < 0 || targetRow >= rowCount()) {
+    return false; // Выход за пределы таблицы
+  }
+
+  // Получаем текущие значения position двух строк
+  int currentPos = data(row, indexName).toInt();
+  int targetPos = data(targetRow, indexName).toInt();
+
+  // Меняем значения позиций местами в модели
+  setData(row, indexName, targetPos);
+  setData(targetRow, indexName, currentPos);
+
+  // Отправляем изменения в базу данных
+  if (submitAll()) {
+    // Перечитываем данные, чтобы QTableView применил сортировку
+    select();
+    // Возвращаем выделение на перемещенную строку
+    tableView()->selectRow(targetRow);
+    return true;
+  }
+  // Откат при ошибке БД
+  revertAll();
+  return false;
 }

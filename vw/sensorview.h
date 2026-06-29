@@ -3,6 +3,7 @@
 
 #include "customviewbase.h"
 #include "modeltablebase.h"
+#include "modeltablecalibration.h"
 #include <QWidget>
 
 class SensorView : public CustomViewBase {
@@ -21,6 +22,7 @@ public:
 
 private:
   ModelTableBase *addCalibrationTable();
+  ModelTableCalibration *detail;
 
 signals:
 };

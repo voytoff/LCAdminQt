@@ -14,11 +14,18 @@ CalibrationDlg::CalibrationDlg(ModelTableBase* model, const int &owner, QWidget 
   /// tableView = new TableView(model, "", CalibrationDlg);
   ui->setupUi(model, this);
   qDebug() << model->parent();
+  setSizeGripEnabled(true);
 
   QPushButton *upButton = new QPushButton("▲");
+  upButton->setFocusPolicy(Qt::NoFocus);
   ui->buttonBox->addButton(upButton, QDialogButtonBox::ActionRole);
   QPushButton *downButton = new QPushButton("▼");
+  downButton->setFocusPolicy(Qt::NoFocus);
   ui->buttonBox->addButton(downButton, QDialogButtonBox::ActionRole);
+
+  QSpacerItem *spacer = new QSpacerItem(20, 20, QSizePolicy::Expanding, QSizePolicy::Minimum);
+  ui->buttonBox->layout()->addItem(spacer);
+
 
   connect(upButton, &QPushButton::clicked, this, &CalibrationDlg::up);
   connect(downButton, &QPushButton::clicked, this, &CalibrationDlg::down);
@@ -31,22 +38,14 @@ CalibrationDlg::~CalibrationDlg() {
 
 void CalibrationDlg::up() {
   auto index = ui->tableView->currentIndex();
-  if (index.isValid()) {
-    int row = index.row();
-    int dest = row - 1;
-    if (dest > -1)
-      change(row, dest, index.column());
-  }
+  if (model->moveRow(index.row(), -1))
+    ui->tableView->setCurrentIndex(model->index(index.row() - 1, index.column()));
 }
 
 void CalibrationDlg::down() {
   auto index = ui->tableView->currentIndex();
-  if (index.isValid()) {
-    int row = index.row();
-    int dest = row + 1;
-    if (dest < model->rowCount())
-      change(row, dest, index.column());
-  }
+  if (model->moveRow(index.row(), 1))
+    ui->tableView->setCurrentIndex(model->index(index.row() + 1, index.column()));
 }
 
 void CalibrationDlg::change(const int &source, const int &dest, const int &column) {

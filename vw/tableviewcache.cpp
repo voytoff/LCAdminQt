@@ -14,10 +14,8 @@ bool TableViewCache::isModified() const {
 bool TableViewCache::save() {
   bool result = false;
   foreach (auto t, this->values()) {
-    if (t->model()->isDirty()) {
+    if (t->model()->isDirty() && t->model()->submitAll())
       result = true;
-      t->model()->submitAll();
-    }
   }
   return result;
 }

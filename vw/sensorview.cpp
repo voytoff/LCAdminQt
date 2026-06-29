@@ -13,13 +13,16 @@ SensorView::SensorView(ModelTableBase *model, const QString &title, QWidget *par
   auto *table = new TableView(model, title);// ModelTableBase::createEditView(title, parent);
   addTable(model->documentType(), table);
   // Получаем модель завизимой таблицы
-  auto detail = addCalibrationTable();
+  detail = qobject_cast<ModelTableCalibration*>(addCalibrationTable());
   detail->select();
 
-  connect(table->selectionModel(), &QItemSelectionModel::currentRowChanged, this, [model, detail, table](const QModelIndex &current, const QModelIndex &previous) {
-    auto id = model->data(model->index(current.row(), table->index("id"), QModelIndex()), Qt::DisplayRole);
-    if (id.isValid())
+  connect(table->selectionModel(), &QItemSelectionModel::currentRowChanged, this, [model, table, this](const QModelIndex &current, const QModelIndex &previous) {
+    auto id = model->data(current.row(), "id");
+    if (id.isValid()) {
       detail->setFilter(QString("sensor_id = %1").arg(id.toInt()));
+      detail->setParentValue(id.toInt());
+      detail->select();
+    }
   });
 }
 
@@ -46,13 +49,13 @@ ModelTableBase* SensorView::addCalibrationTable() {
     model->setFilter("sensor_id = 0"); // пока не показываем никого
     TableView *table = new TableView(model, "Градуировки", this);
     // Делаем таблицу нередактируемой
-    table->setEditTriggers(QAbstractItemView::NoEditTriggers);
+    ///table->setEditTriggers(QAbstractItemView::NoEditTriggers);
     //addTable(Enums::sensorcalibration, table);
 
     modeles.insert(model->documentType(), model);
     tables.insert(model->documentType(), table);
 
-    QVBoxLayout *layout = new QVBoxLayout(this);
+    QVBoxLayout *layout = new QVBoxLayout;
     layout->setContentsMargins(0, 0, 0, 0);
     layout->addWidget(new QLabel("Градуировки"));
     QFrame *line = new QFrame;

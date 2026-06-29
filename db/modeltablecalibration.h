@@ -3,16 +3,20 @@
 
 #include "modeltablebase.h"
 #include <QObject>
+#include <QString>
 
 class ModelTableCalibration : public ModelTableBase {
   Q_OBJECT
 public:
-  explicit ModelTableCalibration(const QString &table, QObject *parent = nullptr);
-  //Qt::ItemFlags flags(const QModelIndex &index) const override;
+  explicit ModelTableCalibration(const QString &table, const QString &parentField, QObject *parent = nullptr);
+  void setParentValue(const int &parentValue);
 
 protected:
   QList<StringPair> columns() const override;
   QStringList hideFields() const override;
+
+  QString parentField;
+  int parentValue;
 
 signals:
 };

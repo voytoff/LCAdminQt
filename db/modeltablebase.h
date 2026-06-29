@@ -30,12 +30,12 @@ public:
   QString title() const;
   Enums::documentType documentType() const;
   QVariant currentData(const QString &fieldName) const;
+  bool moveRow(int row, int direction);
 
   virtual QStringList hideFields() const {return {};}
 
 private:
   Enums::documentType type;
-  QTableView *tableView() const;
   QList<int> boolIds() const;
   mutable QList<int> tmp;
 
@@ -44,6 +44,10 @@ protected:
   virtual QList<StringPair> relations() const {return {};}
   virtual QStringList boolFields() const {return {};}
   virtual void init(const Enums::documentType &type);
+
+  QTableView *tableView() const;
+  const QString indexName = "index";
+  const int indexColumn() const;
 };
 
 #endif // MODELTABLEBASE_H
