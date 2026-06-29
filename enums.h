@@ -33,6 +33,10 @@ public:
     }
     return enumMap;
   }
+  template <typename T>
+  static QString string(T key) {
+    return QMetaEnum::fromType<T>().valueToKey(key);
+  }
 
   /// Типы документов для идентификации в QTabWidget
   enum documentType : int {

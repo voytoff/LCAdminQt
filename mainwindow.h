@@ -48,6 +48,7 @@ private:
   QAction *cancelAction;
   QAction *clearAction;
   QAction *settingsAction;
+  QAction *calibrationAction;
   QAction *appendAction;
   QAction *removeAction;
   QAction *aboutAction;
@@ -94,6 +95,7 @@ private slots:
   void copy();
   /** Вставляет данные в фокус-элемент из буфера обмена */
   void paste();
+  void calibration();
 
 public slots:
   void updateWindowMenu();

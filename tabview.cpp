@@ -8,6 +8,7 @@ TabView::TabView(QWidget *parent)
 
   setTabsClosable(true);
   setIconSize(QSize(16, 16));
+  setStyleSheet("QTabWidget::pane{border:0;margin:0px;padding:0px;}");
 
   connect(this, &QTabWidget::tabCloseRequested, this, &TabView::removeTab);
 

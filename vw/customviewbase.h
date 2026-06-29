@@ -5,6 +5,7 @@
 #include "../settings.h"
 #include "../tableview.h"
 #include "tableviewcache.h"
+#include "modelviewcache.h"
 
 #include <QWidget>
 #include <QSplitter>
@@ -22,7 +23,7 @@ public:
   void addWidget(QWidget *widget);
   void addLayout(QLayout *layout);
 
-  //QWidget *widget() override;
+  QWidget *widget() override;
   /** Возвращает текущий TableView в фокусе */
   TableView *table() override;
   bool isModified() const override;
@@ -32,6 +33,8 @@ public:
 
   /** Возвращает объект QSplitter */
   QSplitter *getSplitter();
+
+  ModelViewCache modeles;
 
 protected:
   void closeEvent(QCloseEvent *event) override;

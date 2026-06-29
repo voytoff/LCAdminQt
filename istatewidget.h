@@ -7,7 +7,7 @@ class TableView;
 class IStateWidget {
 public:
   virtual ~IStateWidget() = default;
-  //virtual QWidget *widget() = 0;
+  virtual QWidget *widget() = 0;
   virtual TableView *table() = 0;
   virtual bool isModified() const = 0;
   virtual bool save() = 0;

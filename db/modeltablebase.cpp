@@ -18,32 +18,33 @@ ModelTableBase::ModelTableBase(const QString &table, QObject *parent)
   setTable(table);
 }
 
-ModelTableBase *ModelTableBase::create(Enums::documentType type, const QString &table) {
+ModelTableBase *ModelTableBase::create(Enums::documentType type) {
   ModelTableBase* result = nullptr;
+  auto tableName = Enums::string(type);
   switch (type) {
   case Enums::documentType::experiment:
-    result = new ModelTableExperiment(table);
+    result = new ModelTableExperiment(tableName);
     break;
   case Enums::documentType::crate:
-    result = new ModelTableCrate(table);
+    result = new ModelTableCrate(tableName);
     break;
   case Enums::documentType::module:
-    result = new ModelTableModule(table);
+    result = new ModelTableModule(tableName);
     break;
   case Enums::documentType::sensorcalibration:
-    result = new ModelTableCalibration(table);
+    result = new ModelTableCalibration(tableName);
     break;
   case Enums::documentType::sensortypecalibration:
-    result = new ModelTableCalibration(table);
+    result = new ModelTableCalibration(tableName);
     break;
   case Enums::documentType::sensortype:
-    result = new ModelTableSensorType(table);
+    result = new ModelTableSensorType(tableName);
     break;
   case Enums::documentType::sensor:
-    result = new ModelTableSensor(table);
+    result = new ModelTableSensor(tableName);
     break;
   case Enums::documentType::measureunit:
-    result = new ModelTableMeasureUnit(table);
+    result = new ModelTableMeasureUnit(tableName);
     break;
   default: return nullptr;
   }
@@ -54,18 +55,32 @@ ModelTableBase *ModelTableBase::create(Enums::documentType type, const QString &
 }
 
 QWidget *ModelTableBase::createEditView(const QString &title, QWidget *parent) {
-  TableView *view = new TableView(this, title);
+  TableView *table = new TableView(this, title);
   // Запоминаем название таблицы
-  view->setWindowTitle(title);
-  return view;
+  table->setWindowTitle(title);
+  return table;
 }
 
 QString ModelTableBase::title() const {
-  return view ? "" : view->windowTitle();
+  return ((QWidget*)parent())->windowTitle();
 }
 
 Enums::documentType ModelTableBase::documentType() const {
   return type;
+}
+
+QVariant ModelTableBase::currentData(const QString &fieldName) const {
+  auto i = this->tableView()->currentIndex();
+  if (i.isValid()) {
+    int c = fieldIndex(fieldName);
+    if (c > -1)
+      return data(index(i.row(), c), Qt::DisplayRole);
+  }
+  return {};
+}
+
+QTableView *ModelTableBase::tableView() const {
+  return qobject_cast<TableView*>(parent());
 }
 
 QList<int> ModelTableBase::boolIds() const {
@@ -77,8 +92,10 @@ QList<int> ModelTableBase::boolIds() const {
   return tmp;
 }
 
-void ModelTableBase::setItemDelegates(QTableView *view) {
-  view->setItemDelegate(new QSqlRelationalDelegate(view));
+void ModelTableBase::setItemDelegates(QTableView *tableView) {
+  tableView->setItemDelegate(new QSqlRelationalDelegate(tableView));
+  if (!parent())
+    setParent(tableView);
 }
 
 Qt::ItemFlags ModelTableBase::flags(const QModelIndex &index) const {
@@ -101,6 +118,13 @@ QVariant ModelTableBase::data(const QModelIndex &index, int role) const {
   return QSqlRelationalTableModel::data(index, role);
 }
 
+QVariant ModelTableBase::data(const int &row, const QString &fieldName) const {
+  auto i = index(row, fieldIndex(fieldName));
+  if (i.isValid())
+    return data(i, Qt::DisplayRole);
+  return {};
+}
+
 bool ModelTableBase::setData(const QModelIndex &index, const QVariant &value, int role) {
   if (boolIds().contains(index.column()) && role == Qt::CheckStateRole) {
     // Конвертируем клик мыши в понятный для базы данных формат (1 или 0)
@@ -109,6 +133,13 @@ bool ModelTableBase::setData(const QModelIndex &index, const QVariant &value, in
     return QSqlRelationalTableModel::setData(index, intValue, Qt::EditRole);
   }
   return QSqlRelationalTableModel::setData(index, value, role);
+}
+
+bool ModelTableBase::setData(const int &row, const QString &fieldName, const QVariant &value) {
+  auto i = index(row, fieldIndex(fieldName));
+  if (i.isValid())
+    return setData(i, value, Qt::EditRole);
+  return false;
 }
 
 void ModelTableBase::init(const Enums::documentType &type) {

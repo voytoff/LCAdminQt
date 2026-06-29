@@ -3,20 +3,18 @@
 ModelTableCalibration::ModelTableCalibration(const QString &table, QObject *parent)
   : ModelTableBase{table, parent} {}
 
+//Qt::ItemFlags ModelTableCalibration::flags(const QModelIndex &index) const {
+//  return ModelTableBase::flags(index) & ~Qt::ItemIsEditable;
+//}
+
 QList<StringPair> ModelTableCalibration::columns() const {
   return {
-    {"index", "N"},
+    {"index", "#"},
     {"x", "X"},
     {"y", "Y"},
   };
 }
 
-QList<StringPair> ModelTableCalibration::relations() const {
-  return {
-    {"sensor_id", "sensor;id;name"},
-  };
-}
-
 QStringList ModelTableCalibration::hideFields() const {
-  return {"sensor_id"};
+  return {"sensor_id", "index"};
 }

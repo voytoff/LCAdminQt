@@ -33,6 +33,10 @@ void CustomViewBase::addLayout(QLayout *layout) {
   addWidget(widget);
 }
 
+QWidget *CustomViewBase::widget() {
+  return this;
+}
+
 bool CustomViewBase::isModified() const {
   return tables.isModified();
 }

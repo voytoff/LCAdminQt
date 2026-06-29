@@ -14,18 +14,18 @@
    <string>Установки</string>
   </property>
   <property name="windowIcon">
-   <iconset resource="res.qrc">
+   <iconset resource="../res.qrc">
     <normaloff>:/images/tb/settings.png</normaloff>:/images/tb/settings.png</iconset>
   </property>
   <layout class="QHBoxLayout" name="horizontalLayout">
    <item>
     <widget class="QTabWidget" name="tabWidget">
      <property name="currentIndex">
-      <number>1</number>
+      <number>0</number>
      </property>
      <widget class="QWidget" name="tabDatabase">
       <attribute name="icon">
-       <iconset resource="res.qrc">
+       <iconset resource="../res.qrc">
         <normaloff>:/images/database.png</normaloff>:/images/database.png</iconset>
       </attribute>
       <attribute name="title">
@@ -58,7 +58,7 @@
           <string>Тест</string>
          </property>
          <property name="icon">
-          <iconset resource="res.qrc">
+          <iconset resource="../res.qrc">
            <normaloff>:/images/check.png</normaloff>:/images/check.png</iconset>
          </property>
          <property name="checkable">
@@ -136,7 +136,7 @@
      </widget>
      <widget class="QWidget" name="tabOptions">
       <attribute name="icon">
-       <iconset resource="res.qrc">
+       <iconset resource="../res.qrc">
         <normaloff>:/images/general.png</normaloff>:/images/general.png</iconset>
       </attribute>
       <attribute name="title">
@@ -193,7 +193,7 @@
   </layout>
  </widget>
  <resources>
-  <include location="res.qrc"/>
+  <include location="../res.qrc"/>
  </resources>
  <connections>
   <connection>

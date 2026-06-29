@@ -13,7 +13,7 @@ public:
   bool save();
   void cancel();
   void clear();
-  TableView * first();
+  TableView *first();
 };
 
 #endif // TABLEVIEWCACHE_H

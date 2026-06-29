@@ -1,10 +1,9 @@
 #include "settingsdlg.h"
-#include "mainwindow.h"
 #include "db.h"
-#include "settings.h"
-#include "QPushButton"
-#include "QPushButton"
-#include "QMessageBox"
+#include "../types.h"
+#include "../settings.h"
+#include <QPushButton>
+#include <QMessageBox>
 
 #include "ui_settingsdlg.h"
 
@@ -27,7 +26,7 @@ SettingsDlg::SettingsDlg(Settings *settings, QWidget *parent)
   ui->password->setText(settings->password());
   ui->timeout->setValue(settings->timeout());
 
-  connect(this, &QDialog::finished, this, [this](int result) { accept(result); });
+  connect(this, &QDialog::finished, this, &SettingsDlg::accept);
   connect(ui->testButton, &QToolButton::clicked, this, &SettingsDlg::test);
 
   //setWindowFlags(windowFlags() & ~Qt::WindowSystemMenuHint);
@@ -44,7 +43,7 @@ void SettingsDlg::test() {
   else QMessageBox::critical(this, title,  QString("Указаны неверные параметры для подключения к узлу %1:%2, или база данных на узле отсутствует.").arg(ui->hostName->text(), ui->hostPort->text()));
 }
 
-void SettingsDlg::accept(const int result) {
+void SettingsDlg::accept(int result) {
   if (result == QDialog::Accepted) {
     settings->colorScheme(ui->colorScheme->currentData());
     settings->hostName(ui->hostName->text());

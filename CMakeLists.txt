@@ -31,7 +31,6 @@ qt_add_executable(LCAdmin
     istatewidget.h treeitemtype.h
     mainwindow.h mainwindow.cpp
     settings.h settings.cpp
-    settingsdlg.h settingsdlg.cpp settingsdlg.ui
     treeview.h treeview.cpp
     optionmodel.h optionmodel.cpp
     treeitem.h treeitem.cpp
@@ -46,7 +45,7 @@ qt_add_executable(LCAdmin
     db/modeltablecrate.h db/modeltablecrate.cpp
     db/modeltableexperiment.h db/modeltableexperiment.cpp
     db/modeltablecalibration.h db/modeltablecalibration.cpp
-     db/modeltablecalibration.h db/modeltablecalibration.cpp
+    db/modeltablecalibration.h db/modeltablecalibration.cpp
     ctl/fixedlistdelegate.h ctl/fixedlistdelegate.cpp
     ctl/enumlistdelegate.h ctl/enumlistdelegate.cpp
     ctl/spinboxdelegate.h ctl/spinboxdelegate.cpp
@@ -62,6 +61,13 @@ qt_add_executable(LCAdmin
     vw/customviewbase.h vw/customviewbase.cpp
     vw/sensorview.h vw/sensorview.cpp
     vw/tableviewcache.h vw/tableviewcache.cpp
+    dlg/settingsdlg.h dlg/settingsdlg.cpp dlg/settingsdlg.ui
+    dlg/calibrationdlg.h dlg/calibrationdlg.cpp dlg/calibrationdlg.ui
+    vw/modelviewcache.h vw/modelviewcache.cpp
+)
+
+target_sources(LCAdmin PRIVATE
+    tableview.h tableview.cpp
 )
 
 set(SCHEMEHELPEREDIR "../SchemeHelperQt")
@@ -89,7 +95,7 @@ if (NOT TARGET GlobalLib)
 endif()
 
 
-include_directories(db ctl vw)
+include_directories(db ctl vw dlg)
 
 # Qt for iOS sets MACOSX_BUNDLE_GUI_IDENTIFIER automatically since Qt 6.1.
 # If you are developing for iOS or macOS you should consider setting an

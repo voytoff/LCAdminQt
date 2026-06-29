@@ -19,7 +19,7 @@ private:
   Settings* settings;
   void test();
 
-  void accept(const int result);
+  void accept(int result);
 };
 
 #endif // SETTINGSDLG_H

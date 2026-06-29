@@ -15,13 +15,12 @@ public:
   explicit TableView(ModelTableBase *model, const QString &title, QWidget *parent = nullptr);
 
   int index(const QString & fieldName) const;
-  //QWidget *widget() override;
+  QWidget *widget() override;
   TableView *table() override;
   bool isModified() const override;
   bool save() override;
   void cancel() override;
   void clear() override;
-  void setModel(QAbstractItemModel *model) override;
   ModelTableBase *model() const;
   QString title() const;
   void hide(const int &index, const bool &hidden = true);
@@ -30,9 +29,6 @@ public:
 protected:
   void closeEvent(QCloseEvent *event) override;
   void keyPressEvent(QKeyEvent *event) override;
-
-private:
-  QString nodeName;
 
 public slots:
   bool copySelection();

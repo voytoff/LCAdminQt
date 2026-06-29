@@ -1,6 +1,8 @@
 #include "mainwindow.h"
+#include "calibrationdlg.h"
 #include "leftview.h"
 #include "modeltablebase.h"
+#include "sensorview.h"
 #include "settingsdlg.h"
 #include "tableview.h"
 #include "types.h"
@@ -17,7 +19,8 @@
 #include <QGridLayout>
 #include <QStyleHints>
 #include <QTimer>
-#include <qevent.h>
+#include <QCloseEvent>
+#include <QList>
 
 //MainWindow* MainWindow::instance = nullptr;
 
@@ -64,6 +67,7 @@ void MainWindow::createActions() {
   aboutAction = schemeHelper->create(tr("&О программе..."));
   copyAction = schemeHelper->create(tr("Скопировать"), ":/images/tb/copy.png", QKeySequence(Qt::SHIFT | Qt::CTRL | Qt::Key_C));
   pasteAction = schemeHelper->create(tr("Вставить"), ":/images/tb/paste.png", QKeySequence(Qt::SHIFT | Qt::CTRL | Qt::Key_V));
+  calibrationAction = schemeHelper->create(tr("Градуировки..."), ":/images/tb/calibration.png", QKeySequence(Qt::CTRL | Qt::Key_U));
 
   toggleOptionAction = leftView->toggleOptionAction();
   toggleDictionAction = leftView->toggleDictionAction();
@@ -77,6 +81,7 @@ void MainWindow::createActions() {
   connect(clearAction, &QAction::triggered, this, &MainWindow::clear);
   connect(copyAction, &QAction::triggered, this, &MainWindow::copy);
   connect(pasteAction, &QAction::triggered, this, &MainWindow::paste);
+  connect(calibrationAction, &QAction::triggered, this, &MainWindow::calibration);
 
   schemeHelper->applayColorScheme(settings->colorScheme(), true);
 }
@@ -104,6 +109,8 @@ void MainWindow::createControlBar() {
   viewMenu->addAction(toggleDictionAction);
 
   QMenu *toolMenu = menuBar()->addMenu(tr("Инструменты"));
+  toolMenu->addAction(calibrationAction);
+  toolMenu->addSeparator();
   toolMenu->addAction(settingsAction);
 
   windowMenu = menuBar()->addMenu(tr("Окно"));
@@ -217,7 +224,7 @@ void MainWindow::remove() {
     QModelIndexList selectedIndexes = doc.table->selectionModel()->selectedIndexes();
     if (!selectedIndexes.isEmpty()) {
       // Удаляем все выделенные строки
-      if (QMessageBox::question(this, title, QString("Удалить выделенные строки из таблицы '%1'?").arg(doc.model->title())) == QMessageBox::Yes) {
+      if (QMessageBox::question(this, title, QString("Удалить выделенные строки из таблицы '%1'?").arg(doc.table->title())) == QMessageBox::Yes) {
         foreach (auto index, selectedIndexes)
           doc.model->removeRow(index.row());
       }
@@ -261,9 +268,27 @@ void MainWindow::paste() {
      doc.table->pasteClipboard();
 }
 
+void MainWindow::calibration() {
+  QList<Enums::documentType> list({Enums::documentType::sensor, Enums::documentType::sensortype});
+  auto doc = tabView->document();
+  if (doc.isValid()) {
+    if (doc.model->documentType() == Enums::documentType::sensor) {
+      SensorView *view = qobject_cast<SensorView*>(doc.widget->widget());
+      auto id = doc.model->currentData("id");
+      if (id.isValid()) { // Есть выбор записи?
+        auto model = view->modeles.value(Enums::documentType::sensorcalibration);
+        if (model) {
+          CalibrationDlg dialog(model, id.toInt(), this);
+          dialog.exec();
+        }
+    }
+    }
+  }
+}
+
 void MainWindow::doSettings() {
-  SettingsDlg *dialog = new SettingsDlg(settings, this);
-  int accepted = dialog->exec();
+  SettingsDlg dialog(settings, this);
+  int accepted = dialog.exec();
   if (accepted == QDialog::Accepted) {
     auto colorScheme = settings->colorScheme();
     if ((Qt::ColorScheme)colorScheme != QGuiApplication::styleHints()->colorScheme())
@@ -278,8 +303,8 @@ void MainWindow::doSettings() {
 
 void MainWindow::openTable(const QModelIndex &index) {
   if (index.isValid()) {
-    auto data = dictionModel->get(index.row());
-    ModelTableBase *model = ModelTableBase::create(data.type, data.table);
+    TreeItemType data = dictionModel->get(index.row());
+    ModelTableBase *model = ModelTableBase::create(data.type);
     if (model) {
       QWidget *editor = model->createEditView(data.title, this);
       tabView->append(editor, data.title, data.type, data.type, data.icon);

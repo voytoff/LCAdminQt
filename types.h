@@ -44,6 +44,7 @@ const int readyTimeout = 5000;
 const int minColumnSize = 100;
 const QString dateFormat = "dd.MM.yyyy";
 const QString dateTimeFormat = "dd.MM.yyyy HH:mm:ss";
+const QString timeFormat = "HH:mm:ss,ff";
 
 /// Иконки
 //const QString icon_cratetype = ":/images/db/cratetype.png";

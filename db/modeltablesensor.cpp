@@ -26,7 +26,6 @@ QList<StringPair> ModelTableSensor::columns() const {
 QList<StringPair> ModelTableSensor::relations() const {
   return QList<StringPair> {
     {"sensortype_id", "sensortype;id;name"},
-    //{"calibration_id", "calibration;id;name"}
   };
 }
 

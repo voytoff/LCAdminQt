@@ -23,5 +23,6 @@
         <file>images/database.png</file>
         <file>images/general.png</file>
         <file>images/db/experiment.png</file>
+        <file>images/tb/calibration.png</file>
     </qresource>
 </RCC>

@@ -8,11 +8,10 @@ class ModelTableCalibration : public ModelTableBase {
   Q_OBJECT
 public:
   explicit ModelTableCalibration(const QString &table, QObject *parent = nullptr);
-  //void setItemDelegates(QTableView *view) override;
+  //Qt::ItemFlags flags(const QModelIndex &index) const override;
 
 protected:
   QList<StringPair> columns() const override;
-  QList<StringPair> relations() const override;
   QStringList hideFields() const override;
 
 signals:

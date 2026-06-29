@@ -15,6 +15,10 @@ public:
   void cancel() override;
   void clear() override;
 
+  ModelTableBase *calibrationModel();
+
+  const Enums::documentType calibrationType = Enums::sensorcalibration;
+
 private:
   ModelTableBase *addCalibrationTable();
 

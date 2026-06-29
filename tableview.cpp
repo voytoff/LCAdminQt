@@ -11,10 +11,20 @@
 #include <QItemSelectionModel>
 
 TableView::TableView(ModelTableBase *model, const QString &title, QWidget *parent)
-  : QTableView{parent}
-  , nodeName(title) {
+  : QTableView{parent} {
 
   setModel(model);
+  // Скрываем служебные поля
+  int id = model->fieldIndex("id");
+  if (id > -1) // Скрываем id столбец
+    hideColumn(id);
+  foreach (auto column, model->hideFields()) {
+    int index = model->fieldIndex(column);
+    if (index > -1)
+      hideColumn(index);
+  }
+
+  setWindowTitle(title);
   // Устанавливаем делегаты пользовательских редакторов
   model->setItemDelegates(this);
   // Внешний вид
@@ -22,7 +32,7 @@ TableView::TableView(ModelTableBase *model, const QString &title, QWidget *paren
   verticalHeader()->setDefaultSectionSize(22); // pixels
   horizontalHeader()->setMinimumSectionSize(minColumnSize);
   resizeColumnsToContents();
-  setStyleSheet("QTableView { border: none; }"); // Убираем рамку
+  //setStyleSheet("QTableView{border:none;}"); // Убираем рамку, плохо смотрится в комплексном редакторе
 }
 
 ModelTableBase *TableView::model() const {
@@ -31,6 +41,10 @@ ModelTableBase *TableView::model() const {
 
 int TableView::index(const QString &fieldName) const {
   return model()->fieldIndex(fieldName);
+}
+
+QWidget *TableView::widget() {
+  return this;
 }
 
 TableView *TableView::table() {
@@ -53,26 +67,8 @@ void TableView::clear() {
   model()->clearItemData(currentIndex());
 }
 
-void TableView::setModel(QAbstractItemModel *model) {
-  QTableView::setModel(model);
-  auto m = qobject_cast<ModelTableBase*>(model);
-  if (m) {
-
-    // Скрываем служебные поля
-    int id = m->fieldIndex("id");
-    if (id > -1) // Скрываем id столбец
-      hideColumn(id);
-    foreach (auto column, m->hideFields()) {
-      int index = m->fieldIndex(column);
-      if (index > -1)
-        hideColumn(index);
-    }
-
-  }
-}
-
 QString TableView::title() const {
-  return nodeName;
+  return windowTitle();
 }
 
 void TableView::hide(const int &index, const bool &hidden) {
@@ -186,7 +182,7 @@ bool TableView::pasteClipboard() {
   if (lastRequiredRow >= currentModelRowCount) {
     int rowsNeeded = lastRequiredRow - currentModelRowCount + 1;
     if (!model()->insertRows(currentModelRowCount, rowsNeeded)) {
-      QMessageBox::information(parentWidget(), ::title, QString("Не удалось выделить дополнительные строки в таблице '%1'?").arg(nodeName));
+      QMessageBox::information(parentWidget(), ::title, QString("Не удалось выделить дополнительные строки в таблице '%1'?").arg(title()));
       return false; // Не удалось выделить строки в кэше
     }
   }
@@ -220,7 +216,7 @@ bool TableView::pasteClipboard() {
 
 void TableView::closeEvent(QCloseEvent *event) {
   if (isModified()) {
-    auto response = QMessageBox::question(qobject_cast<MainWindow*>(parent()), nodeName, QString("Данные таблицы '%1' изменены. Сохранить эти изменения?").arg(nodeName), QMessageBox::Yes | QMessageBox::No | QMessageBox::Cancel);
+    auto response = QMessageBox::question(qobject_cast<MainWindow*>(parent()), title(), QString("Данные таблицы '%1' изменены. Сохранить эти изменения?").arg(title()), QMessageBox::Yes | QMessageBox::No | QMessageBox::Cancel);
     if (response == QMessageBox::Yes)
       save();
     else if (response == QMessageBox::Cancel) {
