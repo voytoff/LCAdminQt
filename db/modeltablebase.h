@@ -11,6 +11,7 @@
 class ModelTableBase : public QSqlRelationalTableModel {
   Q_OBJECT
 protected:
+  using QSqlRelationalTableModel::QSqlRelationalTableModel;
   explicit ModelTableBase(const QString &table, QObject *parent = nullptr);
 
 public:
@@ -18,7 +19,7 @@ public:
   Qt::ItemFlags flags(const QModelIndex &index) const override;
   QVariant data(const QModelIndex &index, int role) const override;
   QVariant data(const int &row, const QString &fieldName) const;
-  bool setData(const QModelIndex &index, const QVariant &value, int role) override;
+  bool setData(const QModelIndex &index, const QVariant &value, int role = Qt::EditRole) override;
   bool setData(const int &row, const QString &fieldName, const QVariant &value);
   /** Создает и возвращает модель по типу в параметре type */
   static ModelTableBase *create(Enums::documentType type);

@@ -7,22 +7,23 @@
 #include <QLabel>
 #include <QFrame>
 
-SensorView::SensorView(ModelTableBase *model, const QString &title, QWidget *parent)
-  : CustomViewBase{parent} {
+SensorView::SensorView(ModelTableBase *model, const QString &foreignKey, const Enums::documentType &foreignType, const QString &title, QWidget *parent)
+  : ComplexViewBase{parent}
+  , detail(nullptr)
+  , foreignKey(foreignKey)
+  , foreignType(foreignType) {
 
-  auto *table = new TableView(model, title);// ModelTableBase::createEditView(title, parent);
+  auto *table = new TableView(model, title);
   addTable(model->documentType(), table);
-  // Получаем модель завизимой таблицы
-  detail = qobject_cast<ModelTableCalibration*>(addCalibrationTable());
-  detail->select();
 
   connect(table->selectionModel(), &QItemSelectionModel::currentRowChanged, this, [model, table, this](const QModelIndex &current, const QModelIndex &previous) {
     auto id = model->data(current.row(), "id");
     if (id.isValid()) {
-      detail->setFilter(QString("sensor_id = %1").arg(id.toInt()));
+      detail->setFilter(QString("%1 = %2").arg(this->foreignKey).arg(id.toInt()));
       detail->setParentValue(id.toInt());
       detail->select();
-    }
+      hideCalibrationPane(false);
+    } else hideCalibrationPane(true);
   });
 }
 
@@ -42,29 +43,62 @@ void SensorView::clear() {
   tables.clear();
 }
 
+bool SensorView::hasUpDown() const {
+  return true;
+}
+
+void SensorView::up() {
+  auto tableView = tables.value(foreignType);
+  auto index = tableView->currentIndex();
+  if (calibrationModel()->moveRow(index.row(), -1))
+    tableView->setCurrentIndex(calibrationModel()->index(index.row() - 1, index.column()));
+}
+
+void SensorView::down() {
+  auto tableView = tables.value(foreignType);
+  auto index = tableView->currentIndex();
+  if (calibrationModel()->moveRow(index.row(), 1))
+    tableView->setCurrentIndex(calibrationModel()->index(index.row() + 1, index.column()));
+}
+
+void SensorView::init() {
+  if (!detail) {
+  // Получаем модель завизимой таблицы
+  detail = qobject_cast<ModelTableCalibration*>(addCalibrationTable());
+  detail->select();
+  hideCalibrationPane(true);
+  }
+}
+
+ModelTableBase *SensorView::calibrationModel() {
+  return modeles.value(foreignType);
+}
+
 ModelTableBase* SensorView::addCalibrationTable() {
-  ModelTableBase *model = ModelTableBase::create(calibrationType);
+  ModelTableBase *model = ModelTableBase::create(foreignType);
   if (model) {
     model->setSort(model->fieldIndex("index"), Qt::AscendingOrder);
-    model->setFilter("sensor_id = 0"); // пока не показываем никого
-    TableView *table = new TableView(model, "Градуировки", this);
-    // Делаем таблицу нередактируемой
-    ///table->setEditTriggers(QAbstractItemView::NoEditTriggers);
-    //addTable(Enums::sensorcalibration, table);
-
+    model->setFilter(QString("%1 = 0").arg(foreignKey)); // пока не показываем ничего
+    TableView *table = new TableView(model, "Градуировка", this);
     modeles.insert(model->documentType(), model);
     tables.insert(model->documentType(), table);
-
+    //addTable(Enums::sensorcalibration, table);
     QVBoxLayout *layout = new QVBoxLayout;
     layout->setContentsMargins(0, 0, 0, 0);
-    layout->addWidget(new QLabel("Градуировки"));
     QFrame *line = new QFrame;
     line->setFrameShape(QFrame::HLine);
     line->setFrameShadow(QFrame::Sunken);
     layout->addWidget(line);
+    layout->addWidget(new QLabel("Градуировка"));
     layout->addWidget(table);
     addLayout(layout);
   }
   return model;
+}
+
+void SensorView::hideCalibrationPane(const bool &hide) {
+  auto w = getSplitter()->widget(1);
+  if (hide) w->hide();
+  else w->show();
 }
 

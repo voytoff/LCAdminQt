@@ -1,7 +1,7 @@
 /*M!999999\- enable the sandbox mode */
 -- MariaDB dump 10.19-11.7.2-MariaDB, for Win64 (AMD64)
 --
--- Host: localhost    Database: 106org
+-- Host: 192.168.10.213    Database: 106org
 -- ------------------------------------------------------
 -- Server version	12.3.2-MariaDB
 
@@ -364,6 +364,7 @@ CREATE TABLE `sensor` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
   `sensortype_id` int(11) DEFAULT NULL,
   `sn` varchar(50) DEFAULT NULL,
+  `calibration` smallint(6) DEFAULT NULL COMMENT 'Используемая с датчиком градуировка',
   `active` tinyint(1) DEFAULT NULL,
   `description` varchar(256) DEFAULT NULL,
   PRIMARY KEY (`id`),
@@ -379,9 +380,9 @@ CREATE TABLE `sensor` (
 LOCK TABLES `sensor` WRITE;
 /*!40000 ALTER TABLE `sensor` DISABLE KEYS */;
 INSERT INTO `sensor` VALUES
-(1,1,'NAME',1,NULL),
-(2,1,'',0,NULL),
-(3,1,'123',1,NULL);
+(1,1,'NAME',1,1,NULL),
+(2,1,'',2,0,NULL),
+(3,1,'123',1,1,NULL);
 /*!40000 ALTER TABLE `sensor` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -401,7 +402,7 @@ CREATE TABLE `sensorcalibration` (
   PRIMARY KEY (`id`),
   KEY `sensorcalibration_sensor_FK` (`sensor_id`),
   CONSTRAINT `sensor_calibration_sensor_FK` FOREIGN KEY (`sensor_id`) REFERENCES `sensor` (`id`) ON DELETE CASCADE ON UPDATE CASCADE
-) ENGINE=InnoDB AUTO_INCREMENT=3 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_uca1400_ai_ci COMMENT='Градуировки (значения) датчика индивидуальные';
+) ENGINE=InnoDB AUTO_INCREMENT=114 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_uca1400_ai_ci COMMENT='Градуировки (значения) датчика индивидуальные';
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -411,8 +412,76 @@ CREATE TABLE `sensorcalibration` (
 LOCK TABLES `sensorcalibration` WRITE;
 /*!40000 ALTER TABLE `sensorcalibration` DISABLE KEYS */;
 INSERT INTO `sensorcalibration` VALUES
-(1,1,1,2,3),
-(2,1,0,2.5,3.2);
+(44,2,0,11.76,60),
+(45,2,1,13.828,65),
+(46,2,2,15.94,70),
+(47,2,3,16.793,72),
+(48,2,4,17.65,74),
+(49,2,5,18.509,76),
+(50,2,6,19.371,78),
+(51,2,7,20.235,80),
+(52,2,8,21.099,82),
+(53,2,9,21.964,84),
+(54,2,10,22.829,86),
+(55,2,11,23.695,88),
+(56,2,12,24.56,90),
+(57,2,13,25.425,92),
+(58,2,14,26.289,94),
+(59,2,15,27.153,96),
+(60,2,16,28.015,98),
+(61,2,17,28.877,100),
+(62,2,18,33.168,110),
+(63,2,19,37.429,120),
+(64,2,20,41.658,130),
+(65,2,21,45.86,140),
+(66,2,22,50.035,150),
+(67,2,23,54.187,160),
+(68,2,24,58.318,170),
+(69,2,25,62.431,180),
+(70,2,26,66.526,190),
+(71,2,27,70.604,200),
+(72,2,28,74.667,210),
+(73,2,29,78.716,220),
+(74,2,30,82.751,230),
+(75,2,31,86.773,240),
+(76,2,32,90.782,250),
+(77,2,33,94.779,260),
+(78,2,34,100.02,273.15),
+(79,2,35,102.736,280),
+(80,2,36,106.692,290),
+(81,2,37,110.636,300),
+(82,2,38,114.568,310),
+(83,2,39,118.488,320),
+(84,2,40,122.397,330),
+(85,3,0,11.7,60),
+(86,3,1,13.77,65),
+(87,3,2,15.883,70),
+(88,3,3,20.181,80),
+(89,3,4,21.046,82),
+(90,3,5,21.911,84),
+(91,3,6,22.777,86),
+(92,3,7,23.643,88),
+(93,3,8,24.509,90),
+(94,3,9,25.375,92),
+(95,3,10,26.24,94),
+(96,3,11,27.104,96),
+(97,3,12,27.967,98),
+(98,3,13,28.829,100),
+(99,3,14,30.98,105),
+(100,3,15,33.123,110),
+(101,3,16,35.259,115),
+(102,3,17,37.386,120),
+(103,3,18,45.823,140),
+(104,3,19,54.165,160),
+(105,3,20,62.405,180),
+(106,3,21,70.584,200),
+(107,3,22,78.702,220),
+(108,3,23,86.764,240),
+(109,3,24,94.775,260),
+(110,3,25,100.02,273.15),
+(111,3,26,102.736,280),
+(112,3,27,110.636,300),
+(113,3,28,118.488,320);
 /*!40000 ALTER TABLE `sensorcalibration` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -441,7 +510,7 @@ CREATE TABLE `sensortype` (
 LOCK TABLES `sensortype` WRITE;
 /*!40000 ALTER TABLE `sensortype` DISABLE KEYS */;
 INSERT INTO `sensortype` VALUES
-(1,'TEST',1,2,3,'description'),
+(1,'TEST',1,1,3,'description'),
 (2,'TEST2',0,0,0,NULL);
 /*!40000 ALTER TABLE `sensortype` ENABLE KEYS */;
 UNLOCK TABLES;
@@ -456,11 +525,13 @@ DROP TABLE IF EXISTS `sensortypecalibration`;
 CREATE TABLE `sensortypecalibration` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
   `sensortype_id` int(11) DEFAULT NULL,
+  `index` smallint(6) DEFAULT NULL,
   `x` double DEFAULT NULL,
   `y` double DEFAULT NULL,
   PRIMARY KEY (`id`),
-  CONSTRAINT `sensortypecalibration_sensortype_FK` FOREIGN KEY (`id`) REFERENCES `sensortype` (`id`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_uca1400_ai_ci COMMENT='Градуировки (значения) датчика типовые';
+  KEY `sensortypecalibration_sensortype_FK` (`sensortype_id`),
+  CONSTRAINT `sensortypecalibration_sensortype_FK` FOREIGN KEY (`sensortype_id`) REFERENCES `sensortype` (`id`) ON DELETE CASCADE ON UPDATE CASCADE
+) ENGINE=InnoDB AUTO_INCREMENT=46 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_uca1400_ai_ci COMMENT='Градуировки (значения) датчика типовые';
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -469,6 +540,50 @@ CREATE TABLE `sensortypecalibration` (
 
 LOCK TABLES `sensortypecalibration` WRITE;
 /*!40000 ALTER TABLE `sensortypecalibration` DISABLE KEYS */;
+INSERT INTO `sensortypecalibration` VALUES
+(1,1,0,11.7,60),
+(2,1,1,13.77,65),
+(5,2,0,11.768,60),
+(6,2,1,13.834,65),
+(7,2,2,15.946,70),
+(8,2,3,16.799,72),
+(9,2,4,17.655,74),
+(10,2,5,18.514,76),
+(11,2,6,19.376,78),
+(12,2,7,20.239,80),
+(13,2,8,21.103,82),
+(14,2,9,21.967,84),
+(15,2,10,22.832,86),
+(16,2,11,23.697,88),
+(17,2,12,24.562,90),
+(18,2,13,25.427,92),
+(19,2,14,26.291,94),
+(20,2,15,27.154,96),
+(21,2,16,28.016,98),
+(22,2,17,28.877,100),
+(23,2,18,33.167,110),
+(24,2,19,37.425,120),
+(25,2,20,41.653,130),
+(26,2,21,45.853,140),
+(27,2,22,50.026,150),
+(28,2,23,54.177,160),
+(29,2,24,58.306,170),
+(30,2,25,62.417,180),
+(31,2,26,66.51,190),
+(32,2,27,70.587,200),
+(33,2,28,74.648,210),
+(34,2,29,78.695,220),
+(35,2,30,82.729,230),
+(36,2,31,86.749,240),
+(37,2,32,90.756,250),
+(38,2,33,94.751,260),
+(39,2,34,99.99,273.15),
+(40,2,35,102.706,280),
+(41,2,36,106.66,290),
+(42,2,37,110.603,300),
+(43,2,38,114.534,310),
+(44,2,39,118.453,320),
+(45,2,40,122.361,330);
 /*!40000 ALTER TABLE `sensortypecalibration` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -485,4 +600,4 @@ UNLOCK TABLES;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*M!100616 SET NOTE_VERBOSITY=@OLD_NOTE_VERBOSITY */;
 
--- Dump completed on 2026-06-29 16:31:15
+-- Dump completed on 2026-06-30 16:25:11

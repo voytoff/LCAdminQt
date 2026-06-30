@@ -11,6 +11,7 @@ class Enums : public QObject {
 public:
   explicit Enums(QObject *parent = nullptr);
 
+  /** Возвращает карту ключ-название для перечисления */
   template <typename T>
   static QMap<int, QString> create(QList<StringPair> replaces = {{"_", "-"}}) {
     QMap<int, QString> enumMap;
@@ -23,6 +24,11 @@ public:
     }
     return enumMap;
   }
+
+  /**
+   * Возвращает карту ключ-название для перечисления,
+   * с использованием вспомогательного массива атрибутов
+   */
   template <typename T>
   static QMap<int, QString> create(const EnumMap &map) {
     QMap<int, QString> enumMap;
@@ -33,6 +39,8 @@ public:
     }
     return enumMap;
   }
+
+  /** Возвращает строковое значение перечисления */
   template <typename T>
   static QString string(T key) {
     return QMetaEnum::fromType<T>().valueToKey(key);
@@ -102,8 +110,8 @@ public:
   Q_ENUM(calibrationSource)
   // атрибуты градуировки (можно сделать static внутри класса или cpp-файла)
   static const EnumMap calibrationSourceMap;
-
-  /// Источник градуировки
+  /*
+  /// Тип интерполяции
   enum interpolationType : int {
     __interpolationType = 0,
     piecewiseLine = 1,      // Кусочно-линейная
@@ -112,11 +120,18 @@ public:
   Q_ENUM(interpolationType)
   // атрибуты градуировки (можно сделать static внутри класса или cpp-файла)
   static const EnumMap interpolationTypeMap;
+  */
+  /// Используемая с датчиком градуировка
+  enum sensorCalibrationType {
+    calibrationOff = 0, // отсутствует
+    individual = 1,     // индивидуальный
+    typically = 2,      // типовой
+  };
+  Q_ENUM(sensorCalibrationType)
+  // атрибуты градуировки (можно сделать static внутри класса или cpp-файла)
+  static const EnumMap sensorCalibrationTypeMap;
 
 public slots:
-  EnumAttributes getAttributes(Enums::calibrationType value);
-  EnumAttributes getAttributes(Enums::calibrationSource value);
-  EnumAttributes getAttributes(Enums::interpolationType value);
 
 };
 

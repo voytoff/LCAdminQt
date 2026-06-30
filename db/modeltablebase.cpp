@@ -10,6 +10,8 @@
 #include "../tableview.h"
 
 #include <QSqlRelationalDelegate>
+#include <QSqlRecord>
+#include <QSqlField>
 
 ModelTableBase::ModelTableBase(const QString &table, QObject *parent)
   : QSqlRelationalTableModel{parent, DB::instance(DatabaseName)} {
@@ -131,6 +133,26 @@ bool ModelTableBase::setData(const QModelIndex &index, const QVariant &value, in
     int intValue = (value.toInt() == Qt::Checked) ? 1 : 0;
     // Записываем в базу данных как обычное редактирование значения
     return QSqlRelationalTableModel::setData(index, intValue, Qt::EditRole);
+  }
+  if (index.isValid()) {
+    auto rec = record(index.row());
+    QSqlField field = rec.field(index.column());
+    switch (field.metaType().id())
+    {
+    case QMetaType::Double: {
+      bool ok;
+      double v = QLocale().toDouble(value.toString(), &ok);
+
+      if (ok) return QSqlRelationalTableModel::setData(index, v);
+      else return QSqlRelationalTableModel::setData(index, QVariant());
+    }
+
+    case QMetaType::Int:
+      return QSqlRelationalTableModel::setData(index, value.toInt());
+
+    default:
+      break;
+    }
   }
   return QSqlRelationalTableModel::setData(index, value, role);
 }

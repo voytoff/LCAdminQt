@@ -23,8 +23,8 @@ public:
   void clear() override;
   ModelTableBase *model() const;
   QString title() const;
-  void hide(const int &index, const bool &hidden = true);
-  void hide(const QString &name, const bool &hidden = true);
+  void hideColumn(const int &index, const bool &hidden = true);
+  void hideColumn(const QString &name, const bool &hidden = true);
 
 protected:
   void closeEvent(QCloseEvent *event) override;

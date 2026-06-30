@@ -24,5 +24,7 @@
         <file>images/general.png</file>
         <file>images/db/experiment.png</file>
         <file>images/tb/calibration.png</file>
+        <file>images/tb/down.png</file>
+        <file>images/tb/up.png</file>
     </qresource>
 </RCC>

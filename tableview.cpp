@@ -56,7 +56,12 @@ bool TableView::isModified() const {
 }
 
 bool TableView::save() {
-  return model()->submitAll();
+  bool result = model()->submitAll();
+  if (!result) {
+    QMessageBox::critical(MainWindow::mw(), ::title, model()->lastError().text());
+    qDebug() << model()->lastError();
+  }
+  return result;
 }
 
 void TableView::cancel() {
@@ -82,11 +87,11 @@ QString TableView::title() const {
   return windowTitle();
 }
 
-void TableView::hide(const int &index, const bool &hidden) {
+void TableView::hideColumn(const int &index, const bool &hidden) {
   setColumnHidden(index, hidden);
 }
 
-void TableView::hide(const QString &name, const bool &hidden) {
+void TableView::hideColumn(const QString &name, const bool &hidden) {
   setColumnHidden(model()->fieldIndex(name), hidden);
 }
 

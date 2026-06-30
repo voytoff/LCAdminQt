@@ -1,5 +1,5 @@
-#ifndef CUSTOMVIEWBASE_H
-#define CUSTOMVIEWBASE_H
+#ifndef COMPLEXVIEWBASE_H
+#define COMPLEXVIEWBASE_H
 
 #include "../istatewidget.h"
 #include "../settings.h"
@@ -11,17 +11,19 @@
 #include <QSplitter>
 #include <QGridLayout>
 
-class CustomViewBase : public QWidget, public IStateWidget {
+class ComplexViewBase : public QWidget, public IStateWidget {
   Q_OBJECT
   Q_INTERFACES(IStateWidget)
 
 public:
-  explicit CustomViewBase(QWidget *parent = nullptr);
+  explicit ComplexViewBase(QWidget *parent = nullptr);
 
   void setOrientation(Qt::Orientation orientation);
   void addTable(Enums::documentType type, TableView *table);
   void addWidget(QWidget *widget);
   void addLayout(QLayout *layout);
+  /** Используем для вызова виртуальных и переопределенных методов */
+  virtual void init() {}
 
   QWidget *widget() override;
   /** Возвращает текущий TableView в фокусе */
@@ -51,4 +53,4 @@ private:
 
 };
 
-#endif // CUSTOMVIEWBASE_H
+#endif // COMPLEXVIEWBASE_H

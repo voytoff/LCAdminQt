@@ -22,7 +22,7 @@
 #include <QCloseEvent>
 #include <QList>
 
-//MainWindow* MainWindow::instance = nullptr;
+MainWindow* MainWindow::instance = nullptr;
 
 MainWindow::MainWindow(QWidget *parent)
   : QMainWindow{parent}
@@ -36,7 +36,7 @@ MainWindow::MainWindow(QWidget *parent)
   , toolbar(addToolBar("Главный"))
   , windowActionGroup(new QActionGroup(this)) {
 
-  //instance = this;
+  instance = this;
 
   /// группа акшенов открытых документов
   windowActionGroup->setExclusive(true);
@@ -55,6 +55,7 @@ MainWindow::MainWindow(QWidget *parent)
 }
 
 void MainWindow::createActions() {
+  //calibrationAction = schemeHelper->create(tr("Градуировки..."), ":/images/tb/calibration.png", QKeySequence(Qt::CTRL | Qt::Key_U));
   openAction = schemeHelper->create(tr("Открыть..."), ":/images/tb/open.png", QKeySequence::Open);
   saveAction = schemeHelper->create(tr("Сохранить"), ":/images/tb/save.png", QKeySequence::Save);
   cancelAction = schemeHelper->create(tr("Отменить"), ":/images/tb/cancel.png", QKeySequence(Qt::ALT | Qt::Key_Escape));
@@ -67,12 +68,15 @@ void MainWindow::createActions() {
   aboutAction = schemeHelper->create(tr("&О программе..."));
   copyAction = schemeHelper->create(tr("Скопировать"), ":/images/tb/copy.png", QKeySequence(Qt::SHIFT | Qt::CTRL | Qt::Key_C));
   pasteAction = schemeHelper->create(tr("Вставить"), ":/images/tb/paste.png", QKeySequence(Qt::SHIFT | Qt::CTRL | Qt::Key_V));
-  calibrationAction = schemeHelper->create(tr("Градуировки..."), ":/images/tb/calibration.png", QKeySequence(Qt::CTRL | Qt::Key_U));
+  upAction = schemeHelper->create(tr("Вверх"), ":/images/tb/up.png", QKeySequence(Qt::SHIFT | Qt::CTRL | Qt::Key_C));
+  downAction = schemeHelper->create(tr("Вниз"), ":/images/tb/down.png", QKeySequence(Qt::SHIFT | Qt::CTRL | Qt::Key_V));
 
   toggleOptionAction = leftView->toggleOptionAction();
   toggleDictionAction = leftView->toggleDictionAction();
 
   connect(settingsAction, &QAction::triggered, this, &MainWindow::doSettings);
+
+  connect(openAction, &QAction::triggered, this, [this]() {openTable(dictionView->currentIndex());});
   connect(appendAction, &QAction::triggered, this, &MainWindow::append);
   connect(removeAction, &QAction::triggered, this, &MainWindow::remove);
   connect(aboutAction, &QAction::triggered, this, &MainWindow::about);
@@ -81,7 +85,9 @@ void MainWindow::createActions() {
   connect(clearAction, &QAction::triggered, this, &MainWindow::clear);
   connect(copyAction, &QAction::triggered, this, &MainWindow::copy);
   connect(pasteAction, &QAction::triggered, this, &MainWindow::paste);
-  connect(calibrationAction, &QAction::triggered, this, &MainWindow::calibration);
+  connect(upAction, &QAction::triggered, this, &MainWindow::up);
+  connect(downAction, &QAction::triggered, this, &MainWindow::down);
+  //connect(calibrationAction, &QAction::triggered, this, &MainWindow::calibration);
 
   schemeHelper->applayColorScheme(settings->colorScheme(), true);
 }
@@ -97,6 +103,8 @@ void MainWindow::createControlBar() {
   editMenu->addSeparator();
   editMenu->addAction(appendAction);
   editMenu->addAction(removeAction);
+  editMenu->addAction(upAction);
+  editMenu->addAction(downAction);
   editMenu->addSeparator();
   editMenu->addAction(cancelAction);
   editMenu->addAction(clearAction);
@@ -109,7 +117,7 @@ void MainWindow::createControlBar() {
   viewMenu->addAction(toggleDictionAction);
 
   QMenu *toolMenu = menuBar()->addMenu(tr("Инструменты"));
-  toolMenu->addAction(calibrationAction);
+  //toolMenu->addAction(calibrationAction);
   toolMenu->addSeparator();
   toolMenu->addAction(settingsAction);
 
@@ -127,12 +135,14 @@ void MainWindow::createControlBar() {
   toolbar->addSeparator();
   toolbar->addAction(appendAction);
   toolbar->addAction(removeAction);
+  toolbar->addAction(upAction);
+  toolbar->addAction(downAction);
   toolbar->addSeparator();
   toolbar->addAction(clearAction);
   toolbar->addAction(cancelAction);
   toolbar->addSeparator();
   toolbar->addAction(settingsAction);
-  toolbar->addAction(calibrationAction);
+  //toolbar->addAction(calibrationAction);
 }
 
 void MainWindow::createControlBox() {
@@ -141,7 +151,7 @@ void MainWindow::createControlBox() {
 
   // Включаем контекстное меню элемента закладок
   tabView->setContextMenuPolicy(Qt::CustomContextMenu);
-  connect(tabView, &QTabBar::customContextMenuRequested, this, &MainWindow::showTabContextMenu);
+  //connect(tabView, &QTabBar::customContextMenuRequested, this, &MainWindow::showTabContextMenu);
 
   splitter->addWidget(leftView);
   splitter->addWidget(tabView);
@@ -197,6 +207,9 @@ void MainWindow::loadData() {
     dictionView->setHeaderHidden(true);
     //connect(optionView, &QTreeView::doubleClicked, this, &MainWindow::openTable);
     connect(dictionView, &QTreeView::doubleClicked, this, &MainWindow::openTable);
+    // контекстное меню дерева справочников
+    dictionView->setContextMenuPolicy(Qt::ActionsContextMenu);
+    dictionView->addActions({openAction});
   } else {
     showMessage(db->lastError().text());
     QMessageBox::critical(this, title, db->lastError().text());
@@ -287,6 +300,18 @@ void MainWindow::calibration() {
   }
 }
 
+void MainWindow::up() {
+  auto doc = tabView->document();
+  if (doc.isValid() && doc.widget->hasUpDown())
+    doc.widget->up();
+}
+
+void MainWindow::down() {
+  auto doc = tabView->document();
+  if (doc.isValid() && doc.widget->hasUpDown())
+    doc.widget->down();
+}
+
 void MainWindow::doSettings() {
   SettingsDlg dialog(settings, this);
   int accepted = dialog.exec();
@@ -307,8 +332,14 @@ void MainWindow::openTable(const QModelIndex &index) {
     TreeItemType data = dictionModel->get(index.row());
     ModelTableBase *model = ModelTableBase::create(data.type);
     if (model) {
+      // таблица или комплексный редактор
       QWidget *editor = model->createEditView(data.title, this);
       tabView->append(editor, data.title, data.type, data.type, data.icon);
+
+      tabView->setContextMenuPolicy(Qt::ActionsContextMenu);
+      QAction *sep = new QAction(tabView);
+      sep->setSeparator(true);
+      tabView->addActions({appendAction, removeAction, sep, clearAction, saveAction});
     }
   }
 }
@@ -343,7 +374,7 @@ void MainWindow::about() {
       "обработки экспериментов с датчиков регистрации параметров испытаний "
       "компанентов и изделий на стендах НИИХМ.</p>"));
 }
-
+/*
 void MainWindow::contextMenuEvent(QContextMenuEvent *event) {
 }
 
@@ -358,4 +389,4 @@ void MainWindow::showTabContextMenu(const QPoint &pos) {
     menu.exec(tabView->mapToGlobal(pos));
   }
 }
-
+*/

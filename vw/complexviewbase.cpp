@@ -1,8 +1,8 @@
-#include "customviewbase.h"
+#include "complexviewbase.h"
 #include <QCloseEvent>
 #include <QApplication>
 
-CustomViewBase::CustomViewBase(QWidget *parent)
+ComplexViewBase::ComplexViewBase(QWidget *parent)
   : QWidget{parent}
   , settings(new Settings(this))
   , layout(new QGridLayout())
@@ -12,48 +12,49 @@ CustomViewBase::CustomViewBase(QWidget *parent)
   layout->addWidget(splitter, 0, 0);
   setLayout(layout);
   setOrientation(Qt::Orientation::Horizontal);
+  //splitter->setCollapsible(0, false);
 }
 
-void CustomViewBase::setOrientation(Qt::Orientation orientation) {
+void ComplexViewBase::setOrientation(Qt::Orientation orientation) {
   splitter->setOrientation(orientation);
 }
 
-void CustomViewBase::addWidget(QWidget *widget) {
+void ComplexViewBase::addWidget(QWidget *widget) {
   splitter->addWidget(widget);
 }
 
-void CustomViewBase::addTable(Enums::documentType type, TableView *table) {
+void ComplexViewBase::addTable(Enums::documentType type, TableView *table) {
   splitter->addWidget(table);
   tables.insert(type, table);
 }
 
-void CustomViewBase::addLayout(QLayout *layout) {
+void ComplexViewBase::addLayout(QLayout *layout) {
   QWidget *widget = new QWidget(splitter);
   widget->setLayout(layout);
   addWidget(widget);
 }
 
-QWidget *CustomViewBase::widget() {
+QWidget *ComplexViewBase::widget() {
   return this;
 }
 
-bool CustomViewBase::isModified() const {
+bool ComplexViewBase::isModified() const {
   return tables.isModified();
 }
 
-bool CustomViewBase::save() {
+bool ComplexViewBase::save() {
   return tables.save();
 }
 
-void CustomViewBase::cancel() {
+void ComplexViewBase::cancel() {
   tables.cancel();
 }
 
-void CustomViewBase::clear() {
+void ComplexViewBase::clear() {
   tables.clear();
 }
 
-TableView *CustomViewBase::table() {
+TableView *ComplexViewBase::table() {
   auto w = QApplication::focusWidget();
   TableView *table = qobject_cast<TableView*>(w);
   if (!table)
@@ -61,11 +62,11 @@ TableView *CustomViewBase::table() {
   return table;
 }
 
-QSplitter *CustomViewBase::getSplitter() {
+QSplitter *ComplexViewBase::getSplitter() {
   return splitter;
 }
 
-void CustomViewBase::closeEvent(QCloseEvent *event) {
+void ComplexViewBase::closeEvent(QCloseEvent *event) {
   foreach (auto table, tables) {
     if (!table->close()) {
       event->ignore();
@@ -75,14 +76,15 @@ void CustomViewBase::closeEvent(QCloseEvent *event) {
   saveLayout();
 }
 
-void CustomViewBase::showEvent(QShowEvent *event) {
+void ComplexViewBase::showEvent(QShowEvent *event) {
+  init();
   restoreLayout();
 }
 
-void CustomViewBase::restoreLayout() {
+void ComplexViewBase::restoreLayout() {
   splitter->restoreState(settings->splitter3());
 }
 
-void CustomViewBase::saveLayout() {
+void ComplexViewBase::saveLayout() {
   settings->splitter3(splitter->saveState());
 }

@@ -9,9 +9,13 @@ class ModelTableSensorType : public ModelTableBase {
 public:
   explicit ModelTableSensorType(const QString &table, QObject *parent = nullptr);
   void setItemDelegates(QTableView *view) override;
+  QWidget *createEditView(const QString &title, QWidget *parent) override;
+
+  QStringList hideFields() const override;
 
 protected:
   QList<StringPair> columns() const override;
+  //QStringList boolFields() const override;
 
 };
 

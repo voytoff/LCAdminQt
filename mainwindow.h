@@ -21,13 +21,13 @@ class MainWindow : public QMainWindow {
   Q_OBJECT
 public:
   explicit MainWindow(QWidget *parent = nullptr);
-  //static MainWindow* getInstance() {return instance;}
+  static MainWindow* mw() {return instance;}
 
 protected:
   void closeEvent(QCloseEvent *event) override;
   void showEvent(QShowEvent *event) override;
-  void contextMenuEvent(QContextMenuEvent *event) override;
-  void showTabContextMenu(const QPoint &pos);
+  //void contextMenuEvent(QContextMenuEvent *event) override;
+  //void showTabContextMenu(const QPoint &pos);
 
 private:
   void showMessage(const QString &text);
@@ -48,18 +48,26 @@ private:
   QAction *cancelAction;
   QAction *clearAction;
   QAction *settingsAction;
-  QAction *calibrationAction;
   QAction *appendAction;
   QAction *removeAction;
   QAction *aboutAction;
   QAction *copyAction;
   QAction *pasteAction;
+  QAction *upAction;
+  QAction *downAction;
 
   QAction *toggleOptionAction;
   QAction *toggleDictionAction;
 
+  //QAction *calibrationAction;
+
   QMenu *windowMenu;
   QActionGroup *windowActionGroup;
+
+  /** Группы для всплывающих меню */
+  QActionGroup *dictionActionGroup;
+  QActionGroup *optionActionGroup;
+  QActionGroup *tableActionGroup;
 
   Settings *settings;
 
@@ -96,6 +104,10 @@ private slots:
   /** Вставляет данные в фокус-элемент из буфера обмена */
   void paste();
   void calibration();
+  /** Поднимает запись в индексированной таблице */
+  void up();
+  /** Опускает запись в индексированной таблице */
+  void down();
 
 public slots:
   void updateWindowMenu();

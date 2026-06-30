@@ -58,12 +58,13 @@ qt_add_executable(LCAdmin
     ctl/datetimeeditdelegate.cpp
     ctl/sqlcombobox.h ctl/sqlcombobox.cpp
     ctl/styledelegatebase.h ctl/styledelegatebase.cpp
-    vw/customviewbase.h vw/customviewbase.cpp
+    vw/complexviewbase.h vw/complexviewbase.cpp
     vw/sensorview.h vw/sensorview.cpp
     vw/tableviewcache.h vw/tableviewcache.cpp
     dlg/settingsdlg.h dlg/settingsdlg.cpp dlg/settingsdlg.ui
     dlg/calibrationdlg.h dlg/calibrationdlg.cpp dlg/calibrationdlg.ui
     vw/modelviewcache.h vw/modelviewcache.cpp
+    ctl/doubledelegate.h ctl/doubledelegate.cpp
 )
 
 target_sources(LCAdmin PRIVATE
