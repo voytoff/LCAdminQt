@@ -32,9 +32,13 @@ bool ModelTableCalibration::insertRows(int row, int count, const QModelIndex &pa
   if (!QSqlRelationalTableModel::insertRows(row, count, parent))
     return false;
   for (int r = row; r < row + count; ++r) {
-    qDebug() << setData(r, this->parentField, parentValue);
-    qDebug() << setData(r, this->indexName, row);
+    qDebug() << setData(r, parentField, parentValue);
+    //qDebug() << setData(r, indexName, r);
   }
   // + пересчитать полностью !equals =
+  for (int r = 0; r < rowCount(); r++) {
+    auto i = data(r, indexName);
+    if (i != r) qDebug() << r << setData(r, indexName, r);
+  }
   return true;
 }

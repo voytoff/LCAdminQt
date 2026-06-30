@@ -5,7 +5,7 @@ set(CMAKE_AUTOMOC ON)
 set(CMAKE_AUTOUIC ON)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
-find_package(Qt6 6.2 REQUIRED COMPONENTS
+find_package(Qt6 6.5 REQUIRED COMPONENTS
     Quick
     Core
     Widgets
@@ -65,6 +65,7 @@ qt_add_executable(LCAdmin
     dlg/calibrationdlg.h dlg/calibrationdlg.cpp dlg/calibrationdlg.ui
     vw/modelviewcache.h vw/modelviewcache.cpp
     ctl/doubledelegate.h ctl/doubledelegate.cpp
+    ctl/separatoraction.h ctl/separatoraction.cpp
 )
 
 target_sources(LCAdmin PRIVATE

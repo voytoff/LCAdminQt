@@ -9,7 +9,7 @@
 class SensorView : public ComplexViewBase {
   Q_OBJECT
 public:
-  explicit SensorView(ModelTableBase *model, const QString &foreignKey, const Enums::documentType &type, const QString &title, QWidget *parent = nullptr);
+  explicit SensorView(ModelTableBase *model, const QString &foreignKey, const Enums::documentType &type, const QList<QAction *> &actions, const QString &title, QWidget *parent = nullptr);
 
   bool isModified() const override;
   bool save() override;

@@ -10,7 +10,7 @@
 #include <QMimeData>
 #include <QItemSelectionModel>
 
-TableView::TableView(ModelTableBase *model, const QString &title, QWidget *parent)
+TableView::TableView(ModelTableBase *model, const QList<QAction*> &actions, const QString &title, QWidget *parent)
   : QTableView{parent} {
 
   setModel(model);
@@ -32,6 +32,8 @@ TableView::TableView(ModelTableBase *model, const QString &title, QWidget *paren
   verticalHeader()->setDefaultSectionSize(22); // pixels
   horizontalHeader()->setMinimumSectionSize(minColumnSize);
   resizeColumnsToContents();
+  setContextMenuPolicy(Qt::ActionsContextMenu);
+  addActions(actions);
   //setStyleSheet("QTableView{border:none;}"); // Убираем рамку, плохо смотрится в комплексном редакторе
 }
 
@@ -228,6 +230,15 @@ bool TableView::pasteClipboard() {
     setCurrentIndex(newFocusIndex);
   }
   return true;
+}
+
+bool TableView::checkData() {
+  if (isModified()) {
+    auto response = QMessageBox::question(qobject_cast<MainWindow*>(parent()), title(), QString("Данные таблицы '%1' изменены. Сохранить эти изменения?").arg(title()), QMessageBox::Yes | QMessageBox::No);
+    if (response == QMessageBox::Yes) save();
+    return true;
+  }
+  return false;
 }
 
 void TableView::closeEvent(QCloseEvent *event) {

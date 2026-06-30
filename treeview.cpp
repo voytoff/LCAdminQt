@@ -13,4 +13,5 @@ TreeView::TreeView(const QString &title, QWidget *parent)
   QLocale locale = this->locale();
   locale.setNumberOptions(QLocale::OmitGroupSeparator);
   setLocale(locale);
+  setContextMenuPolicy(Qt::ActionsContextMenu);
 }

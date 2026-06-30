@@ -11,8 +11,8 @@ void ModelTableSensorType::setItemDelegates(QTableView *view) {
   view->setItemDelegateForColumn(fieldIndex("source"), new EnumListDelegate(Enums::create<Enums::calibrationSource>(Enums::calibrationSourceMap), view));
 }
 
-QWidget *ModelTableSensorType::createEditView(const QString &title, QWidget *parent) {
-  return new SensorView(this, "sensortype_id", Enums::sensortypecalibration, title, parent);
+QWidget *ModelTableSensorType::createEditView(const QString &title, const QList<QAction *> &actions, QWidget *parent) {
+  return new SensorView(this, "sensortype_id", Enums::sensortypecalibration, actions, title, parent);
 }
 
 QStringList ModelTableSensorType::hideFields() const {

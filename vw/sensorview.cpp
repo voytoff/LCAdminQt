@@ -1,22 +1,25 @@
 #include "sensorview.h"
 #include "modeltablebase.h"
 #include "../tableview.h"
+#include "../mainwindow.h"
 
 #include <QApplication>
 #include <QSqlQuery>
 #include <QLabel>
 #include <QFrame>
 
-SensorView::SensorView(ModelTableBase *model, const QString &foreignKey, const Enums::documentType &foreignType, const QString &title, QWidget *parent)
+SensorView::SensorView(ModelTableBase *model, const QString &foreignKey, const Enums::documentType &foreignType, const QList<QAction*> &actions, const QString &title, QWidget *parent)
   : ComplexViewBase{parent}
   , detail(nullptr)
   , foreignKey(foreignKey)
   , foreignType(foreignType) {
 
-  auto *table = new TableView(model, title);
+  auto *table = new TableView(model, actions, title);
   addTable(model->documentType(), table);
 
   connect(table->selectionModel(), &QItemSelectionModel::currentRowChanged, this, [model, table, this](const QModelIndex &current, const QModelIndex &previous) {
+    auto tableView = tables.value(this->foreignType);
+    tableView->checkData();
     auto id = model->data(current.row(), "id");
     if (id.isValid()) {
       detail->setFilter(QString("%1 = %2").arg(this->foreignKey).arg(id.toInt()));
@@ -63,10 +66,10 @@ void SensorView::down() {
 
 void SensorView::init() {
   if (!detail) {
-  // Получаем модель завизимой таблицы
-  detail = qobject_cast<ModelTableCalibration*>(addCalibrationTable());
-  detail->select();
-  hideCalibrationPane(true);
+    // Получаем модель завизимой таблицы
+    detail = qobject_cast<ModelTableCalibration*>(addCalibrationTable());
+    detail->select();
+    hideCalibrationPane(true);
   }
 }
 
@@ -79,7 +82,9 @@ ModelTableBase* SensorView::addCalibrationTable() {
   if (model) {
     model->setSort(model->fieldIndex("index"), Qt::AscendingOrder);
     model->setFilter(QString("%1 = 0").arg(foreignKey)); // пока не показываем ничего
-    TableView *table = new TableView(model, "Градуировка", this);
+
+    TableView *table = new TableView(model, MainWindow::mw()->calibrationActionGroup, "Градуировка", this);
+
     modeles.insert(model->documentType(), model);
     tables.insert(model->documentType(), table);
     //addTable(Enums::sensorcalibration, table);
@@ -89,7 +94,7 @@ ModelTableBase* SensorView::addCalibrationTable() {
     line->setFrameShape(QFrame::HLine);
     line->setFrameShadow(QFrame::Sunken);
     layout->addWidget(line);
-    layout->addWidget(new QLabel("Градуировка"));
+    layout->addWidget(new QLabel("Градуировка"), 0, Qt::AlignHCenter);
     layout->addWidget(table);
     addLayout(layout);
   }

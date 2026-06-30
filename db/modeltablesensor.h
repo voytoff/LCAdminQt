@@ -9,7 +9,7 @@ class ModelTableSensor : public ModelTableBase {
 public:
   explicit ModelTableSensor(const QString &table, QObject *parent = nullptr);
   void setItemDelegates(QTableView *view) override;
-  QWidget *createEditView(const QString &title, QWidget *parent) override;
+  QWidget *createEditView(const QString &title, const QList<QAction*> &actions, QWidget *parent) override;
 
 protected:
   QList<StringPair> columns() const override;

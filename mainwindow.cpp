@@ -3,6 +3,7 @@
 #include "leftview.h"
 #include "modeltablebase.h"
 #include "sensorview.h"
+#include "separatoraction.h"
 #include "settingsdlg.h"
 #include "tableview.h"
 #include "types.h"
@@ -89,6 +90,19 @@ void MainWindow::createActions() {
   connect(downAction, &QAction::triggered, this, &MainWindow::down);
   //connect(calibrationAction, &QAction::triggered, this, &MainWindow::calibration);
 
+  dictionActionGroup.append(openAction);
+  tableActionGroup.append({
+    copyAction, pasteAction, new SeparatorAction(),
+    appendAction, removeAction, new SeparatorAction(),
+    cancelAction, clearAction, new SeparatorAction(),
+    saveAction});
+  calibrationActionGroup.append({
+    copyAction, pasteAction, new SeparatorAction(),
+    appendAction, removeAction, new SeparatorAction(),
+    cancelAction, clearAction, new SeparatorAction(),
+    upAction, downAction, new SeparatorAction(),
+    saveAction});
+
   schemeHelper->applayColorScheme(settings->colorScheme(), true);
 }
 
@@ -149,8 +163,13 @@ void MainWindow::createControlBox() {
   //connect(treeView, &QTreeView::doubleClicked, this, &MainWindow::editSensor);
   //сonnect(optionView->selectionModel(), &QItemSelectionModel::selectionChanged, this, &MainWindow::reload);
 
+  // контекстное меню дерева справочников
+  dictionView->addActions(dictionActionGroup);
+  // контекстное меню дерева объектов
+  optionView->addActions(optionActionGroup);
+
   // Включаем контекстное меню элемента закладок
-  tabView->setContextMenuPolicy(Qt::CustomContextMenu);
+  //tabView->setContextMenuPolicy(Qt::CustomContextMenu);
   //connect(tabView, &QTabBar::customContextMenuRequested, this, &MainWindow::showTabContextMenu);
 
   splitter->addWidget(leftView);
@@ -158,7 +177,7 @@ void MainWindow::createControlBox() {
 
   QGridLayout *layout = new QGridLayout();
   layout->addWidget(splitter, 0, 0);
-  layout->setContentsMargins(2, 1, 2, 0);
+  layout->setContentsMargins(3, 1, 3, 0);
 
   QWidget *widget = new QWidget;
   widget->setLayout(layout);
@@ -207,9 +226,6 @@ void MainWindow::loadData() {
     dictionView->setHeaderHidden(true);
     //connect(optionView, &QTreeView::doubleClicked, this, &MainWindow::openTable);
     connect(dictionView, &QTreeView::doubleClicked, this, &MainWindow::openTable);
-    // контекстное меню дерева справочников
-    dictionView->setContextMenuPolicy(Qt::ActionsContextMenu);
-    dictionView->addActions({openAction});
   } else {
     showMessage(db->lastError().text());
     QMessageBox::critical(this, title, db->lastError().text());
@@ -295,7 +311,7 @@ void MainWindow::calibration() {
           CalibrationDlg dialog(model, id.toInt(), this);
           dialog.exec();
         }
-    }
+      }
     }
   }
 }
@@ -333,13 +349,9 @@ void MainWindow::openTable(const QModelIndex &index) {
     ModelTableBase *model = ModelTableBase::create(data.type);
     if (model) {
       // таблица или комплексный редактор
-      QWidget *editor = model->createEditView(data.title, this);
+      QWidget *editor = model->createEditView(data.title, tableActionGroup, this);
       tabView->append(editor, data.title, data.type, data.type, data.icon);
-
-      tabView->setContextMenuPolicy(Qt::ActionsContextMenu);
-      QAction *sep = new QAction(tabView);
-      sep->setSeparator(true);
-      tabView->addActions({appendAction, removeAction, sep, clearAction, saveAction});
+      tabView->addActions(tableActionGroup);
     }
   }
 }

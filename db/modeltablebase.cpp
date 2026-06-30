@@ -12,6 +12,8 @@
 #include <QSqlRelationalDelegate>
 #include <QSqlRecord>
 #include <QSqlField>
+#include <QString>
+#include <QRegularExpression>
 
 ModelTableBase::ModelTableBase(const QString &table, QObject *parent)
   : QSqlRelationalTableModel{parent, DB::instance(DatabaseName)} {
@@ -56,8 +58,8 @@ ModelTableBase *ModelTableBase::create(Enums::documentType type) {
   return result;
 }
 
-QWidget *ModelTableBase::createEditView(const QString &title, QWidget *parent) {
-  TableView *table = new TableView(this, title);
+QWidget *ModelTableBase::createEditView(const QString &title, const QList<QAction*> &actions, QWidget *parent) {
+  TableView *table = new TableView(this, actions, title);
   // Запоминаем название таблицы
   table->setWindowTitle(title);
   return table;
@@ -140,9 +142,16 @@ bool ModelTableBase::setData(const QModelIndex &index, const QVariant &value, in
     switch (field.metaType().id())
     {
     case QMetaType::Double: {
+      auto text = value.toString();
       bool ok;
-      double v = QLocale().toDouble(value.toString(), &ok);
-
+      double v = QLocale().toDouble(text, &ok);
+      if (!ok) {
+        for (int i = 0; i < text.length(); ++i) {
+          if (text[i] == '.')  text[i] = ',';
+          else if (text[i] == ',') text[i] = '.';
+        }
+        v = QLocale().toDouble(text, &ok);
+      }
       if (ok) return QSqlRelationalTableModel::setData(index, v);
       else return QSqlRelationalTableModel::setData(index, QVariant());
     }

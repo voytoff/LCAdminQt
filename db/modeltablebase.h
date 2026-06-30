@@ -27,7 +27,7 @@ public:
    *  Создает и возвращает об'ект редактирования с интерфейсом IStateWidget.
    *  Это может быть таблица TableView или комплексный редактор CustomViewBase
   */
-  virtual QWidget *createEditView(const QString &title, QWidget *parent);
+  virtual QWidget *createEditView(const QString &title, const QList<QAction *> &actions, QWidget *parent);
   QString title() const;
   Enums::documentType documentType() const;
   QVariant currentData(const QString &fieldName) const;

@@ -10,8 +10,8 @@ void ModelTableSensor::setItemDelegates(QTableView *view) {
   view->setItemDelegateForColumn(fieldIndex("calibration"), new EnumListDelegate(Enums::create<Enums::sensorCalibrationType>(Enums::sensorCalibrationTypeMap), view));
 }
 
-QWidget *ModelTableSensor::createEditView(const QString &title, QWidget *parent) {
-  return new SensorView(this, "sensor_id", Enums::sensorcalibration, title, parent);
+QWidget *ModelTableSensor::createEditView(const QString &title, const QList<QAction *> &actions, QWidget *parent) {
+  return new SensorView(this, "sensor_id", Enums::sensorcalibration, actions, title, parent);
 }
 
 QList<StringPair> ModelTableSensor::columns() const {

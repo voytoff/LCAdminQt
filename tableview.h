@@ -12,7 +12,7 @@ class TableView : public QTableView, public IStateWidget {
   Q_INTERFACES(IStateWidget)
 
 public:
-  explicit TableView(ModelTableBase *model, const QString &title, QWidget *parent = nullptr);
+  explicit TableView(ModelTableBase *model, const QList<QAction *> &actions, const QString &title, QWidget *parent = nullptr);
 
   int index(const QString & fieldName) const;
   QWidget *widget() override;
@@ -33,6 +33,7 @@ protected:
 public slots:
   bool copySelection();
   bool pasteClipboard();
+  bool checkData();
 
 signals:
 

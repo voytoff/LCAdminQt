@@ -6,6 +6,7 @@
 #include <QSqlDatabase>
 #include <QSplitter>
 #include <QMenu>
+#include <QList>
 #include <QActionGroup>
 
 #include "db.h"
@@ -64,11 +65,6 @@ private:
   QMenu *windowMenu;
   QActionGroup *windowActionGroup;
 
-  /** Группы для всплывающих меню */
-  QActionGroup *dictionActionGroup;
-  QActionGroup *optionActionGroup;
-  QActionGroup *tableActionGroup;
-
   Settings *settings;
 
   QSplitter *splitter;
@@ -81,6 +77,15 @@ private:
   QToolBar *toolbar;
 
   DB *db;
+
+  /** Группы для всплывающих меню */
+  QList<QAction*> dictionActionGroup;
+  QList<QAction*> optionActionGroup;
+  QList<QAction*> tableActionGroup;
+
+public:
+  QList<QAction*> calibrationActionGroup;
+
 
 private:
   static MainWindow* instance;
