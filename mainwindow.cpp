@@ -1,5 +1,6 @@
 #include "mainwindow.h"
 #include "calibrationdlg.h"
+#include "crate.h"
 #include "leftview.h"
 #include "modeltablebase.h"
 #include "sensorview.h"
@@ -72,6 +73,8 @@ void MainWindow::createActions() {
   upAction = schemeHelper->create(tr("Вверх"), ":/images/tb/up.png", QKeySequence(Qt::SHIFT | Qt::CTRL | Qt::Key_C));
   downAction = schemeHelper->create(tr("Вниз"), ":/images/tb/down.png", QKeySequence(Qt::SHIFT | Qt::CTRL | Qt::Key_V));
 
+  cratesAction = schemeHelper->create(tr("Подключенные крейты..."), ":/images/tb/crates.png");
+
   toggleOptionAction = leftView->toggleOptionAction();
   toggleDictionAction = leftView->toggleDictionAction();
 
@@ -88,7 +91,7 @@ void MainWindow::createActions() {
   connect(pasteAction, &QAction::triggered, this, &MainWindow::paste);
   connect(upAction, &QAction::triggered, this, &MainWindow::up);
   connect(downAction, &QAction::triggered, this, &MainWindow::down);
-  //connect(calibrationAction, &QAction::triggered, this, &MainWindow::calibration);
+  connect(cratesAction, &QAction::triggered, this, &MainWindow::crates);
 
   dictionActionGroup.append(openAction);
   tableActionGroup.append({
@@ -131,9 +134,11 @@ void MainWindow::createControlBar() {
   viewMenu->addAction(toggleDictionAction);
 
   QMenu *toolMenu = menuBar()->addMenu(tr("Инструменты"));
-  //toolMenu->addAction(calibrationAction);
   toolMenu->addSeparator();
   toolMenu->addAction(settingsAction);
+
+  QMenu *crateMenu = menuBar()->addMenu(tr("Крейт"));
+  crateMenu->addAction(cratesAction);
 
   windowMenu = menuBar()->addMenu(tr("Окно"));
   windowMenu->addAction(aboutAction);
@@ -326,6 +331,21 @@ void MainWindow::down() {
   auto doc = tabView->document();
   if (doc.isValid() && doc.widget->hasUpDown())
     doc.widget->down();
+}
+
+void MainWindow::crates() {
+  QList<QString> list;
+  auto result = Crate::cratesEx(list);
+  if (result == OK) {
+    QString s;
+    if (list.length() == 0) s = "Нет подключенных устройств Lcard.";
+    else {
+      list.insert(0, "Подключены следующие устройства:");
+      s = list.join("\r");
+    }
+    QMessageBox::information(this, title, s);
+  } else
+    QMessageBox::warning(this, title, LCard::getErrorString(result));
 }
 
 void MainWindow::doSettings() {

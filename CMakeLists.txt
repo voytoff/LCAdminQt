@@ -96,8 +96,13 @@ if (NOT TARGET GlobalLib)
     add_subdirectory(${GLOBALLIBDIR} GlobalLib)
 endif()
 
-
 include_directories(db ctl vw dlg)
+
+if(WIN32)
+  include_directories("C:/Program Files (x86)/L-Card/ltr/include")
+elseif(LINUX)
+  include_directories("/usr/include/ltr/include")
+endif()
 
 # Qt for iOS sets MACOSX_BUNDLE_GUI_IDENTIFIER automatically since Qt 6.1.
 # If you are developing for iOS or macOS you should consider setting an

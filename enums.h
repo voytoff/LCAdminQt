@@ -34,7 +34,7 @@ public:
     QMap<int, QString> enumMap;
     QMetaEnum metaEnum = QMetaEnum::fromType<T>();
     for (int i = 0; i < metaEnum.keyCount(); ++i) {
-      QString name = metaEnum.key(i) == 0 ? "" : map.value(i).description;
+      QString name = map.value(metaEnum.keyToValue(metaEnum.key(i))).description;
       enumMap.insert(metaEnum.value(i), name);
     }
     return enumMap;
@@ -44,6 +44,11 @@ public:
   template <typename T>
   static QString string(T key) {
     return QMetaEnum::fromType<T>().valueToKey(key);
+  }
+  /** Возвращает строковое значение перечисления из карты имен */
+  template <typename T>
+  static QString string(T key, EnumMap map) {
+    return map.value(key).description;
   }
 
   /// Типы документов для идентификации в QTabWidget
@@ -59,17 +64,7 @@ public:
   };
   Q_ENUM(documentType)
 
-  /// Типы крейтов
-  enum crateType : int {
-    __crateType = 0,
-    LTR_EU_2 = 1, // 2-местный портативный крейт с интерфейсами USB 2.0, Ethernet и источником питания.
-    LTR_EU_8 = 2, // 8-местный крейт с интерфейсами USB 2.0, Ethernet и источником питания.
-    LTR_EU_16 = 3,// 16-местный крейт с интерфейсами USB 2.0, Ethernet и источником питания.
-    PXI_1045 = 4  // 18-слотовый 3U PXI крейт с стандартным AC блоком питания
-  };
-  Q_ENUM(crateType) // Предоставляет доступ к перечислению crateType системе метаобъектов
-
-  /// Типы крейтов
+  /// Типы модулей
   enum moduleType : int {
     __moduleType = 0,
     LTR11 = 11,   // Универсальный модуль АЦП с последовательным опросом каналов
@@ -130,8 +125,6 @@ public:
   Q_ENUM(sensorCalibrationType)
   // атрибуты градуировки (можно сделать static внутри класса или cpp-файла)
   static const EnumMap sensorCalibrationTypeMap;
-
-public slots:
 
 };
 

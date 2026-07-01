@@ -1,6 +1,6 @@
 #include "modeltablecrate.h"
 #include "enumlistdelegate.h"
-#include "../enums.h"
+#include "lcenums.h"
 #include "spinboxdelegate.h"
 
 ModelTableCrate::ModelTableCrate(const QString &table, QObject *parent)
@@ -8,7 +8,7 @@ ModelTableCrate::ModelTableCrate(const QString &table, QObject *parent)
 
 void ModelTableCrate::setItemDelegates(QTableView *view) {
   ModelTableBase::setItemDelegates(view);
-  view->setItemDelegateForColumn(fieldIndex("cratetype"), new EnumListDelegate(Enums::create<Enums::crateType>(), view));
+  view->setItemDelegateForColumn(fieldIndex("cratetype"), new EnumListDelegate(LCEnums::create<LCEnums::LTR_CrateType>(LCEnums::LTR_CrateTypeMap), view));
   view->setItemDelegateForColumn(fieldIndex("port"), new SpinBoxDelegate(0, 65000, this));
 }
 

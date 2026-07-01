@@ -26,5 +26,6 @@
         <file>images/tb/calibration.png</file>
         <file>images/tb/down.png</file>
         <file>images/tb/up.png</file>
+        <file>images/tb/crates.png</file>
     </qresource>
 </RCC>

@@ -57,6 +57,8 @@ private:
   QAction *upAction;
   QAction *downAction;
 
+  QAction *cratesAction;
+
   QAction *toggleOptionAction;
   QAction *toggleDictionAction;
 
@@ -113,6 +115,9 @@ private slots:
   void up();
   /** Опускает запись в индексированной таблице */
   void down();
+
+  /** Информация о подключенных крейтах */
+  void crates();
 
 public slots:
   void updateWindowMenu();
