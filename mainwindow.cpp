@@ -334,14 +334,15 @@ void MainWindow::down() {
 }
 
 void MainWindow::crates() {
-  QList<QString> list;
+  QList<CrateInfo> list;
   auto result = Crate::cratesEx(list);
   if (result == OK) {
     QString s;
     if (list.length() == 0) s = "Нет подключенных устройств Lcard.";
     else {
-      list.insert(0, "Подключены следующие устройства:");
-      s = list.join("\r");
+      foreach (auto p, list)
+        s.append(QString("%1 - %2 - %3\n").arg(p.sn).arg(LCEnums::string(p.type, LCEnums::LTR_CrateTypeMap)).arg(LCEnums::string(p.iface, LCEnums::LTR_CrateIfaceMap)));
+      s = QString("Подключены следующие устройства:\n%1").arg(s);
     }
     QMessageBox::information(this, title, s);
   } else
